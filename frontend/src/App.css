@@ -1,0 +1,588 @@
+/* ==========================================================================
+   GLOBAL STYLES & DESIGN TOKENS
+   ========================================================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    /* Background colors */
+    --bg-deep:       #13103a;
+    /* Card gradient colors */
+    --card-from:     #352978;
+    --card-mid:      #4638a0;
+    --card-to:       #5548b8;
+    /* Glassmorphism details */
+    --border-glass:  rgba(255,255,255,0.12);
+    /* Typography colors */
+    --text-primary:  #ffffff;
+    --text-muted:    rgba(255,255,255,0.55);
+    --text-hint:     rgba(255,255,255,0.35);
+    /* Accent palette */
+    --accent-purple: #a78bfa;
+    --accent-green:  #6ddd8a;
+    --accent-orange: #ffa03c;
+    --accent-red:    #f07070;
+    --accent-blue:   #6ab0ff;
+    /* Layout constants */
+    --radius-card:   18px;
+    --radius-sm:     10px;
+    --font:          'DM Sans', system-ui, sans-serif;
+}
+
+body {
+    background: var(--bg-deep);
+    font-family: var(--font);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   SHARED UI COMPONENTS (Used across multiple pages)
+   ========================================================================== */
+
+/* Shimmer wave animation for cards */
+@keyframes mc-shimmer {
+    0%   { transform: translateX(-120%); }
+    100% { transform: translateX(220%);  }
+}
+
+/* Base Glassmorphism Card */
+.glass-card {
+    border-radius: var(--radius-card);
+    padding: 20px 22px 28px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(140deg, var(--card-from) 0%, var(--card-mid) 55%, var(--card-to) 100%);
+    border: 1px solid var(--border-glass);
+    backdrop-filter: blur(12px);
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+            105deg,
+            transparent 20%,
+            rgba(255,255,255,0.05) 38%,
+            rgba(210,190,255,0.11) 50%,
+            rgba(255,255,255,0.05) 62%,
+            transparent 80%
+    );
+    transform: translateX(-120%);
+    animation: mc-shimmer 3.6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Staggered animation delays for card rows */
+.glass-card:nth-child(2)::before { animation-delay: 0.7s; }
+.glass-card:nth-child(3)::before { animation-delay: 1.4s; }
+.glass-card:nth-child(4)::before { animation-delay: 2.1s; }
+.glass-card:nth-child(5)::before { animation-delay: 2.8s; }
+
+/* Arrow button in card corners */
+.card-arr-btn {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: rgba(255,255,255,0.65);
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    z-index: 1;
+}
+
+.card-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+/* Generic Label-Value row */
+.mc-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.11);
+    font-size: 13px;
+    gap: 10px;
+}
+.mc-field:last-of-type { border-bottom: none; }
+.mc-fl { color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+.mc-fv { color: #fff; text-align: right; word-break: break-all; }
+
+/* Layout Wrappers */
+.page-wrap {
+    background: var(--bg-deep);
+    min-height: 100vh;
+    font-family: var(--font);
+    color: #fff;
+}
+.page-body { padding: 0 20px 32px; }
+
+/* ==========================================================================
+   NAVIGATION COMPONENTS (Top bar, Back button)
+   ========================================================================== */
+.mc-topbar {
+    display: flex;
+    align-items: center;
+    padding: 20px 28px 16px;
+}
+
+.mc-menu-btn {
+    background: none; border: none; cursor: pointer; color: #fff;
+    display: flex; flex-direction: column; gap: 5px; padding: 4px; margin-right: 12px;
+}
+.mc-menu-btn span { display: block; width: 22px; height: 2px; background: #fff; border-radius: 2px; }
+
+.mc-page-title {
+    flex: 1; text-align: center; font-size: 19px; font-weight: 500; letter-spacing: 0.01em;
+}
+
+.mc-back-btn {
+    background: none; border: none; color: var(--accent-purple);
+    cursor: pointer; font-size: 13px; font-family: inherit;
+    margin: 0 20px 16px; display: inline-flex; align-items: center; gap: 6px;
+    transition: color 0.15s;
+}
+
+/* ==========================================================================
+   FORM ELEMENTS (Inputs, Buttons, Selects)
+   ========================================================================== */
+.btn-primary {
+    background: rgba(167,139,250,0.25);
+    border: 1px solid rgba(167,139,250,0.45);
+    color: var(--accent-purple);
+    border-radius: var(--radius-sm);
+    padding: 9px 18px;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.btn-danger {
+    background: rgba(240,112,112,0.18);
+    border: 1px solid rgba(240,112,112,0.4);
+    color: var(--accent-red);
+    border-radius: var(--radius-sm);
+    padding: 9px 18px;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.glass-input {
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    color: #fff;
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+.glass-select {
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    color: #fff;
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    width: 100%;
+    cursor: pointer;
+    appearance: none;
+}
+
+/* ==========================================================================
+   MODAL WINDOW STYLES
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 35, 0.72);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+}
+.modal-box {
+    background: linear-gradient(140deg, #2e2470 0%, #3d2f96 60%, #4a3aac 100%);
+    border: 1px solid var(--border-glass);
+    border-radius: 20px;
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   CASE LIST PAGE (cl- prefix)
+   ========================================================================== */
+.cl-search-panel {
+    margin: 0 20px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 14px 18px;
+}
+
+.cl-table-wrap {
+    margin: 0 20px;
+    background: rgba(120,90,210,0.18);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.cl-table-head, .cl-table-row {
+    display: grid;
+    grid-template-columns: 1.6fr 1.5fr 1.3fr 1.3fr 36px;
+    padding: 13px 18px;
+    align-items: center;
+}
+
+/* ==========================================================================
+   CASE DETAIL PAGE (cd- prefix)
+   ========================================================================= */
+.cd-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 14px;
+    padding: 0 20px 14px;
+}
+
+.cd-card-case    { grid-column: 1; grid-row: 1 / 3; }
+.cd-card-contact { grid-column: 2; grid-row: 1; }
+.cd-card-driver  { grid-column: 2; grid-row: 2 / 4; }
+.cd-card-vehicle { grid-column: 1; grid-row: 3; }
+
+/* ==========================================================================
+   DASHBOARD / STATISTICS (db- prefix)
+   ========================================================================== */
+.db-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    padding: 0 20px 32px;
+}
+
+.db-chart-card { grid-column: 1 / -1; }
+
+.db-stat-value {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   PROFILE PAGE (profile- prefix)
+   ========================================================================== */
+.profile-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: rgba(167,139,250,0.22);
+    border: 2px solid rgba(167,139,250,0.4);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 8px;
+}
+
+.role-badge {
+    background: rgba(167,139,250,0.2);
+    border: 1px solid rgba(167,139,250,0.4);
+    color: var(--accent-purple);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 12px;
+}
+
+/* ==========================================================================
+   CONTACT HISTORY / TIMELINE (ch- prefix)
+   ========================================================================== */
+.ch-timeline { position: relative; padding-left: 28px; }
+.ch-timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 0; bottom: 0;
+    width: 1px;
+    background: rgba(255,255,255,0.15);
+}
+
+.ch-dot {
+    position: absolute;
+    left: -22px; top: 2px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* ==========================================================================
+   ADD PENALTY MODAL (ap- prefix)
+   ========================================================================== */
+.ap-amount-wrap {
+    display: flex;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.ap-currency {
+    padding: 0 10px;
+    background: rgba(255,255,255,0.06);
+    border-right: 1px solid rgba(255,255,255,0.12);
+}
+
+
+.tab-item.active {
+    color: var(--accent-purple); /* Используем наш токен #a78bfa */
+}
+
+.tab-item-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+
+/* Adjust page padding so content isn't hidden behind the Tab Bar */
+.page-wrap {
+    padding-bottom: 68px !important;
+}
+
+.icon-btn, .cl-chip-x, .card-arr-btn, .mc-menu-btn {
+    background: none !important;
+    border: none !important;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Убираем серый фон у крестиков в фильтрах */
+.cl-chip-x {
+    background: none !important;
+    border: none !important;
+    color: inherit; /* Цвет крестика будет как у текста */
+    cursor: pointer;
+    padding: 0 4px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.cl-chip-x:hover {
+    opacity: 1;
+}
+
+/* Стеклянные кнопки переключения страниц */
+.cl-pag-btn {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+    border-radius: 10px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cl-pag-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.cl-pag-btn.active {
+    background: var(--accent-purple) !important;
+    border-color: var(--accent-purple) !important;
+}
+
+/* Прозрачные кнопки-иконки в Профиле */
+.icon-btn {
+    background: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px;
+    color: var(--text-muted);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Исправление кнопки Filters */
+.cl-filter-btn {
+    background: rgba(255, 255, 255, 0.09) !important; /* Полупрозрачный фон */
+    border: 1px solid rgba(255, 255, 255, 0.18) !important; /* Тонкая светлая рамка */
+    border-radius: 10px !important;
+    padding: 8px 16px !important;
+    color: #fff !important;
+    font-family: var(--font);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.cl-filter-btn:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.cl-filter-btn:active {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* 1. Выравниваем поиск и кнопку Filters в одну линию */
+.cl-search-row {
+    display: flex;
+    align-items: center; /* Центрируем по вертикали */
+    gap: 12px;           /* Расстояние между инпутом и кнопкой */
+    margin-bottom: 16px; /* Отступ до списка фильтров */
+}
+
+/* Растягиваем инпут, чтобы он занимал всё свободное место */
+.cl-search-row .glass-input {
+    flex: 1;
+}
+
+/* 2. Делаем список фильтров (чипсов) в столбик */
+.cl-chips {
+    display: flex;
+    flex-direction: column; /* Выстраиваем в колонку */
+    align-items: flex-start; /* Прижимаем к левому краю */
+    gap: 8px;               /* Расстояние между строчками-фильтрами */
+}
+
+/* Дополнительно: чтобы чипсы не растягивались на всю ширину */
+.cl-chip {
+    display: inline-flex;
+    width: auto;
+}
+
+.cl-showing {
+    font-size: 13px;
+    color: var(--text-muted); /* Используем твой токен для серого цвета */
+    text-align: center;       /* ВОТ ЭТО ДОБАВЛЯЕМ */
+    margin-bottom: 12px;      /* Небольшой отступ до таблицы */
+    width: 100%;              /* Растягиваем на всю ширину для корректного центрирования */
+}
+
+.cl-pag {
+    display: flex;          /* Включаем гибкий контейнер */
+    justify-content: center; /* Выравниваем содержимое (кнопки) по центру */
+    align-items: center;    /* Выравниваем по вертикали */
+    gap: 8px;               /* Расстояние между кнопками */
+    margin-top: 24px;       /* Отступ сверху от таблицы */
+    width: 100%;            /* Растягиваем на всю ширину */
+}
+
+/* Sidebar Container */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Спрятан за левым краем */
+    width: 280px;
+    height: 100vh;
+    background: rgba(25, 18, 70, 0.98);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid var(--border-glass);
+    z-index: 1000;
+    transition: left 0.3s ease; /* Плавный выезд */
+    padding: 60px 20px;
+}
+
+.sidebar.open {
+    left: 0; /* Выезжает */
+}
+
+/* Close button inside sidebar */
+.sidebar-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* Menu items */
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.sidebar-item.active {
+    background: rgba(167, 139, 250, 0.15);
+    border-color: var(--accent-purple);
+    color: var(--accent-purple);
+}
+
+.sidebar-icon {
+    font-size: 20px;
+}
+
+/* Overlay background */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+}
+
+/* Убираем лишний отступ снизу, который был для таб-бара */
+.page-wrap {
+    padding-bottom: 32px !important;
+}
