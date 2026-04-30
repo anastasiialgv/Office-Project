@@ -61,14 +61,37 @@ export function Field({ label, children }) {
     );
 }
 
-/* ── Кнопка-стрелка в углу карточки ── */
+
 export function ArrButton({ onClick }) {
     return (
-        <button className="card-arr-btn" onClick={onClick} aria-label="Open">
+        <button
+            className="cl-arrow-btn"
+            aria-label="Open case"
+            onClick={(e) => {
+                e.stopPropagation();
+                if (onClick) onClick();
+            }}
+        >
             →
         </button>
     );
 }
+
+export function SideButton ( {onClick}){
+    return(
+        <div className="card-side-action"
+             onClick={(e) => {
+            // Останавливаем событие, чтобы клик по полоске
+            // не считался кликом по всей карточке
+            e.stopPropagation();
+            if (onClick) onClick();
+        }}
+             aria-label="Open details">
+            <span className="side-arrow">→</span>
+        </div>
+    );
+}
+
 
 /* ── Кнопка «Назад» ── */
 export function BackButton({ onClick, label = "← Back to list" }) {

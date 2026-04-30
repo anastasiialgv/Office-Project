@@ -200,7 +200,7 @@ function StatCard({ stat }) {
 }
 
 // ── Главный компонент ─────────────────────────────────────────────────────
-export default function DashboardPage(onMenuClick) {
+export default function Statistics(onMenuClick) {
     return (
         <>
             <div className="page-wrap">

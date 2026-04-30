@@ -1,6 +1,29 @@
-/* ==========================================================================
-   GLOBAL STYLES & DESIGN TOKENS
-   ========================================================================== */
+/* =============================================================================
+   App.css — LegalDesk UI
+   Structure:
+     1. Reset & Design Tokens
+     2. Base / Typography
+     3. Animations
+     4. Layout & Page Wrappers
+     5. Glass Card (shared component)
+     6. Navigation — Top Bar
+     7. Navigation — Sidebar
+     8. Form Elements — Inputs & Selects
+     9. Form Elements — Buttons
+    10. Modal Window
+    11. Case List Page  (cl-)
+    12. Case Detail Page  (cd-)
+    13. Dashboard / Statistics  (db-)
+    14. Profile Page  (profile-)
+    15. Contact History / Timeline  (ch-)
+    16. Add Penalty Modal  (ap-)
+============================================================================= */
+
+
+/* =============================================================================
+   1. RESET & DESIGN TOKENS
+============================================================================= */
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -8,581 +31,1320 @@
 }
 
 :root {
-    /* Background colors */
-    --bg-deep:       #13103a;
-    /* Card gradient colors */
-    --card-from:     #352978;
-    --card-mid:      #4638a0;
-    --card-to:       #5548b8;
-    /* Glassmorphism details */
-    --border-glass:  rgba(255,255,255,0.12);
-    /* Typography colors */
-    --text-primary:  #ffffff;
-    --text-muted:    rgba(255,255,255,0.55);
-    --text-hint:     rgba(255,255,255,0.35);
-    /* Accent palette */
-    --accent-purple: #a78bfa;
-    --accent-green:  #6ddd8a;
-    --accent-orange: #ffa03c;
-    --accent-red:    #f07070;
-    --accent-blue:   #6ab0ff;
-    /* Layout constants */
-    --radius-card:   18px;
-    --radius-sm:     10px;
-    --font:          'DM Sans', system-ui, sans-serif;
+    /* --- Background --- */
+    --bg-deep:          #13103a;
+
+    /* --- Card gradient stops --- */
+    --card-from:        #352978;
+    --card-mid:         #4638a0;
+    --card-to:          #5548b8;
+
+    /* --- Glassmorphism --- */
+    --border-glass:     rgba(255, 255, 255, 0.12);
+
+    /* --- Typography --- */
+    --text-primary:     #ffffff;
+    --text-muted:       rgba(255, 255, 255, 0.55);
+    --text-hint:        rgba(255, 255, 255, 0.35);
+
+    /* --- Accent palette --- */
+    --accent-purple:    #a78bfa;
+    --accent-green:     #6ddd8a;
+    --accent-orange:    #ffa03c;
+    --accent-red:       #f07070;
+    --accent-blue:      #6ab0ff;
+
+    /* --- Radii --- */
+    --radius-card:      18px;
+    --radius-sm:        10px;
+
+    /* --- Font --- */
+    --font:             'DM Sans', system-ui, sans-serif;
+
+    /* --- Sidebar width --- */
+    --sidebar-w:        260px;
 }
+
+
+/* =============================================================================
+   2. BASE / TYPOGRAPHY
+============================================================================= */
 
 body {
-    background: var(--bg-deep);
+    background:  var(--bg-deep);
     font-family: var(--font);
-    color: var(--text-primary);
-    min-height: 100vh;
+    color:       var(--text-primary);
+    min-height:  100vh;
 }
 
-/* ==========================================================================
-   SHARED UI COMPONENTS (Used across multiple pages)
-   ========================================================================== */
 
-/* Shimmer wave animation for cards */
+/* =============================================================================
+   3. ANIMATIONS
+============================================================================= */
+
+/* Shimmer wave that slides across glass cards */
 @keyframes mc-shimmer {
     0%   { transform: translateX(-120%); }
     100% { transform: translateX(220%);  }
 }
 
-/* Base Glassmorphism Card */
-.glass-card {
-    border-radius: var(--radius-card);
-    padding: 20px 22px 28px;
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(140deg, var(--card-from) 0%, var(--card-mid) 55%, var(--card-to) 100%);
-    border: 1px solid var(--border-glass);
-    backdrop-filter: blur(12px);
+/* Sidebar overlay fade-in */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
+
+/* =============================================================================
+   4. LAYOUT & PAGE WRAPPERS
+============================================================================= */
+
+/* Full-screen page shell */
+.page-wrap {
+    background:  var(--bg-deep);
+    min-height:  100vh;
+    font-family: var(--font);
+    color:       var(--text-primary);
+    padding-bottom: 32px;
+}
+
+/* Inner content padding helper */
+.page-body {
+    padding: 0 20px 32px;
+}
+
+
+/* =============================================================================
+   5. GLASS CARD  (shared component used on every page)
+============================================================================= */
+
+.glass-card {
+    border-radius:    var(--radius-card);
+    padding:          20px 22px 28px;
+    position:         relative;
+    overflow:         hidden;
+    background:       linear-gradient(140deg, var(--card-from) 0%, var(--card-mid) 55%, var(--card-to) 100%);
+    border:           1px solid var(--border-glass);
+    backdrop-filter:  blur(12px);
+}
+
+/* Shimmer light sweep overlay */
 .glass-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+    content:    '';
+    position:   absolute;
+    inset:      0;
     background: linear-gradient(
             105deg,
-            transparent 20%,
-            rgba(255,255,255,0.05) 38%,
-            rgba(210,190,255,0.11) 50%,
-            rgba(255,255,255,0.05) 62%,
-            transparent 80%
+            transparent              20%,
+            rgba(255, 255, 255, 0.05) 38%,
+            rgba(210, 190, 255, 0.11) 50%,
+            rgba(255, 255, 255, 0.05) 62%,
+            transparent              80%
     );
-    transform: translateX(-120%);
-    animation: mc-shimmer 3.6s ease-in-out infinite;
-    pointer-events: none;
+    transform:       translateX(-120%);
+    animation:       mc-shimmer 3.6s ease-in-out infinite;
+    pointer-events:  none;
 }
 
-/* Staggered animation delays for card rows */
+/* Staggered delays so sibling cards shimmer at different moments */
 .glass-card:nth-child(2)::before { animation-delay: 0.7s; }
 .glass-card:nth-child(3)::before { animation-delay: 1.4s; }
 .glass-card:nth-child(4)::before { animation-delay: 2.1s; }
 .glass-card:nth-child(5)::before { animation-delay: 2.8s; }
 
-/* Arrow button in card corners */
-.card-arr-btn {
-    position: absolute;
-    right: 14px;
-    bottom: 14px;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.12);
-    border: none;
-    color: rgba(255,255,255,0.65);
-    font-size: 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s;
-    z-index: 1;
-}
-
+/* Centered heading inside a card */
 .card-title {
-    text-align: center;
-    font-size: 17px;
-    font-weight: 500;
-    color: #fff;
+    text-align:    center;
+    font-size:     17px;
+    font-weight:   500;
+    color:         #fff;
     margin-bottom: 16px;
 }
 
-/* Generic Label-Value row */
+/* Circular arrow button pinned to the bottom-right corner of a card */
+.card-arr-btn {
+    position:        absolute;
+    right:           14px;
+    bottom:          14px;
+    width:           30px;
+    height:          30px;
+    border-radius:   50%;
+    background:      rgba(255, 255, 255, 0.12);
+    border:          none;
+    color:           rgba(255, 255, 255, 0.65);
+    font-size:       15px;
+    cursor:          pointer;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    transition:      background 0.15s;
+    z-index:         1;
+}
+
+.card-arr-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+/* Darker vertical strip on the right edge of a card (used as a clickable action area) */
+.card-side-action {
+    position:      absolute;
+    top:           0;
+    right:         0;
+    bottom:        0;
+    width:         50px;
+    background:    rgba(26, 15, 60, 0.8);
+    border-left:   1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    cursor:        pointer;
+    transition:    background 0.2s, width 0.2s;
+    z-index:       5;
+}
+
+.card-side-action:hover {
+    background: rgba(20, 10, 50, 0.9);
+    width:      100px;
+}
+
+/* Arrow icon inside .card-side-action */
+.side-arrow {
+    color:       #fff;
+    font-size:   30px;
+    font-weight: bold;
+    opacity:     0.8;
+}
+
+/* Generic label / value row — used inside any card */
 .mc-field {
-    display: flex;
+    display:         flex;
     justify-content: space-between;
-    align-items: flex-start;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.11);
-    font-size: 13px;
-    gap: 10px;
-}
-.mc-field:last-of-type { border-bottom: none; }
-.mc-fl { color: var(--text-muted); font-weight: 500; white-space: nowrap; }
-.mc-fv { color: #fff; text-align: right; word-break: break-all; }
-
-/* Layout Wrappers */
-.page-wrap {
-    background: var(--bg-deep);
-    min-height: 100vh;
-    font-family: var(--font);
-    color: #fff;
-}
-.page-body { padding: 0 20px 32px; }
-
-/* ==========================================================================
-   NAVIGATION COMPONENTS (Top bar, Back button)
-   ========================================================================== */
-.mc-topbar {
-    display: flex;
-    align-items: center;
-    padding: 20px 28px 16px;
+    align-items:     flex-start;
+    padding:         8px 0;
+    border-bottom:   1px solid rgba(255, 255, 255, 0.11);
+    font-size:       13px;
+    gap:             10px;
 }
 
-.mc-menu-btn {
-    background: none; border: none; cursor: pointer; color: #fff;
-    display: flex; flex-direction: column; gap: 5px; padding: 4px; margin-right: 12px;
-}
-.mc-menu-btn span { display: block; width: 22px; height: 2px; background: #fff; border-radius: 2px; }
-
-.mc-page-title {
-    flex: 1; text-align: center; font-size: 19px; font-weight: 500; letter-spacing: 0.01em;
+.mc-field:last-of-type {
+    border-bottom: none;
 }
 
-.mc-back-btn {
-    background: none; border: none; color: var(--accent-purple);
-    cursor: pointer; font-size: 13px; font-family: inherit;
-    margin: 0 20px 16px; display: inline-flex; align-items: center; gap: 6px;
-    transition: color 0.15s;
-}
-
-/* ==========================================================================
-   FORM ELEMENTS (Inputs, Buttons, Selects)
-   ========================================================================== */
-.btn-primary {
-    background: rgba(167,139,250,0.25);
-    border: 1px solid rgba(167,139,250,0.45);
-    color: var(--accent-purple);
-    border-radius: var(--radius-sm);
-    padding: 9px 18px;
-    font-family: var(--font);
-    font-size: 13px;
+.mc-fl {
+    color:       var(--text-muted);
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
     white-space: nowrap;
 }
 
-.btn-danger {
-    background: rgba(240,112,112,0.18);
-    border: 1px solid rgba(240,112,112,0.4);
-    color: var(--accent-red);
-    border-radius: var(--radius-sm);
-    padding: 9px 18px;
-    font-family: var(--font);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s;
+.mc-fv {
+    color:      #fff;
+    text-align: right;
+    word-break: break-all;
 }
 
-.glass-input {
-    background: rgba(255,255,255,0.09);
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: var(--radius-sm);
-    padding: 8px 12px;
-    color: #fff;
-    font-family: var(--font);
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-}
 
-.glass-select {
-    background: rgba(255,255,255,0.09);
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: var(--radius-sm);
-    padding: 8px 12px;
-    color: #fff;
-    font-family: var(--font);
-    font-size: 13px;
-    outline: none;
-    width: 100%;
-    cursor: pointer;
-    appearance: none;
-}
+/* =============================================================================
+   6. NAVIGATION — TOP BAR
+============================================================================= */
 
-/* ==========================================================================
-   MODAL WINDOW STYLES
-   ========================================================================== */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 8, 35, 0.72);
-    backdrop-filter: blur(4px);
-    display: flex;
+.mc-topbar {
+    display:     flex;
     align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 20px;
-}
-.modal-box {
-    background: linear-gradient(140deg, #2e2470 0%, #3d2f96 60%, #4a3aac 100%);
-    border: 1px solid var(--border-glass);
-    border-radius: 20px;
-    padding: 28px;
-    width: 100%;
-    max-width: 420px;
-    position: relative;
-    overflow: hidden;
+    padding:     20px 28px 16px;
 }
 
-/* ==========================================================================
-   CASE LIST PAGE (cl- prefix)
-   ========================================================================== */
-.cl-search-panel {
-    margin: 0 20px 14px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 16px;
-    padding: 14px 18px;
+/* Hamburger button (three lines) */
+.mc-menu-btn {
+    background:      none;
+    border:          none;
+    cursor:          pointer;
+    color:           #fff;
+    display:         flex;
+    flex-direction:  column;
+    gap:             5px;
+    padding:         4px;
+    margin-right:    12px;
 }
 
-.cl-table-wrap {
-    margin: 0 20px;
-    background: rgba(120,90,210,0.18);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    overflow: hidden;
+.mc-menu-btn span {
+    display:       block;
+    width:         22px;
+    height:        2px;
+    background:    #fff;
+    border-radius: 2px;
 }
 
-.cl-table-head, .cl-table-row {
-    display: grid;
-    grid-template-columns: 1.6fr 1.5fr 1.3fr 1.3fr 36px;
-    padding: 13px 18px;
+/* Centered page title in the top bar */
+.mc-page-title {
+    flex:           1;
+    text-align:     center;
+    font-size:      19px;
+    font-weight:    500;
+    letter-spacing: 0.01em;
+}
+
+/* Back navigation link */
+.mc-back-btn {
+    background:  none;
+    border:      none;
+    color:       var(--accent-purple);
+    cursor:      pointer;
+    font-size:   13px;
+    font-family: inherit;
+    margin:      0 20px 16px;
+    display:     inline-flex;
     align-items: center;
+    gap:         6px;
+    transition:  color 0.15s;
 }
 
-/* ==========================================================================
-   CASE DETAIL PAGE (cd- prefix)
-   ========================================================================= */
-.cd-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
-    gap: 14px;
-    padding: 0 20px 14px;
+.mc-back-btn:hover {
+    color: #fff;
 }
 
-.cd-card-case    { grid-column: 1; grid-row: 1 / 3; }
-.cd-card-contact { grid-column: 2; grid-row: 1; }
-.cd-card-driver  { grid-column: 2; grid-row: 2 / 4; }
-.cd-card-vehicle { grid-column: 1; grid-row: 3; }
-
-/* ==========================================================================
-   DASHBOARD / STATISTICS (db- prefix)
-   ========================================================================== */
-.db-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    padding: 0 20px 32px;
-}
-
-.db-chart-card { grid-column: 1 / -1; }
-
-.db-stat-value {
-    font-size: 30px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-/* ==========================================================================
-   PROFILE PAGE (profile- prefix)
-   ========================================================================== */
-.profile-avatar {
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    background: rgba(167,139,250,0.22);
-    border: 2px solid rgba(167,139,250,0.4);
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 8px;
-}
-
-.role-badge {
-    background: rgba(167,139,250,0.2);
-    border: 1px solid rgba(167,139,250,0.4);
-    color: var(--accent-purple);
-    border-radius: 20px;
-    padding: 3px 12px;
-    font-size: 12px;
-}
-
-/* ==========================================================================
-   CONTACT HISTORY / TIMELINE (ch- prefix)
-   ========================================================================== */
-.ch-timeline { position: relative; padding-left: 28px; }
-.ch-timeline::before {
-    content: '';
-    position: absolute;
-    left: 10px; top: 0; bottom: 0;
-    width: 1px;
-    background: rgba(255,255,255,0.15);
-}
-
-.ch-dot {
-    position: absolute;
-    left: -22px; top: 2px;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-}
-
-/* ==========================================================================
-   ADD PENALTY MODAL (ap- prefix)
-   ========================================================================== */
-.ap-amount-wrap {
-    display: flex;
-    background: rgba(255,255,255,0.09);
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.ap-currency {
-    padding: 0 10px;
-    background: rgba(255,255,255,0.06);
-    border-right: 1px solid rgba(255,255,255,0.12);
+/* Status text badge (CLOSED / IN PROGRESS / etc.) */
+.mc-status {
+    font-size:      12px;
+    font-weight:    600;
+    letter-spacing: 0.02em;
 }
 
 
-.tab-item.active {
-    color: var(--accent-purple); /* Используем наш токен #a78bfa */
+/* =============================================================================
+   7. NAVIGATION — SIDEBAR
+============================================================================= */
+
+/* Sidebar panel — hidden by default, slides in from the left */
+.sidebar {
+    position:       fixed;
+    top:            0;
+    left:           calc(-1 * var(--sidebar-w));
+    width:          var(--sidebar-w);
+    height:         100vh;
+    background:     rgba(25, 18, 70, 0.98);
+    backdrop-filter: blur(20px);
+    border-right:   1px solid var(--border-glass);
+    z-index:        1000;
+    transition:     left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding:        70px 20px 20px;
+    display:        flex;
+    flex-direction: column;
 }
 
-.tab-item-icon {
-    font-size: 20px;
+/* Visible state — toggled by adding .open class via React */
+.sidebar.open {
+    left: 0;
+}
+
+/* Close (×) button inside sidebar */
+.sidebar-close {
+    position:    absolute;
+    top:         20px;
+    right:       20px;
+    background:  none;
+    border:      none;
+    color:       var(--text-muted);
+    font-size:   32px;
     line-height: 1;
+    cursor:      pointer;
+    transition:  color 0.2s;
 }
 
-/* Adjust page padding so content isn't hidden behind the Tab Bar */
-.page-wrap {
-    padding-bottom: 68px !important;
+.sidebar-close:hover {
+    color: #fff;
 }
 
-.icon-btn, .cl-chip-x, .card-arr-btn, .mc-menu-btn {
-    background: none !important;
-    border: none !important;
-    outline: none;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
+/* Vertical list of nav buttons */
+.sidebar-menu {
+    display:        flex;
+    flex-direction: column;
+    gap:            12px;
+}
+
+/* Individual nav button */
+.sidebar-item {
+    display:       flex;
+    align-items:   center;
+    gap:           15px;
+    padding:       14px 20px;
+    background:    none;
+    border:        1px solid transparent;
+    border-radius: var(--radius-sm);
+    color:         var(--text-muted);
+    font-family:   var(--font);
+    font-size:     16px;
+    font-weight:   500;
+    cursor:        pointer;
+    text-align:    left;
+    transition:    background 0.2s, color 0.2s, border-color 0.2s;
+    width:         100%;
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color:      #fff;
+}
+
+/* Highlighted state for the current page */
+.sidebar-item.active {
+    background:   rgba(167, 139, 250, 0.15);
+    border-color: rgba(167, 139, 250, 0.4);
+    color:        var(--accent-purple);
+}
+
+/* Icon slot inside a nav button */
+.sidebar-icon {
+    font-size:       20px;
+    display:         flex;
+    align-items:     center;
     justify-content: center;
+    width:           24px;
 }
 
-/* Убираем серый фон у крестиков в фильтрах */
+/* Full-screen dimmer shown behind the open sidebar */
+.sidebar-overlay {
+    position:        fixed;
+    inset:           0;
+    background:      rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index:         999;
+    animation:       fadeIn 0.3s ease;
+}
+
+
+/* =============================================================================
+   8. FORM ELEMENTS — INPUTS & SELECTS
+============================================================================= */
+
+/* Text / email / password input with glass styling */
+.glass-input {
+    background:    rgba(255, 255, 255, 0.09);
+    border:        1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-sm);
+    padding:       8px 12px;
+    color:         #fff;
+    font-family:   var(--font);
+    font-size:     13px;
+    outline:       none;
+    transition:    border-color 0.2s;
+    width:         100%;
+}
+
+.glass-input::placeholder {
+    color: var(--text-hint);
+}
+
+.glass-input:focus {
+    border-color: rgba(167, 139, 250, 0.6);
+}
+
+/* Dropdown select with glass styling */
+.glass-select {
+    background:    rgba(255, 255, 255, 0.09);
+    border:        1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-sm);
+    padding:       8px 12px;
+    color:         #fff;
+    font-family:   var(--font);
+    font-size:     13px;
+    outline:       none;
+    width:         100%;
+    cursor:        pointer;
+    appearance:    none;
+    transition:    border-color 0.2s;
+}
+
+.glass-select:focus {
+    border-color: rgba(167, 139, 250, 0.6);
+}
+
+.glass-select option {
+    background: #2d2060;
+}
+
+
+/* =============================================================================
+   9. FORM ELEMENTS — BUTTONS
+============================================================================= */
+
+/* Primary action button (purple tint) */
+.btn-primary {
+    background:    rgba(167, 139, 250, 0.25);
+    border:        1px solid rgba(167, 139, 250, 0.45);
+    color:         var(--accent-purple);
+    border-radius: var(--radius-sm);
+    padding:       9px 18px;
+    font-family:   var(--font);
+    font-size:     13px;
+    font-weight:   500;
+    cursor:        pointer;
+    transition:    background 0.15s, border-color 0.15s;
+    white-space:   nowrap;
+}
+
+.btn-primary:hover {
+    background:   rgba(167, 139, 250, 0.38);
+    border-color: rgba(167, 139, 250, 0.65);
+}
+
+/* Destructive / cancel button (red tint) */
+.btn-danger {
+    background:    rgba(240, 112, 112, 0.18);
+    border:        1px solid rgba(240, 112, 112, 0.4);
+    color:         var(--accent-red);
+    border-radius: var(--radius-sm);
+    padding:       9px 18px;
+    font-family:   var(--font);
+    font-size:     13px;
+    font-weight:   500;
+    cursor:        pointer;
+    transition:    background 0.15s;
+}
+
+.btn-danger:hover {
+    background: rgba(240, 112, 112, 0.28);
+}
+
+/* Small square icon button (pencil, check, etc.) */
+.icon-btn {
+    background:      none;
+    border:          1px solid rgba(255, 255, 255, 0.2);
+    border-radius:   8px;
+    color:           var(--text-muted);
+    width:           30px;
+    height:          30px;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    cursor:          pointer;
+    flex-shrink:     0;
+    transition:      background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.icon-btn:hover {
+    background:   rgba(167, 139, 250, 0.2);
+    color:        var(--accent-purple);
+    border-color: rgba(167, 139, 250, 0.4);
+}
+
+/* Confirm variant (green) */
+.icon-btn.confirm {
+    color:        var(--accent-green);
+    border-color: rgba(109, 221, 138, 0.4);
+}
+
+.icon-btn.confirm:hover {
+    background: rgba(109, 221, 138, 0.15);
+}
+
+/* Inline arrow button in table rows */
+.cl-arrow-btn {
+    background:      none;
+    border:          none;
+    color:           var(--accent-purple);
+    font-size:       22px;
+    cursor:          pointer;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    transition:      transform 0.2s, color 0.2s;
+    padding:         0;
+    width:           100%;
+}
+
+.cl-arrow-btn:hover {
+    color:     #fff;
+    transform: translateX(4px);
+}
+
+.cl-arrow-btn:active {
+    transform: translateX(2px) scale(0.9);
+}
+
+
+/* =============================================================================
+   10. MODAL WINDOW
+============================================================================= */
+
+/* Semi-transparent backdrop */
+.modal-overlay {
+    position:        fixed;
+    inset:           0;
+    background:      rgba(10, 8, 35, 0.72);
+    backdrop-filter: blur(4px);
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    z-index:         100;
+    padding:         20px;
+}
+
+/* Modal dialog box */
+.modal-box {
+    background:    linear-gradient(140deg, #2e2470 0%, #3d2f96 60%, #4a3aac 100%);
+    border:        1px solid var(--border-glass);
+    border-radius: 20px;
+    padding:       28px;
+    width:         100%;
+    max-width:     420px;
+    position:      relative;
+    overflow:      hidden;
+}
+
+/* Title text at the top of the modal */
+.modal-title {
+    font-size:     18px;
+    font-weight:   500;
+    margin-bottom: 20px;
+    color:         #fff;
+}
+
+/* Close (×) button in the top-right corner */
+.modal-close {
+    position:        absolute;
+    top:             16px;
+    right:           16px;
+    background:      none;
+    border:          none;
+    color:           var(--text-muted);
+    font-size:       24px;
+    line-height:     1;
+    cursor:          pointer;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    width:           32px;
+    height:          32px;
+    transition:      color 0.2s, transform 0.2s;
+}
+
+.modal-close:hover  { color: #fff; transform: scale(1.1); }
+.modal-close:active { transform: scale(0.9); }
+
+
+/* =============================================================================
+   11. CASE LIST PAGE  (prefix: cl-)
+============================================================================= */
+
+/* Search + filter chips container */
+.cl-search-panel {
+    margin:        0 20px 14px;
+    background:    rgba(255, 255, 255, 0.06);
+    border:        1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding:       14px 18px;
+}
+
+/* Search input + Filters button on one line */
+.cl-search-row {
+    display:       flex;
+    align-items:   center;
+    gap:           12px;
+    margin-bottom: 12px;
+}
+
+.cl-search-row .glass-input {
+    flex: 1;
+}
+
+/* Filters button */
+.cl-filter-btn {
+    background:    rgba(255, 255, 255, 0.09);
+    border:        1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    padding:       8px 16px;
+    color:         #fff;
+    font-family:   var(--font);
+    font-size:     13px;
+    cursor:        pointer;
+    display:       flex;
+    align-items:   center;
+    gap:           6px;
+    white-space:   nowrap;
+    transition:    background 0.2s, border-color 0.2s;
+}
+
+.cl-filter-btn:hover {
+    background:   rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Row of active filter chips (displayed in one horizontal line, wrapping) */
+.cl-chips {
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       8px;
+}
+
+/* Single filter chip */
+.cl-chip {
+    display:     inline-flex;
+    align-items: center;
+    gap:         6px;
+    border-radius: 20px;
+    padding:     4px 10px;
+    font-size:   12px;
+    font-weight: 500;
+    border:      1px solid transparent;
+    white-space: nowrap;
+}
+
+/* Per-status chip colors */
+.chip-CLOSED              { background: rgba(109, 221, 138, 0.13); color: var(--accent-green);  border-color: rgba(109, 221, 138, 0.3); }
+.chip-IN_PROGRESS         { background: rgba(255, 160,  60, 0.13); color: var(--accent-orange); border-color: rgba(255, 160,  60, 0.3); }
+.chip-DISPUTED            { background: rgba(240, 112, 112, 0.13); color: var(--accent-red);    border-color: rgba(240, 112, 112, 0.3); }
+.chip-WAITING_FOR_CONTACT { background: rgba(106, 176, 255, 0.13); color: var(--accent-blue);  border-color: rgba(106, 176, 255, 0.3); }
+
+/* Remove (×) button inside a chip */
 .cl-chip-x {
-    background: none !important;
-    border: none !important;
-    color: inherit; /* Цвет крестика будет как у текста */
-    cursor: pointer;
-    padding: 0 4px;
-    opacity: 0.6;
-    transition: opacity 0.2s;
+    background:  none;
+    border:      none;
+    color:       inherit;
+    font-size:   15px;
+    line-height: 1;
+    padding:     0 2px;
+    cursor:      pointer;
+    opacity:     0.6;
+    transition:  opacity 0.2s;
 }
 
 .cl-chip-x:hover {
     opacity: 1;
 }
 
-/* Стеклянные кнопки переключения страниц */
+/* "Showing N–M of total" counter */
+.cl-showing {
+    font-size:     13px;
+    color:         var(--text-muted);
+    text-align:    right;
+    padding:       0 20px 10px;
+}
+
+/* Table container */
+.cl-table-wrap {
+    margin:        0 20px;
+    background:    rgba(120, 90, 210, 0.18);
+    border:        1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow:      hidden;
+}
+
+/* Header row */
+.cl-table-head {
+    display:               grid;
+    grid-template-columns: 1.6fr 1.5fr 1.3fr 1.3fr 36px;
+    padding:               11px 18px;
+    font-size:             13px;
+    font-weight:           500;
+    color:                 var(--text-muted);
+    border-bottom:         1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Data row */
+.cl-table-row {
+    display:               grid;
+    grid-template-columns: 1.6fr 1.5fr 1.3fr 1.3fr 36px;
+    padding:               13px 18px;
+    font-size:             13px;
+    border-bottom:         1px solid rgba(255, 255, 255, 0.07);
+    cursor:                pointer;
+    align-items:           center;
+    transition:            background 0.15s;
+}
+
+.cl-table-row:last-child { border-bottom: none; }
+.cl-table-row:hover      { background: rgba(255, 255, 255, 0.06); }
+.cl-table-row:active     { background: rgba(255, 255, 255, 0.09); }
+
+/* Right-aligned arrow in the last column */
+.cl-arrow {
+    color:      rgba(255, 255, 255, 0.45);
+    font-size:  16px;
+    text-align: right;
+}
+
+/* Empty state message when no results match */
+.cl-empty {
+    text-align: center;
+    padding:    40px 20px;
+    color:      var(--text-muted);
+    font-size:  14px;
+}
+
+/* Pagination row */
+.cl-pag {
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    gap:             8px;
+    padding:         16px 20px;
+    width:           100%;
+}
+
+/* Individual page button */
 .cl-pag-btn {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    color: #fff !important;
+    background:    rgba(255, 255, 255, 0.07);
+    border:        1px solid rgba(255, 255, 255, 0.14);
     border-radius: 10px;
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: all 0.2s;
+    color:         #fff;
+    font-size:     13px;
+    font-family:   var(--font);
+    padding:       6px 14px;
+    cursor:        pointer;
+    min-width:     36px;
+    text-align:    center;
+    transition:    background 0.15s;
 }
 
 .cl-pag-btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255, 255, 255, 0.14);
 }
 
 .cl-pag-btn.active {
-    background: var(--accent-purple) !important;
-    border-color: var(--accent-purple) !important;
+    background:   var(--accent-purple);
+    border-color: var(--accent-purple);
+    color:        #fff;
 }
 
-/* Прозрачные кнопки-иконки в Профиле */
-.icon-btn {
-    background: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 8px;
-    color: var(--text-muted);
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+.cl-pag-btn:disabled {
+    opacity: 0.28;
+    cursor:  default;
 }
 
-/* Исправление кнопки Filters */
-.cl-filter-btn {
-    background: rgba(255, 255, 255, 0.09) !important; /* Полупрозрачный фон */
-    border: 1px solid rgba(255, 255, 255, 0.18) !important; /* Тонкая светлая рамка */
-    border-radius: 10px !important;
-    padding: 8px 16px !important;
-    color: #fff !important;
-    font-family: var(--font);
-    font-size: 13px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.2s, border-color 0.2s;
+
+/* =============================================================================
+   12. CASE DETAIL PAGE  (prefix: cd-)
+============================================================================= */
+
+/* Bento grid — 2 columns, 3 rows */
+.cd-grid {
+    display:               grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows:    auto auto auto;
+    gap:                   14px;
+    padding:               0 20px 14px;
 }
 
-.cl-filter-btn:hover {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
+/* Grid placement — matches the screenshot layout exactly */
+.cd-card-case    { grid-column: 1; grid-row: 1 / 3; }  /* left column, tall */
+.cd-card-contact { grid-column: 2; grid-row: 1;     }  /* right top         */
+.cd-card-driver  { grid-column: 2; grid-row: 2 / 4; }  /* right column, tall */
+.cd-card-vehicle { grid-column: 1; grid-row: 3;     }  /* left bottom       */
+
+/* Two-column inner layout for the Vehicle card */
+.cd-vehicle-grid {
+    display:               grid;
+    grid-template-columns: 1fr 1fr;
+    gap:                   0 8px;
 }
 
-.cl-filter-btn:active {
-    background: rgba(255, 255, 255, 0.05) !important;
-}
-
-/* 1. Выравниваем поиск и кнопку Filters в одну линию */
-.cl-search-row {
-    display: flex;
-    align-items: center; /* Центрируем по вертикали */
-    gap: 12px;           /* Расстояние между инпутом и кнопкой */
-    margin-bottom: 16px; /* Отступ до списка фильтров */
-}
-
-/* Растягиваем инпут, чтобы он занимал всё свободное место */
-.cl-search-row .glass-input {
-    flex: 1;
-}
-
-/* 2. Делаем список фильтров (чипсов) в столбик */
-.cl-chips {
-    display: flex;
-    flex-direction: column; /* Выстраиваем в колонку */
-    align-items: flex-start; /* Прижимаем к левому краю */
-    gap: 8px;               /* Расстояние между строчками-фильтрами */
-}
-
-/* Дополнительно: чтобы чипсы не растягивались на всю ширину */
-.cl-chip {
-    display: inline-flex;
-    width: auto;
-}
-
-.cl-showing {
-    font-size: 13px;
-    color: var(--text-muted); /* Используем твой токен для серого цвета */
-    text-align: center;       /* ВОТ ЭТО ДОБАВЛЯЕМ */
-    margin-bottom: 12px;      /* Небольшой отступ до таблицы */
-    width: 100%;              /* Растягиваем на всю ширину для корректного центрирования */
-}
-
-.cl-pag {
-    display: flex;          /* Включаем гибкий контейнер */
-    justify-content: center; /* Выравниваем содержимое (кнопки) по центру */
-    align-items: center;    /* Выравниваем по вертикали */
-    gap: 8px;               /* Расстояние между кнопками */
-    margin-top: 24px;       /* Отступ сверху от таблицы */
-    width: 100%;            /* Растягиваем на всю ширину */
-}
-
-/* Sidebar Container */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -280px; /* Спрятан за левым краем */
-    width: 280px;
-    height: 100vh;
-    background: rgba(25, 18, 70, 0.98);
-    backdrop-filter: blur(20px);
-    border-right: 1px solid var(--border-glass);
-    z-index: 1000;
-    transition: left 0.3s ease; /* Плавный выезд */
-    padding: 60px 20px;
-}
-
-.sidebar.open {
-    left: 0; /* Выезжает */
-}
-
-/* Close button inside sidebar */
-.sidebar-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 30px;
-    cursor: pointer;
-}
-
-/* Menu items */
-.sidebar-menu {
-    display: flex;
+.cd-vehicle-grid .mc-field {
     flex-direction: column;
-    gap: 10px;
+    gap:            2px;
 }
 
-.sidebar-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 12px 20px;
-    background: none;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    color: var(--text-muted);
-    font-family: var(--font);
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
+.cd-vehicle-grid .mc-fv {
     text-align: left;
 }
 
-.sidebar-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
+/* Red ADD / VIEW link for Payment Proof */
+.cd-add-link {
+    color:       var(--accent-red);
+    font-weight: 600;
+    cursor:      pointer;
+    font-size:   13px;
+    transition:  opacity 0.15s;
 }
 
-.sidebar-item.active {
-    background: rgba(167, 139, 250, 0.15);
-    border-color: var(--accent-purple);
-    color: var(--accent-purple);
+.cd-add-link:hover {
+    opacity: 0.75;
 }
 
-.sidebar-icon {
-    font-size: 20px;
+/* "Add Penalty" button row */
+.cd-penalty-row {
+    padding:         0 20px 14px;
+    display:         flex;
+    justify-content: flex-end;
 }
 
-/* Overlay background */
-.sidebar-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 999;
+/* "Add Penalty" button itself */
+.cd-penalty-btn {
+    display:       flex;
+    align-items:   center;
+    gap:           7px;
+    background:    rgba(240, 112, 112, 0.15);
+    border:        1px solid rgba(240, 112, 112, 0.35);
+    border-radius: 12px;
+    color:         var(--accent-red);
+    font-family:   var(--font);
+    font-size:     13px;
+    font-weight:   500;
+    padding:       9px 18px;
+    cursor:        pointer;
+    transition:    background 0.15s;
 }
 
-/* Убираем лишний отступ снизу, который был для таб-бара */
-.page-wrap {
-    padding-bottom: 32px !important;
+.cd-penalty-btn:hover {
+    background: rgba(240, 112, 112, 0.25);
+}
+
+
+/* =============================================================================
+   13. DASHBOARD / STATISTICS  (prefix: db-)
+============================================================================= */
+
+/* 2-column bento grid */
+.db-grid {
+    display:               grid;
+    grid-template-columns: 1fr 1fr;
+    gap:                   14px;
+    padding:               0 20px 32px;
+}
+
+/* Chart card spans both columns */
+.db-chart-card {
+    grid-column: 1 / -1;
+}
+
+/* Large numeric value inside a stat card */
+.db-stat-value {
+    font-size:   30px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+/* Smaller label below the number */
+.db-stat-label {
+    font-size:   12px;
+    color:       var(--text-muted);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+/* Trend delta ("+12 this month") */
+.db-stat-delta        { font-size: 11px; margin-top: 2px; }
+.db-stat-delta.up     { color: var(--accent-green); }
+.db-stat-delta.down   { color: var(--accent-red); }
+
+/* Chart title + period selector row */
+.db-chart-head {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    margin-bottom:   18px;
+}
+
+.db-chart-title {
+    font-size:   15px;
+    font-weight: 500;
+}
+
+.db-chart-period {
+    font-size:     12px;
+    color:         var(--text-muted);
+    background:    rgba(255, 255, 255, 0.07);
+    border:        1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding:       4px 10px;
+}
+
+/* SVG chart fills its container */
+.db-chart-svg {
+    width:    100%;
+    overflow: visible;
+    display:  block;
+}
+
+/* Legend row below the chart */
+.db-chart-legend {
+    display:    flex;
+    gap:        16px;
+    margin-top: 14px;
+}
+
+.db-legend-item {
+    display:     flex;
+    align-items: center;
+    gap:         6px;
+    font-size:   12px;
+    color:       var(--text-muted);
+}
+
+.db-legend-dot {
+    width:         8px;
+    height:        8px;
+    border-radius: 50%;
+}
+
+/* SVG text labels */
+text.db-axis-label {
+    fill:        rgba(255, 255, 255, 0.4);
+    font-family: var(--font);
+    font-size:   11px;
+}
+
+text.db-bar-val {
+    fill:         rgba(255, 255, 255, 0.6);
+    font-family:  var(--font);
+    font-size:    10px;
+    text-anchor:  middle;
+}
+
+
+/* =============================================================================
+   14. PROFILE PAGE  (prefix: profile-)
+============================================================================= */
+
+/* Outer centering wrapper */
+.profile-card-wrap {
+    display:         flex;
+    justify-content: center;
+    padding:         0 20px 32px;
+}
+
+/* Constrain card to a readable width */
+.profile-narrow-card {
+    max-width: 600px;
+    width:     100%;
+}
+
+/* Avatar circle */
+.profile-avatar {
+    width:           72px;
+    height:          72px;
+    border-radius:   50%;
+    background:      rgba(167, 139, 250, 0.22);
+    border:          2px solid rgba(167, 139, 250, 0.4);
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    color:           var(--accent-purple);
+    margin:          0 auto 8px;
+    flex-shrink:     0;
+}
+
+/* Centered top section with avatar, name, and role */
+.profile-header {
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    padding-bottom: 16px;
+    margin-bottom:  16px;
+    border-bottom:  1px solid rgba(255, 255, 255, 0.12);
+}
+
+.profile-name {
+    font-size:   20px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* Role pill badge */
+.role-badge {
+    display:       inline-block;
+    background:    rgba(167, 139, 250, 0.2);
+    border:        1px solid rgba(167, 139, 250, 0.4);
+    color:         var(--accent-purple);
+    border-radius: 20px;
+    padding:       3px 12px;
+    font-size:     12px;
+    font-weight:   500;
+    text-align:    center;
+    margin:        0 auto 20px;
+}
+
+/* Editable field row (label + value + pencil icon) */
+.edit-field {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    padding:         10px 0;
+    border-bottom:   1px solid rgba(255, 255, 255, 0.1);
+    gap:             12px;
+    min-height:      44px;
+}
+
+.edit-field:last-of-type {
+    border-bottom: none;
+}
+
+.edit-label {
+    font-size:   13px;
+    color:       var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+    min-width:   90px;
+}
+
+/* Read-only value */
+.edit-value {
+    font-size: 13px;
+    color:     #fff;
+    flex:      1;
+    text-align: right;
+}
+
+/* Input + confirm button row when editing */
+.edit-controls {
+    display:     flex;
+    align-items: center;
+    gap:         8px;
+    flex:        1;
+}
+
+.edit-controls .glass-input {
+    text-align: right;
+}
+
+/* Password modal field group */
+.pwd-field {
+    margin-bottom: 14px;
+}
+
+.pwd-label {
+    font-size:     12px;
+    color:         var(--text-muted);
+    margin-bottom: 6px;
+}
+
+/* Modal action buttons row */
+.pwd-footer {
+    display:         flex;
+    gap:             10px;
+    margin-top:      20px;
+    justify-content: flex-end;
+}
+
+
+/* =============================================================================
+   15. CONTACT HISTORY / TIMELINE  (prefix: ch-)
+============================================================================= */
+
+.ch-wrap {
+    margin-top: 14px;
+}
+
+/* Vertical line container */
+.ch-timeline {
+    position:     relative;
+    padding-left: 28px;
+}
+
+/* The vertical connecting line */
+.ch-timeline::before {
+    content:    '';
+    position:   absolute;
+    left:       10px;
+    top:        0;
+    bottom:     0;
+    width:      1px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* One timeline entry */
+.ch-entry {
+    position:      relative;
+    margin-bottom: 18px;
+    animation:     ch-in 0.3s ease both;
+}
+
+@keyframes ch-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* Circular icon on the line */
+.ch-dot {
+    position:        absolute;
+    left:            -22px;
+    top:             2px;
+    width:           22px;
+    height:          22px;
+    border-radius:   50%;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+}
+
+.ch-dot.call  { background: rgba(109, 221, 138, 0.18); color: var(--accent-green); border: 1px solid rgba(109, 221, 138, 0.35); }
+.ch-dot.email { background: rgba(106, 176, 255, 0.18); color: var(--accent-blue);  border: 1px solid rgba(106, 176, 255, 0.35); }
+
+/* Entry bubble */
+.ch-body {
+    background:    rgba(255, 255, 255, 0.05);
+    border:        1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding:       10px 14px;
+}
+
+/* Date + type badge on one line */
+.ch-meta {
+    display:       flex;
+    align-items:   center;
+    gap:           8px;
+    margin-bottom: 6px;
+}
+
+.ch-date {
+    font-size: 12px;
+    color:     var(--text-muted);
+}
+
+.ch-type-badge {
+    font-size:      11px;
+    font-weight:    600;
+    letter-spacing: 0.04em;
+    padding:        2px 8px;
+    border-radius:  20px;
+}
+
+.ch-type-badge.call  { background: rgba(109, 221, 138, 0.15); color: var(--accent-green); }
+.ch-type-badge.email { background: rgba(106, 176, 255, 0.15); color: var(--accent-blue); }
+
+.ch-comment {
+    font-size:   13px;
+    color:       #fff;
+    line-height: 1.5;
+}
+
+/* Inline add-contact form */
+.ch-form {
+    background:    rgba(255, 255, 255, 0.06);
+    border:        1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding:       16px;
+    margin-top:    6px;
+    animation:     ch-in 0.25s ease both;
+}
+
+.ch-form-row {
+    margin-bottom: 12px;
+}
+
+.ch-form-label {
+    font-size:     12px;
+    color:         var(--text-muted);
+    margin-bottom: 5px;
+}
+
+.ch-form-footer {
+    display:         flex;
+    gap:             10px;
+    justify-content: flex-end;
+    margin-top:      14px;
+}
+
+/* Dashed "Add New Contact" button */
+.ch-add-btn {
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    gap:             7px;
+    background:      rgba(167, 139, 250, 0.15);
+    border:          1px dashed rgba(167, 139, 250, 0.4);
+    border-radius:   12px;
+    color:           var(--accent-purple);
+    font-family:     var(--font);
+    font-size:       13px;
+    font-weight:     500;
+    padding:         10px 16px;
+    cursor:          pointer;
+    width:           100%;
+    margin-top:      14px;
+    transition:      background 0.15s;
+}
+
+.ch-add-btn:hover {
+    background: rgba(167, 139, 250, 0.25);
+}
+
+
+/* =============================================================================
+   16. ADD PENALTY MODAL  (prefix: ap-)
+============================================================================= */
+
+.ap-field {
+    margin-bottom: 16px;
+}
+
+.ap-label {
+    font-size:     12px;
+    color:         var(--text-muted);
+    margin-bottom: 6px;
+}
+
+/* Currency prefix + number input as one visual unit */
+.ap-amount-wrap {
+    display:       flex;
+    align-items:   stretch;
+    background:    rgba(255, 255, 255, 0.09);
+    border:        1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    overflow:      hidden;
+    transition:    border-color 0.2s;
+}
+
+.ap-amount-wrap:focus-within {
+    border-color: rgba(167, 139, 250, 0.6);
+}
+
+.ap-currency {
+    padding:       0 10px;
+    display:       flex;
+    align-items:   center;
+    color:         var(--text-muted);
+    font-size:     14px;
+    font-weight:   500;
+    background:    rgba(255, 255, 255, 0.06);
+    border-right:  1px solid rgba(255, 255, 255, 0.12);
+    user-select:   none;
+}
+
+.ap-amount-input {
+    background:  none;
+    border:      none;
+    outline:     none;
+    color:       #fff;
+    font-family: var(--font);
+    font-size:   14px;
+    padding:     9px 12px;
+    width:       100%;
+}
+
+.ap-amount-input::placeholder {
+    color: var(--text-hint);
+}
+
+/* Formatted amount preview below the input */
+.ap-preview {
+    font-size:  12px;
+    color:      var(--text-muted);
+    margin-top: 6px;
+    text-align: right;
+}
+
+.ap-preview strong {
+    color: var(--accent-orange);
+}
+
+/* Resizable textarea for "Other" reason */
+.ap-textarea {
+    resize:     vertical;
+    min-height: 72px;
+}
+
+/* Validation error message */
+.ap-error {
+    font-size:  12px;
+    color:      var(--accent-red);
+    margin-top: 8px;
+}
+
+/* Footer row with Cancel / Confirm buttons */
+.ap-footer {
+    display:         flex;
+    gap:             10px;
+    justify-content: flex-end;
+    margin-top:      20px;
 }

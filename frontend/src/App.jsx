@@ -1,115 +1,57 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// App.jsx — корневой компонент.
-// Простая навигация без react-router (замени на Router при необходимости).
-// ─────────────────────────────────────────────────────────────────────────────
 import './App.css';
 import { useState } from "react";
-import CasesList    from "./pages/CaseList";
-import CaseDetail   from "./pages/CaseDetail";
-import ProfilePage  from "./pages/Profile";
-import DashboardPage from "./pages/Dashboard";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 
-// Нижняя навигация (Tab Bar)
+import CasesList from "./pages/CaseList";
+import CaseDetail from "./pages/CaseDetail";
+import ProfilePage from "./pages/Profile";
+import Files from "./pages/Files.jsx";
+
+// Список ссылок для меню
 const NAV_ITEMS = [
-    { key: "cases",     label: "Cases",     icon: "⚖️" },
-    { key: "dashboard", label: "Stats",     icon: "📊" },
-    { key: "profile",   label: "Profile",   icon: "👤" },
+    { path: "/cases",   label: "Cases",   icon: "⚖️" },
+    { path: "/profile", label: "Profile", icon: "👤" },
+    { path: "/files",   label: "Files",   icon: "📁" },
 ];
 
-
 export default function App() {
-    const [tab, setTab]         = useState("cases");       // текущая вкладка
-    const [detailCase, setCase] = useState(null);          // кейс для CaseDetail
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar
-
-    const openCase = (c)  => { setCase(c); setTab("detail"); };
-    const closeCase = ()  => { setCase(null); setTab("cases"); };
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     return (
-        <>
+        <BrowserRouter>
             <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-                <button onClick={() => setIsSidebarOpen(false)}>Close ×</button>
-                <nav>
-                    <button onClick={() => {
-                        setTab("cases");
-                        setIsSidebarOpen(false);
-                    }}>Cases
-                    </button>
-                    <button onClick={() => {
-                        setTab("dashboard");
-                        setIsSidebarOpen(false);
-                    }}>Stats
-                    </button>
-                    <button onClick={() => {
-                        setTab("profile");
-                        setIsSidebarOpen(false);
-                    }}>Profile
-                    </button>
-                </nav>
+                <button className="sidebar-close" onClick={() => setIsSidebarOpen(false)}>×</button>
+                <div className="sidebar-menu">
+                    {NAV_ITEMS.map((item) => (
+                        <NavLink
+                            key={item.path}
+                            to={item.path}
+                            className={({ isActive }) => `sidebar-item ${isActive ? "active" : ""}`}
+                            onClick={() => setIsSidebarOpen(false)}
+                        >
+                            <span className="sidebar-icon">{item.icon}</span>
+                            {item.label}
+                        </NavLink>
+                    ))}
+                </div>
             </div>
 
-            {/* 3. Оверлей для закрытия */}
-            {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}/>}
-
-            {/* ── Страницы ── */}
-            {/* Передаем onMenuClick в каждую страницу */}
-            {tab === "cases" && (
-                <CasesList
-                    onSelect={openCase}
-                    onMenuClick={() => setIsSidebarOpen(true)}
-                />
+            {isSidebarOpen && (
+                <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)} />
             )}
 
-            {tab === "detail" && (
-                <CaseDetail
-                    caseData={detailCase}
-                    onBack={closeCase}
-                />
-            )}
+            <Routes>
+                <Route path="/" element={<CasesList onMenuClick={toggleSidebar} />} />
 
-            {tab === "dashboard" && (
-                <DashboardPage
-                    onMenuClick={() => setIsSidebarOpen(true)}
-                />
-            )}
+                <Route path="/cases" element={<CasesList onMenuClick={toggleSidebar} />} />
 
-            {tab === "profile" && (
-                <ProfilePage
-                    onMenuClick={() => setIsSidebarOpen(true)}
-                />
-            )}
-        </>
+                <Route path="/cases/:id" element={<CaseDetail />} />
 
-)
-    ;
-}
+                <Route path="/files" element={<Files onMenuClick={toggleSidebar} />} />
 
-
-{/*/!* ── Tab Bar (не показываем на детальной странице) ── *!/*/
-}
-{/*{tab !== "detail" && (*/
-}
-{/*    <div className="tab-bar">*/
-}
-{/*        {NAV_ITEMS.map((item) => (*/
-}
-{/*            <button*/
-}
-{/*                key={item.key}*/
-}
-{/*                className={`tab-item ${tab === item.key ? "active" : ""}`}*/
-}
-{/*                onClick={() => setTab(item.key)}*/
-}
-{/*            >*/
-}
-{/*                <span className="tab-item-icon">{item.icon}</span>*/
-}
-{/*                {item.label}*/
-}
-{/*            </button>*/
-}
-{/*        ))}*/
-}
-{/*    </div>*/
+                <Route path="/profile" element={<ProfilePage onMenuClick={toggleSidebar} />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }

@@ -1,65 +1,41 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// pages/ProfilePage.jsx — страница «Мой профиль»
-//
-// Функции:
-//   • Glassmorphism-карточка с аватаром и ролевым бейджем
-//   • Inline-редактирование каждого поля (иконка карандаша → инпут → галочка)
-//   • Модальное окно «Change Password»
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState } from "react";
 import {
     TopBar, GlassCard, Modal,
     PencilIcon, CheckIcon, UserIcon,
 } from "../components/Mini.jsx";
 
-
-// ── Компонент редактируемого поля ─────────────────────────────────────────
+// ── Компонент редактируемого поля (оставляем без изменений) ──
 function EditableField({ label, value, onChange }) {
     const [editing, setEditing] = useState(false);
     const [draft, setDraft] = useState(value);
 
-    const confirm = () => {
-        onChange(draft);
-        setEditing(false);
-    };
-    const cancel = () => {
-        setDraft(value);
-        setEditing(false);
-    };
+    const confirm = () => { onChange(draft); setEditing(false); };
+    const cancel = () => { setDraft(value); setEditing(false); };
 
     return (
-        <div className="edit-field">
-            <span className="edit-label">{label}</span>
-
-            {editing ? (
-                /* Режим редактирования */
-                <div className="edit-controls">
+        <div className="profile-edit-row">
+            <div className="profile-info-block">
+                <span className="profile-label">{label}</span>
+                {editing ? (
                     <input
-                        className="glass-input"
+                        className="glass-input profile-input-edit"
                         value={draft}
                         onChange={(e) => setDraft(e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") confirm(); if (e.key === "Escape") cancel(); }}
                         autoFocus
                     />
-                    <button className="icon-btn confirm" onClick={confirm} title="Сохранить">
-                        <CheckIcon />
-                    </button>
-                </div>
-            ) : (
-                /* Режим просмотра */
-                <>
-                    <span className="edit-value">{value}</span>
-                    <button className="icon-btn" onClick={() => { setDraft(value); setEditing(true); }} title="Редактировать">
-                        <PencilIcon />
-                    </button>
-                </>
-            )}
+                ) : (
+                    <span className="profile-value">{value}</span>
+                )}
+            </div>
+            <button className="icon-btn" onClick={() => editing ? confirm() : setEditing(true)}>
+                {editing ? <CheckIcon size={16} /> : <PencilIcon size={16} />}
+            </button>
         </div>
     );
 }
 
-// ── Модальное окно смены пароля ───────────────────────────────────────────
+// ── Модальное окно смены пароля (восстановленная логика) ──
 function ChangePasswordModal({ onClose }) {
     const [form, setForm] = useState({ current: "", next: "", confirm: "" });
     const [error, setError] = useState("");
@@ -76,95 +52,76 @@ function ChangePasswordModal({ onClose }) {
         if (form.next.length < 6) {
             setError("Password must be at least 6 characters"); return;
         }
-        // TODO: PATCH /api/auth/change-password
+        // Здесь будет API запрос
         onClose();
     };
 
     return (
-        <Modal title="Change Password" onClose={onClose}>
+        <Modal onClose={onClose}>
             <div className="pwd-field">
                 <div className="pwd-label">Current password</div>
-                <input type="password" className="glass-input" value={form.current} onChange={set("current")} />
+                <input type="password" psychological className="glass-input" value={form.current} onChange={set("current")} />
             </div>
             <div className="pwd-field">
                 <div className="pwd-label">New password</div>
-                <input type="password" className="glass-input" value={form.next} onChange={set("next")} />
+                <input type="password" psychological className="glass-input" value={form.next} onChange={set("next")} />
             </div>
             <div className="pwd-field">
                 <div className="pwd-label">Confirm new password</div>
-                <input type="password" className="glass-input" value={form.confirm} onChange={set("confirm")} />
+                <input type="password" psychological className="glass-input" value={form.confirm} onChange={set("confirm")} />
             </div>
-
-            {error && (
-                <div style={{ fontSize: 12, color: "var(--accent-red)", marginTop: 8 }}>{error}</div>
-            )}
-
-            <div className="pwd-footer">
-                <button className="btn-danger" onClick={onClose}>Cancel</button>
-                <button className="btn-primary" onClick={handleSubmit}>Confirm</button>
+            {error && <div style={{ fontSize: 12, color: "var(--accent-red)", marginTop: 8 }}>{error}</div>}
+            <div className="profile-actions" style={{ marginTop: 20 }}>
+                <button className="btn-danger flex-1" onClick={onClose}>Cancel</button>
+                <button className="btn-primary flex-1" onClick={handleSubmit}>Confirm</button>
             </div>
         </Modal>
     );
 }
 
-// ── Главный компонент страницы ────────────────────────────────────────────
-export default function ProfilePage(onMenuClick) {
-    // Данные профиля (в реальном проекте — из контекста / API)
+export default function ProfilePage({ onMenuClick }) {
     const [profile, setProfile] = useState({
-        fullName:  "John Mille",
-        email:     "johnmille@gmail.com",
-        phone:     "+48 601 234 567",
-        role:      "Employee",
+        fullName: "John Mille",
+        email: "johnmille@gmail.com",
+        phone: "+48 601 234 567",
+        role: "Employee",
     });
 
-    const [showPwdModal, setShowPwdModal] = useState(false);
+    const [showPwdModal, setShowPwdModal] = useState(false); // Состояние для окна
 
-    // Обновляем одно поле профиля
-    const updateField = (key) => (val) =>
-        setProfile((p) => ({ ...p, [key]: val }));
+    const updateField = (key) => (val) => setProfile((p) => ({ ...p, [key]: val }));
 
     return (
-        <>
-            <div className="page-wrap">
-                <TopBar title="My Profile" />
+        <div className="page-wrap">
+            <TopBar title="Profile" onMenuClick={onMenuClick} />
 
-                <div className="profile-card-wrap">
-                    <div className="glass-card">
-
-                        {/* Шапка — аватар, имя, роль */}
-                        <div className="profile-header">
-                            <div className="profile-avatar">
-                                <UserIcon size={36} />
-                            </div>
-                            <div className="profile-name">{profile.fullName}</div>
-                            <div className="role-badge">{profile.role}</div>
+            <div className="profile-container">
+                <GlassCard className="profile-narrow-card">
+                    <div className="profile-header-centered">
+                        <div className="profile-avatar-large">
+                            <UserIcon size={48} />
                         </div>
-
-                        {/* Редактируемые поля */}
-                        <EditableField label="Full Name" value={profile.fullName} onChange={updateField("fullName")} />
-                        <EditableField label="Email"     value={profile.email}    onChange={updateField("email")} />
-                        <EditableField label="Phone"     value={profile.phone}    onChange={updateField("phone")} />
-
-                        {/* Поле Role — только для чтения */}
-                        <div className="edit-field">
-                            <span className="edit-label">Role</span>
-                            <span className="edit-value" style={{ color: "var(--accent-purple)" }}>
-                {profile.role}
-              </span>
-                        </div>
-
-                        {/* Кнопка смены пароля */}
-                        <div style={{ marginTop: 24, display: "flex", justifyContent: "center" }}>
-                            <button className="btn-primary" onClick={() => setShowPwdModal(true)}>
-                                Change Password
-                            </button>
-                        </div>
+                        <div className="profile-role-text">{profile.role}</div>
                     </div>
-                </div>
 
-                {/* Модальное окно смены пароля */}
-                {showPwdModal && <ChangePasswordModal onClose={() => setShowPwdModal(false)} />}
+                    <div className="profile-fields-list">
+                        <EditableField label="Full Name" value={profile.fullName} onChange={updateField("fullName")} />
+                        <EditableField label="Email" value={profile.email} onChange={updateField("email")} />
+                        <EditableField label="Phone" value={profile.phone} onChange={updateField("phone")} />
+                    </div>
+
+                    {/* Кнопки как на макете[cite: 19] */}
+                    <div className="profile-actions">
+                        <button className="btn-primary flex-1" onClick={() => setShowPwdModal(true)}>
+                            Change Password
+                        </button>
+                        <button className="btn-danger flex-1">Logout</button>
+                    </div>
+                </GlassCard>
             </div>
-        </>
+
+            {/* Вызов модального окна[cite: 19] */}
+            {showPwdModal && <ChangePasswordModal onClose={() => setShowPwdModal(false)} />}
+        </div>
     );
 }

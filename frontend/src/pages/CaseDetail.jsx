@@ -8,8 +8,17 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
-import { STATUS_STYLES } from "../components/StatusBadge.jsx";
-import { TopBar, BackButton, GlassCard, CardTitle, ArrButton, StatusBadge, Field } from "../components/Mini.jsx";
+import { useParams, useNavigate } from "react-router-dom"
+import {
+    TopBar,
+    BackButton,
+    GlassCard,
+    CardTitle,
+    ArrButton,
+    StatusBadge,
+    Field,
+    SideButton
+} from "../components/Mini.jsx";
 import ContactHistory from "../components/ContactHistory";
 import AddPenaltyModal from "../components/AddPenalty";
 
@@ -38,6 +47,8 @@ const INITIAL_CASE = {
 // ── Компонент страницы ────────────────────────────────────────────────────
 export default function CaseDetail({ caseData = INITIAL_CASE, onBack }, onMenuClick) {
     // caseData может обновляться (штраф, статус)
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [data, setData] = useState(caseData);
     const [showPenaltyModal, setShowPenaltyModal] = useState(false);
 
@@ -52,10 +63,10 @@ export default function CaseDetail({ caseData = INITIAL_CASE, onBack }, onMenuCl
     };
 
     return (
-        <>
+
             <div className="page-wrap">
-                <TopBar title="My cases" onMenuClick={onMenuClick}/>
-                <BackButton onClick={onBack} />
+                <TopBar title={`Case #${id || data.id}`} onMenuClick={onMenuClick}/>
+                <BackButton onClick={() => navigate(-1)} />
 
                 {/* ── Bento Grid ── */}
                 <div className="cd-grid">
@@ -82,7 +93,7 @@ export default function CaseDetail({ caseData = INITIAL_CASE, onBack }, onMenuCl
                 {data.payment ? "VIEW" : "ADD"}
               </span>
                         </div>
-                        <ArrButton />
+                        <SideButton />
                     </GlassCard>
 
                     {/* Contact info — правая верхняя */}
@@ -91,7 +102,7 @@ export default function CaseDetail({ caseData = INITIAL_CASE, onBack }, onMenuCl
                         <Field label="Phone">{data.phone}</Field>
                         <Field label="Address">{data.address}</Field>
                         <Field label="Email">{data.email}</Field>
-                        <ArrButton />
+                        <SideButton />
                     </GlassCard>
 
                     {/* Driver — правая, высокая */}
@@ -102,7 +113,7 @@ export default function CaseDetail({ caseData = INITIAL_CASE, onBack }, onMenuCl
                         <Field label="PESEL">{data.pesel}</Field>
                         <Field label="Passport">{data.passport}</Field>
                         {data.notes && <Field label="Notes">{data.notes}</Field>}
-                        <ArrButton />
+                        <SideButton />
                     </GlassCard>
 
                     {/* Vehicle — левая нижняя */}
@@ -126,7 +137,7 @@ export default function CaseDetail({ caseData = INITIAL_CASE, onBack }, onMenuCl
                                 <span className="mc-fv">{data.vehicle.color}</span>
                             </div>
                         </div>
-                        <ArrButton />
+                        <SideButton />
                     </GlassCard>
                 </div>
 
@@ -151,6 +162,6 @@ export default function CaseDetail({ caseData = INITIAL_CASE, onBack }, onMenuCl
                     />
                 )}
             </div>
-        </>
+
     );
 }
