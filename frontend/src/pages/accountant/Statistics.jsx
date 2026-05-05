@@ -8,7 +8,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
-import { TopBar, GlassCard } from "../components/Mini.jsx";
+import { TopBar, GlassCard } from "../../components/Mini.jsx";
 
 
 
@@ -199,7 +199,6 @@ function StatCard({ stat }) {
     );
 }
 
-// ── Главный компонент ─────────────────────────────────────────────────────
 export default function Statistics(onMenuClick) {
     return (
         <>

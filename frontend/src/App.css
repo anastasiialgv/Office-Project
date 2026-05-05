@@ -696,6 +696,17 @@ body {
 .chip-DISPUTED            { background: rgba(240, 112, 112, 0.13); color: var(--accent-red);    border-color: rgba(240, 112, 112, 0.3); }
 .chip-WAITING_FOR_CONTACT { background: rgba(106, 176, 255, 0.13); color: var(--accent-blue);  border-color: rgba(106, 176, 255, 0.3); }
 
+/* Per-type chip colors */
+.chip-Payment_Demand_Notice {background: rgba(109, 221, 138, 0.13);color: #6ddd8a;border-color: rgba(109, 221, 138, 0.3);}
+.chip-Pre-litigation_Payment_Demand {background: rgba(255, 160, 60, 0.13);color: #ffa03c;border-color: rgba(255, 160, 60, 0.3);}
+.chip-Notice_of_Case_Referral_to_Court {background: rgba(240, 112, 112, 0.13);color: #f07070;border-color: rgba(240, 112, 112, 0.3);}
+.chip-Payment_Confirmation {background: rgba(200, 160, 255, 0.13);color: #c8a0ff;border-color: rgba(200, 160, 255, 0.3);}
+.chip-Official_Note {background: rgba(106, 176, 255, 0.13);color: #6ab0ff;border-color: rgba(106, 176, 255, 0.3);}
+.chip-Client_Contact_Report {background: rgba(255, 132, 193, 0.13);color: #ff84c1;border-color: rgba(255, 132, 193, 0.3);}
+.chip-Mail_Labels {background: rgba(238, 238, 238, 0.13);color: #eee;border-color: rgba(238, 238, 238, 0.3);}
+.chip-Vehicle_Evidence {background: rgba(251, 255, 150, 0.13); color: #fbff96;border-color: rgba(251, 255, 150, 0.3);}
+
+
 /* Remove (×) button inside a chip */
 .cl-chip-x {
     background:  none;
@@ -891,7 +902,7 @@ body {
 
 
 /* =============================================================================
-   13. DASHBOARD / STATISTICS  (prefix: db-)
+   13. STATISTICS
 ============================================================================= */
 
 /* 2-column bento grid */
@@ -1006,7 +1017,8 @@ text.db-bar-val {
 /* Constrain card to a readable width */
 .profile-narrow-card {
     max-width: 600px;
-    width:     100%;
+    width: 100%;
+    padding: 32px !important;
 }
 
 /* Avatar circle */
@@ -1026,12 +1038,12 @@ text.db-bar-val {
 
 /* Centered top section with avatar, name, and role */
 .profile-header {
-    display:        flex;
+    display: flex;
     flex-direction: column;
-    align-items:    center;
+    align-items: center;
+    margin-bottom: 24px;
     padding-bottom: 16px;
-    margin-bottom:  16px;
-    border-bottom:  1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .profile-name {
@@ -1054,68 +1066,42 @@ text.db-bar-val {
     margin:        0 auto 20px;
 }
 
-/* Editable field row (label + value + pencil icon) */
-.edit-field {
-    display:         flex;
-    align-items:     center;
+
+.profile-edit-row {
+    display: flex;
     justify-content: space-between;
-    padding:         10px 0;
-    border-bottom:   1px solid rgba(255, 255, 255, 0.1);
-    gap:             12px;
-    min-height:      44px;
+    align-items: flex-end;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.edit-field:last-of-type {
-    border-bottom: none;
+.profile-info-block {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
-.edit-label {
-    font-size:   13px;
-    color:       var(--text-muted);
-    font-weight: 500;
-    white-space: nowrap;
-    min-width:   90px;
+.profile-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
 }
 
-/* Read-only value */
-.edit-value {
-    font-size: 13px;
-    color:     #fff;
-    flex:      1;
-    text-align: right;
+.profile-value {
+    color: #fff;
+    font-size: 14px;
 }
 
-/* Input + confirm button row when editing */
-.edit-controls {
-    display:     flex;
-    align-items: center;
-    gap:         8px;
-    flex:        1;
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
 }
 
-.edit-controls .glass-input {
-    text-align: right;
-}
+.flex-1 { flex: 1; }
 
-/* Password modal field group */
-.pwd-field {
-    margin-bottom: 14px;
-}
-
-.pwd-label {
-    font-size:     12px;
-    color:         var(--text-muted);
-    margin-bottom: 6px;
-}
-
-/* Modal action buttons row */
-.pwd-footer {
-    display:         flex;
-    gap:             10px;
-    margin-top:      20px;
-    justify-content: flex-end;
-}
-
+.pwd-field { margin-bottom: 16px; }
+.pwd-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
 
 /* =============================================================================
    15. CONTACT HISTORY / TIMELINE  (prefix: ch-)

@@ -4,8 +4,9 @@ import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 
 import CasesList from "./pages/CaseList";
 import CaseDetail from "./pages/CaseDetail";
-import ProfilePage from "./pages/Profile";
+import Profile from "./pages/Profile";
 import Files from "./pages/Files.jsx";
+import Statistics from "./pages/accountant/Statistics.jsx";
 
 // Список ссылок для меню
 const NAV_ITEMS = [
@@ -50,7 +51,10 @@ export default function App() {
 
                 <Route path="/files" element={<Files onMenuClick={toggleSidebar} />} />
 
-                <Route path="/profile" element={<ProfilePage onMenuClick={toggleSidebar} />} />
+                <Route path="/profile" element={<Profile onMenuClick={toggleSidebar} />} />
+
+                <Route path="/statistics" element={<Statistics onMenuClick={toggleSidebar} />} />
+
             </Routes>
         </BrowserRouter>
     );

@@ -2,8 +2,25 @@
 // components/ui/index.jsx — переиспользуемые «атомарные» компоненты.
 // Импортируй нужное: import { GlassCard, Field, TopBar, Modal } from '../ui'
 // ─────────────────────────────────────────────────────────────────────────────
+export const STATUS_STYLES = {
+    "CLOSED":              { color: "#6ddd8a" },
+    "IN PROGRESS":         { color: "#ffa03c" },
+    "DISPUTED":            { color: "#f07070" },
+    "WAITING FOR CONTACT": { color: "#6ab0ff" },
+    "REGISTERED":          { color: "#c8a0ff" },
+};
 
-import { STATUS_STYLES } from "./StatusBadge.jsx";
+export const TYPES_STYLES = {
+    "Payment Demand Notice": { color: "#6ddd8a" },
+    "Pre-litigation Payment Demand": { color: "#ffa03c" },
+    "Notice of Case Referral to Court": { color: "#f07070" },
+    "Official Note": { color: "#6ab0ff" },
+    "Payment Confirmation": { color: "#c8a0ff" },
+    "Client Contact Report":            { color: "#ff84c1" },
+    "Mail Labels":                      { color: "#eee" },
+    "Vehicle Evidence":                 { color: "#fbff96" }
+};
+
 
 /* ── Гамбургер-кнопка ── */
 function MenuIcon() {
@@ -37,6 +54,14 @@ export function StatusBadge({ status }) {
     );
 }
 
+export function TypeBadge({ type }) {
+    const style = TYPES_STYLES[type] || {};
+    return (
+        <span className="mc-status" style={style}>
+      {type}
+    </span>
+    );
+}
 /* ── Стеклянная карточка с shimmer ── */
 export function GlassCard({ children, style, className = "" }) {
     return (

@@ -4,7 +4,6 @@ import {
     PencilIcon, CheckIcon, UserIcon,
 } from "../components/Mini.jsx";
 
-// ── Компонент редактируемого поля (оставляем без изменений) ──
 function EditableField({ label, value, onChange }) {
     const [editing, setEditing] = useState(false);
     const [draft, setDraft] = useState(value);
@@ -18,10 +17,14 @@ function EditableField({ label, value, onChange }) {
                 <span className="profile-label">{label}</span>
                 {editing ? (
                     <input
-                        className="glass-input profile-input-edit"
+                        className="glass-input"
+                        style={{ textAlign: 'left', marginTop: '4px' }}
                         value={draft}
                         onChange={(e) => setDraft(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === "Enter") confirm(); if (e.key === "Escape") cancel(); }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") confirm();
+                            if (e.key === "Escape") cancel();
+                        }}
                         autoFocus
                     />
                 ) : (
@@ -35,7 +38,6 @@ function EditableField({ label, value, onChange }) {
     );
 }
 
-// ── Модальное окно смены пароля (восстановленная логика) ──
 function ChangePasswordModal({ onClose }) {
     const [form, setForm] = useState({ current: "", next: "", confirm: "" });
     const [error, setError] = useState("");
@@ -52,26 +54,25 @@ function ChangePasswordModal({ onClose }) {
         if (form.next.length < 6) {
             setError("Password must be at least 6 characters"); return;
         }
-        // Здесь будет API запрос
         onClose();
     };
 
     return (
-        <Modal onClose={onClose}>
+        <Modal title="Change Password" onClose={onClose}>
             <div className="pwd-field">
                 <div className="pwd-label">Current password</div>
-                <input type="password" psychological className="glass-input" value={form.current} onChange={set("current")} />
+                <input type="password" className="glass-input" value={form.current} onChange={set("current")} />
             </div>
             <div className="pwd-field">
                 <div className="pwd-label">New password</div>
-                <input type="password" psychological className="glass-input" value={form.next} onChange={set("next")} />
+                <input type="password" className="glass-input" value={form.next} onChange={set("next")} />
             </div>
             <div className="pwd-field">
                 <div className="pwd-label">Confirm new password</div>
-                <input type="password" psychological className="glass-input" value={form.confirm} onChange={set("confirm")} />
+                <input type="password" className="glass-input" value={form.confirm} onChange={set("confirm")} />
             </div>
             {error && <div style={{ fontSize: 12, color: "var(--accent-red)", marginTop: 8 }}>{error}</div>}
-            <div className="profile-actions" style={{ marginTop: 20 }}>
+            <div className="profile-actions">
                 <button className="btn-danger flex-1" onClick={onClose}>Cancel</button>
                 <button className="btn-primary flex-1" onClick={handleSubmit}>Confirm</button>
             </div>
@@ -79,7 +80,7 @@ function ChangePasswordModal({ onClose }) {
     );
 }
 
-export default function ProfilePage({ onMenuClick }) {
+export default function Profile({ onMenuClick }) {
     const [profile, setProfile] = useState({
         fullName: "John Mille",
         email: "johnmille@gmail.com",
@@ -87,21 +88,19 @@ export default function ProfilePage({ onMenuClick }) {
         role: "Employee",
     });
 
-    const [showPwdModal, setShowPwdModal] = useState(false); // Состояние для окна
-
+    const [showPwdModal, setShowPwdModal] = useState(false);
     const updateField = (key) => (val) => setProfile((p) => ({ ...p, [key]: val }));
 
     return (
         <div className="page-wrap">
             <TopBar title="Profile" onMenuClick={onMenuClick} />
-
-            <div className="profile-container">
+            <div className="profile-card-wrap">
                 <GlassCard className="profile-narrow-card">
-                    <div className="profile-header-centered">
-                        <div className="profile-avatar-large">
+                    <div className="profile-header">
+                        <div className="profile-avatar">
                             <UserIcon size={48} />
                         </div>
-                        <div className="profile-role-text">{profile.role}</div>
+                        <div className="role-badge">{profile.role}</div>
                     </div>
 
                     <div className="profile-fields-list">
@@ -110,7 +109,6 @@ export default function ProfilePage({ onMenuClick }) {
                         <EditableField label="Phone" value={profile.phone} onChange={updateField("phone")} />
                     </div>
 
-                    {/* Кнопки как на макете[cite: 19] */}
                     <div className="profile-actions">
                         <button className="btn-primary flex-1" onClick={() => setShowPwdModal(true)}>
                             Change Password
@@ -120,7 +118,6 @@ export default function ProfilePage({ onMenuClick }) {
                 </GlassCard>
             </div>
 
-            {/* Вызов модального окна[cite: 19] */}
             {showPwdModal && <ChangePasswordModal onClose={() => setShowPwdModal(false)} />}
         </div>
     );
