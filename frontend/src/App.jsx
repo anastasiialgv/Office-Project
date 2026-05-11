@@ -2,17 +2,21 @@ import './App.css';
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 
-import CasesList from "./pages/CaseList";
-import CaseDetail from "./pages/CaseDetail";
+import CasesList from "./pages/employee/Case/CaseList.jsx";
+import CaseDetail from "./pages/employee/Case/CaseDetail.jsx";
 import Profile from "./pages/Profile";
-import Files from "./pages/Files.jsx";
+import Files from "./pages/employee/File/Files.jsx";
+import FileDetail from "./pages/employee/File/FileDetail.jsx";
 import Statistics from "./pages/accountant/Statistics.jsx";
+import Contacts from "./pages/employee/Contact/Contacts.jsx";
+import ContactDetail from "./pages/employee/Contact/ContactDetail.jsx";
 
 // Список ссылок для меню
 const NAV_ITEMS = [
     { path: "/cases",   label: "Cases",   icon: "⚖️" },
-    { path: "/profile", label: "Profile", icon: "👤" },
     { path: "/files",   label: "Files",   icon: "📁" },
+    { path: "/contacts", label: "My Contacts", icon: "📞"},
+    { path: "/profile", label: "Profile", icon: "👤" }
 ];
 
 export default function App() {
@@ -50,6 +54,12 @@ export default function App() {
                 <Route path="/cases/:id" element={<CaseDetail />} />
 
                 <Route path="/files" element={<Files onMenuClick={toggleSidebar} />} />
+
+                <Route path="/files/:id" element={<FileDetail />} />
+
+                <Route path="/contacts" element={<Contacts onMenuClick={toggleSidebar} />} />
+
+                <Route path="/contacts/:id" element={<ContactDetail />} />
 
                 <Route path="/profile" element={<Profile onMenuClick={toggleSidebar} />} />
 

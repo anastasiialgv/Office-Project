@@ -1,7 +1,6 @@
-import { useState } from "react";
-import {TopBar, StatusBadge, ArrButton, TypeBadge} from "../components/Mini.jsx";
+import {TopBar, ArrButton, TypeBadge} from "../../../components/Mini.jsx";
 import { useNavigate } from "react-router-dom";
-import Table from "../components/Table.jsx";
+import Table from "../../../components/Table.jsx";
 // ── Все кейсы (моковые данные) ───────────────────────────
 export const ALL_FILES = [
     {

@@ -21,6 +21,11 @@ export const TYPES_STYLES = {
     "Vehicle Evidence":                 { color: "#fbff96" }
 };
 
+export const CONTACT_TYPES_STYLES = {
+    "EMAIL": { color: "#6ab0ff" }, // Синий
+    "PHONE": { color: "#6ddd8a" }, // Зеленый
+    "SMS":   { color: "#ffa03c" }, // Оранжевый
+};
 
 /* ── Гамбургер-кнопка ── */
 function MenuIcon() {
@@ -45,17 +50,36 @@ export function TopBar({ title, onMenuClick }) {
 }
 
 /* ── Цветной статус-бейдж ── */
-export function StatusBadge({ status }) {
-    const style = STATUS_STYLES[status] || {};
+export function StatusBadge({ status, style, onClick, ...props }) {
+    // Получаем базовый цвет из стилей
+    const baseStyle = STATUS_STYLES[status] || {};
+
     return (
-        <span className="mc-status" style={style}>
-      {status}
-    </span>
+        <span
+            className="mc-status"
+            // Склеиваем базовый цвет и дополнительные стили (например, курсор)
+            style={{ ...baseStyle, ...style }}
+            // Передаем функцию клика, чтобы меню открывалось
+            onClick={onClick}
+            // Прокидываем остальные системные пропсы, если будут
+            {...props}
+        >
+            {status}
+        </span>
     );
 }
 
 export function TypeBadge({ type }) {
     const style = TYPES_STYLES[type] || {};
+    return (
+        <span className="mc-status" style={style}>
+      {type}
+    </span>
+    );
+}
+
+export function ContactTypeBadge({ type }) {
+    const style = CONTACT_TYPES_STYLES[type] || {};
     return (
         <span className="mc-status" style={style}>
       {type}
@@ -119,7 +143,7 @@ export function SideButton ( {onClick}){
 
 
 /* ── Кнопка «Назад» ── */
-export function BackButton({ onClick, label = "← Back to list" }) {
+export function BackButton({ onClick, label = "← Back" }) {
     return (
         <button className="mc-back-btn" onClick={onClick}>
             {label}
@@ -204,4 +228,14 @@ export function UserIcon({ size = 40 }) {
             <circle cx="12" cy="7" r="4"/>
         </svg>
     );
+}
+
+export function GoToCaseButton({ caseId, navigate }) {
+    return(<button
+        className="mc-button primary"
+        onClick={() => navigate(`/cases/${caseId}`)}
+        style={{marginTop: '20px', width: '100%'}}
+    >
+        ⚖️ Go to Case #{caseId}
+    </button>);
 }
