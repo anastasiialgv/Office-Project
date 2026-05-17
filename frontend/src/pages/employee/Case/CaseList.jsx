@@ -16,13 +16,11 @@ export const ALL_CASES = [
 
 const ALL_FILTER_STATUSES = ["CLOSED", "IN PROGRESS", "DISPUTED", "WAITING FOR CONTACT"];
 
-export default function CasesList({ onMenuClick }) {
+export default function CasesList() {
     const navigate = useNavigate();
 
     return (
-
-        <div className="page-wrap">
-            <TopBar title="My cases" onMenuClick={onMenuClick}/>
+        <>
                 <Table
                     data={ALL_CASES}
                     filterKey="status"
@@ -43,7 +41,7 @@ export default function CasesList({ onMenuClick }) {
                     )}
                 />
 
-        </div>
+        </>
     );
 }
 

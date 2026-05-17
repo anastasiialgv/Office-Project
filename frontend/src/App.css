@@ -1596,13 +1596,362 @@ text.db-bar-val {
 }
 
 .contact-body-text {
-    background: rgba(0, 0, 0, 0.2); /* Темная подложка */
+    background: rgba(0, 0, 0, 0.2);
     padding: 15px;
     border-radius: 12px;
     font-size: 14px;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    white-space: pre-wrap; /* Чтобы сохранялись переносы строк */
+    white-space: pre-wrap;
     min-height: 100px;
+}
+
+
+/* =============================================================================
+   17.  Document Generator Page
+============================================================================= */
+/* Сетка для документов */
+.cd-docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.doc-template-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 24px;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 16px;
+    transition: all 0.2s ease;
+    min-height: 130px;
+}
+
+.doc-template-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-purple);
+    transform: translateY(-2px); /* Легкий эффект приподнимания */
+}
+
+.doc-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+
+.doc-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px;
+    justify-content: center;
+    width: 100%;
+    margin-top: auto;
+}
+
+.btn-doc {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    min-width: 200px;
+    min-height: 50px;
+    width: auto;
+    text-align: center;
+    transition: all 0.2s ease;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-doc:hover {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+    transform: scale(1.02);
+}
+
+.doc-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.glass-input, .glass-select, .glass-textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px;
+    color: #fff;
+    width: 100%;
+    outline: none;
+}
+
+.glass-textarea { min-height: 100px; resize: none; }
+
+/* =============================================================================
+   18. Login Page
+============================================================================= */
+.login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top right, var(--card-mid), var(--bg-deep));
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 600px;
+    padding: 40px !important;
+    text-align: center;
+    animation: login-appear 0.6s ease-out;
+}
+
+@keyframes login-appear {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-logo {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    background: linear-gradient(to right, #fff, var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+}
+
+.login-subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-input-group {
+    text-align: left;
+}
+
+.login-btn {
+    margin-top: 10px;
+    padding: 14px !important;
+    font-size: 16px !important;
+    width: 100%;
+}
+
+.login-footer {
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.login-footer a {
+    color: var(--accent-purple);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+
+
+/* =============================================================================
+   18. ADMIN
+============================================================================= */
+/* Статистика админа */
+.adm-stat-row {
+    display: flex;
+    gap: 12px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.adm-stat-chip {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 16px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.adm-stat-value { font-size: 20px; font-weight: 800; }
+.adm-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+
+/* Таблица админа */
+.adm-table-head, .adm-table-row {
+    display: grid;
+    grid-template-columns: 100px 100px 100px 100px 120px 1fr 100px;
+    align-items: center;
+    padding: 12px 20px;
+    gap: 15px;
+}
+
+.adm-table-head {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.adm-table-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: background 0.2s;
+}
+
+.adm-table-row:hover { background: rgba(255, 255, 255, 0.02); }
+
+/* Кнопки и селекты */
+.adm-assign-select {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.adm-archive-btn {
+    background: rgba(109, 221, 138, 0.1);
+    color: #6ddd8a;
+    border: 1px solid rgba(109, 221, 138, 0.3);
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Панель инструментов (Поиск и Кнопки) */
+.adm-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+
+.adm-search {
+    flex: 1;
+    max-width: 400px;
+}
+
+.adm-toolbar-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Стили для призрачных кнопок (Import, Archived) */
+.adm-btn-ghost {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.adm-btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* Строка фильтров (Чипсы) */
+.adm-filter-row {
+    display: flex;
+    gap: 12px;
+    padding: 0 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap; /* Чтобы на мобилках не ломалось */
+}
+
+.adm-filter-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.adm-filter-chip:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.adm-filter-chip.active {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple);
+    color: #fff;
+}
+
+.adm-chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* Центрированная навигация админа */
+.adm-top-nav-centered {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.adm-nav-link-wide {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 30px; /* Широкие отступы */
+    min-width: 160px;   /* Минимальная ширина кнопок */
+    text-align: center;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.adm-nav-link-wide:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.adm-nav-link-wide.active {
+    background: var(--accent-purple);
+    color: #fff;
+    border-color: var(--accent-purple);
+    box-shadow: 0 4px 20px rgba(167, 139, 250, 0.4);
 }

@@ -4,7 +4,7 @@ import {
     Field, TypeBadge, BackButton
 } from "../../../components/Mini.jsx";
 
-export default function ContactDetail({ onMenuClick }) {
+export default function ContactDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -20,11 +20,8 @@ export default function ContactDetail({ onMenuClick }) {
     };
 
     return (
-        <div className="page-wrap">
-            <TopBar title="Contact Details" onMenuClick={onMenuClick} />
-
+        <>
             <BackButton onClick={() => navigate(-1)} />
-
             <div className="single-card-container">
                 <GlassCard className="detail-view-card">
                     <CardTitle>{data.subject}</CardTitle>
@@ -70,6 +67,6 @@ export default function ContactDetail({ onMenuClick }) {
                     </div>
                 </GlassCard>
             </div>
-        </div>
+        </>
     );
 }

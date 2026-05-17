@@ -1,8 +1,7 @@
 import { useState } from "react";
-import {
-    TopBar, GlassCard, Modal,
+import {GlassCard, Modal,
     PencilIcon, CheckIcon, UserIcon,
-} from "../components/Mini.jsx";
+} from "../../components/Mini.jsx";
 
 function EditableField({ label, value, onChange }) {
     const [editing, setEditing] = useState(false);
@@ -80,7 +79,7 @@ function ChangePasswordModal({ onClose }) {
     );
 }
 
-export default function Profile({ onMenuClick }) {
+export default function Profile() {
     const [profile, setProfile] = useState({
         fullName: "John Mille",
         email: "johnmille@gmail.com",
@@ -92,9 +91,7 @@ export default function Profile({ onMenuClick }) {
     const updateField = (key) => (val) => setProfile((p) => ({ ...p, [key]: val }));
 
     return (
-        <div className="page-wrap">
-            <TopBar title="Profile" onMenuClick={onMenuClick} />
-            <div className="profile-card-wrap">
+            <div className="profile-card-wrap" style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
                 <GlassCard className="profile-narrow-card">
                     <div className="profile-header">
                         <div className="profile-avatar">
@@ -116,9 +113,7 @@ export default function Profile({ onMenuClick }) {
                         <button className="btn-danger flex-1">Logout</button>
                     </div>
                 </GlassCard>
+                {showPwdModal && <ChangePasswordModal onClose={() => setShowPwdModal(false)} />}
             </div>
-
-            {showPwdModal && <ChangePasswordModal onClose={() => setShowPwdModal(false)} />}
-        </div>
     );
 }

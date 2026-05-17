@@ -22,12 +22,11 @@ const ALL_FILTER_TYPES_DOCUMENTS = ["Payment Demand Notice",
     "Payment Confirmation", "Official Note", "Client Contact Report",
     "Mail Labels", "Vehicle Evidence"];
 
-export default function Files({ onMenuClick }) {
+export default function Files() {
     const navigate = useNavigate();
     return (
 
-        <div className="page-wrap">
-            <TopBar title="My files" onMenuClick={onMenuClick}/>
+        <>
             <Table
                 data={ALL_FILES}
                 filterKey="document_type"
@@ -48,6 +47,6 @@ export default function Files({ onMenuClick }) {
                 )}
             />
 
-        </div>
+        </>
     );
 }

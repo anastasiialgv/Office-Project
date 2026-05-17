@@ -210,8 +210,7 @@ function VehicleCard({ vehicle, evidence = [] }) {
 
 // ── Основной компонент страницы ──────────────────────────────────────────────
 
-export default function CaseDetail({ caseData, onMenuClick }) {
-    const { id } = useParams();
+export default function CaseDetail({ caseData }) {
     const navigate = useNavigate();
     const [data, setData] = useState(caseData || INITIAL_CASE);
     const [showPenaltyModal, setShowPenaltyModal] = useState(false);
@@ -221,8 +220,7 @@ export default function CaseDetail({ caseData, onMenuClick }) {
     const handleNotesSave = (n) => setData(p => ({ ...p, notes: n }));
 
     return (
-        <div className="page-wrap">
-            <TopBar title={`Case #${id || data.id}`} onMenuClick={onMenuClick} />
+        <>
             <BackButton onClick={() => navigate(-1)} />
 
             <div className="cd-grid">
@@ -283,6 +281,6 @@ export default function CaseDetail({ caseData, onMenuClick }) {
                     onClose={() => setShowPenaltyModal(false)}
                 />
             )}
-        </div>
+        </>
     );
 }

@@ -26,12 +26,11 @@ export const ALL_CONTACTS = [
 // 2. Список типов для фильтрации
 const ALL_FILTER_TYPES_CONTACTS = ["EMAIL", "PHONE", "SMS"];
 
-export default function Contacts({ onMenuClick }) {
+export default function Contacts() {
     const navigate = useNavigate();
 
     return (
-        <div className="page-wrap">
-            <TopBar title="My contacts" onMenuClick={onMenuClick}/>
+        <>
             <Table
                 data={ALL_CONTACTS}
                 filterKey="contact_type"
@@ -51,6 +50,6 @@ export default function Contacts({ onMenuClick }) {
                     </div>
                 )}
             />
-        </div>
+        </>
     );
 }

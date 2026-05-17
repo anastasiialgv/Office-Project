@@ -4,7 +4,7 @@ import {
     Field, TypeBadge, BackButton
 } from "../../../components/Mini.jsx";
 
-export default function FileDetail({ onMenuClick }) {
+export default function FileDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -19,17 +19,14 @@ export default function FileDetail({ onMenuClick }) {
     };
 
     return (
-        <div className="page-wrap">
-            <TopBar title="File Details" onMenuClick={onMenuClick}/>
-
-            <BackButton onClick={() => navigate(-1)} />
-
+        <>
             <div className="single-card-container">
                 <GlassCard className="detail-view-card">
-                    <CardTitle>{data.id}</CardTitle>
+                    <CardTitle>File Details</CardTitle>
 
                     <div className="mc-fields-group">
 
+                        <Field label="Created Date">{data.id}</Field>
                         <Field label="Type">
                             <TypeBadge type={data.document_type}/>
                         </Field>
@@ -74,6 +71,6 @@ export default function FileDetail({ onMenuClick }) {
                     </div>
                 </GlassCard>
             </div>
-        </div>
+        </>
     );
 }

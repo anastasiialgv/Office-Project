@@ -2,6 +2,8 @@
 // components/ui/index.jsx — переиспользуемые «атомарные» компоненты.
 // Импортируй нужное: import { GlassCard, Field, TopBar, Modal } from '../ui'
 // ─────────────────────────────────────────────────────────────────────────────
+import {NavLink} from "react-router-dom";
+
 export const STATUS_STYLES = {
     "CLOSED":              { color: "#6ddd8a" },
     "IN PROGRESS":         { color: "#ffa03c" },
@@ -230,12 +232,61 @@ export function UserIcon({ size = 40 }) {
     );
 }
 
-export function GoToCaseButton({ caseId, navigate }) {
-    return(<button
-        className="mc-button primary"
-        onClick={() => navigate(`/cases/${caseId}`)}
-        style={{marginTop: '20px', width: '100%'}}
-    >
-        ⚖️ Go to Case #{caseId}
-    </button>);
+export function AdminTopBar() {
+    return (
+        <div className="mc-topbar" style={{justifyContent: 'center'}}>
+            <div className="adm-top-nav-centered">
+                <NavLink
+                    to="/admin/cases"
+                    className={({isActive}) => `adm-nav-link-wide ${isActive ? "active" : ""}`}
+                >
+                    📁 Case Registry
+                </NavLink>
+                <NavLink
+                    to="/admin/users"
+                    className={({isActive}) => `adm-nav-link-wide ${isActive ? "active" : ""}`}
+                >
+                    👥 Team
+                </NavLink>
+                <NavLink
+                    to="/admin/profile"
+                    className={({isActive}) => `adm-nav-link-wide ${isActive ? "active" : ""}`}
+                >
+                    👤 Profile
+                </NavLink>
+            </div>
+        </div>
+    );
+}
+
+/* ── Боковая панель навигации (Sidebar) ── */
+export function Sidebar({isOpen, onClose, navItems}) {
+    return (
+        <>
+            {/* Сама панель */}
+            <div className={`sidebar ${isOpen ? "open" : ""}`}>
+                <button className="sidebar-close" onClick={onClose} aria-label="Close">
+                    ×
+                </button>
+                <div className="sidebar-menu">
+                    {navItems.map((item) => (
+                        <NavLink
+                            key={item.path}
+                            to={item.path}
+                            className={({isActive}) => `sidebar-item ${isActive ? "active" : ""}`}
+                            onClick={onClose} // Закрываем при клике на ссылку
+                        >
+                            <span className="sidebar-icon">{item.icon}</span>
+                            {item.label}
+                        </NavLink>
+                    ))}
+                </div>
+            </div>
+
+            {/* Оверлей (затемнение), который закрывает меню при клике вне его */}
+            {isOpen && (
+                <div className="sidebar-overlay" onClick={onClose} />
+            )}
+        </>
+    );
 }
