@@ -68,7 +68,7 @@ function AccountantLayout({ children }) {
 }
 
 export default function App() {
-
+// const role = localStorage.getItem("role");
     return (
         <BrowserRouter>
             <Routes>

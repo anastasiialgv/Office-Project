@@ -1,7 +1,8 @@
-import { useState } from "react";
-import {GlassCard, Modal,
+import { useState, useEffect } from "react";
+import {GlassCard,
     PencilIcon, CheckIcon, UserIcon,
 } from "../../components/Mini.jsx";
+import axios from "axios";
 
 function EditableField({ label, value, onChange }) {
     const [editing, setEditing] = useState(false);
@@ -18,7 +19,6 @@ function EditableField({ label, value, onChange }) {
                     <input
                         className="glass-input"
                         style={{ textAlign: 'left', marginTop: '4px' }}
-                        value={draft}
                         onChange={(e) => setDraft(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") confirm();
@@ -37,59 +37,48 @@ function EditableField({ label, value, onChange }) {
     );
 }
 
-function ChangePasswordModal({ onClose }) {
-    const [form, setForm] = useState({ current: "", next: "", confirm: "" });
-    const [error, setError] = useState("");
 
-    const set = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
-
-    const handleSubmit = () => {
-        if (!form.current || !form.next || !form.confirm) {
-            setError("Fill in all fields"); return;
-        }
-        if (form.next !== form.confirm) {
-            setError("New passwords do not match"); return;
-        }
-        if (form.next.length < 6) {
-            setError("Password must be at least 6 characters"); return;
-        }
-        onClose();
-    };
-
-    return (
-        <Modal title="Change Password" onClose={onClose}>
-            <div className="pwd-field">
-                <div className="pwd-label">Current password</div>
-                <input type="password" className="glass-input" value={form.current} onChange={set("current")} />
-            </div>
-            <div className="pwd-field">
-                <div className="pwd-label">New password</div>
-                <input type="password" className="glass-input" value={form.next} onChange={set("next")} />
-            </div>
-            <div className="pwd-field">
-                <div className="pwd-label">Confirm new password</div>
-                <input type="password" className="glass-input" value={form.confirm} onChange={set("confirm")} />
-            </div>
-            {error && <div style={{ fontSize: 12, color: "var(--accent-red)", marginTop: 8 }}>{error}</div>}
-            <div className="profile-actions">
-                <button className="btn-danger flex-1" onClick={onClose}>Cancel</button>
-                <button className="btn-primary flex-1" onClick={handleSubmit}>Confirm</button>
-            </div>
-        </Modal>
-    );
-}
 
 export default function Profile() {
-    const [profile, setProfile] = useState({
-        fullName: "John Mille",
-        email: "johnmille@gmail.com",
-        phone: "+48 601 234 567",
-        role: "Employee",
-    });
-
-    const [showPwdModal, setShowPwdModal] = useState(false);
+    const [profile, setProfile] = useState(null); // Изначально null
+    const [loading, setLoading] = useState(true);
     const updateField = (key) => (val) => setProfile((p) => ({ ...p, [key]: val }));
 
+    const fetchProfile = async () => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem("token");
+            const response = await axios.get("http://localhost:8080/office/profile", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setProfile(response.data);
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProfile();
+    }, []);
+
+    const updateProfile = async (updatedData) => {
+        try {
+            const token = localStorage.getItem("token");
+            // Используем уже созданный нами метод PutMapping("/{employeeId}")
+            await axios.put(`http://localhost:8080/office/${profile.userId || profile.id}`,
+                updatedData,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            fetchProfile(); // Перезагружаем данные
+        } catch (error) {
+            alert("Failed to update profile");
+        }
+    };
+
+    if (loading) return <div style={{color: '#fff', padding: '40px', textAlign: 'center'}}>Loading profile...</div>;
+    if (!profile) return <div style={{color: '#fff', padding: '40px', textAlign: 'center'}}>Profile not found</div>;
     return (
             <div className="profile-card-wrap" style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
                 <GlassCard className="profile-narrow-card">
@@ -101,19 +90,30 @@ export default function Profile() {
                     </div>
 
                     <div className="profile-fields-list">
-                        <EditableField label="Full Name" value={profile.fullName} onChange={updateField("fullName")} />
-                        <EditableField label="Email" value={profile.email} onChange={updateField("email")} />
-                        <EditableField label="Phone" value={profile.phone} onChange={updateField("phone")} />
+                        <EditableField
+                            label="Name"
+                            value={profile.name}
+                            onChange={(val) => updateProfile({ ...profile, name: val })}
+                        />
+                        <EditableField
+                            label="Surname"
+                            value={profile.surname}
+                            onChange={(val) => updateProfile({ ...profile, surname: val })}
+                        />
+                        <EditableField label="Email" value={profile.email}
+                                       onChange={(val) => updateProfile({ ...profile, email: val })} />
+                        <EditableField label="Phone" value={profile.phone}
+                                       onChange={(val) => updateProfile({ ...profile, phone: val })} />
                     </div>
 
                     <div className="profile-actions">
-                        <button className="btn-primary flex-1" onClick={() => setShowPwdModal(true)}>
-                            Change Password
-                        </button>
-                        <button className="btn-danger flex-1">Logout</button>
+                        <button className="btn-danger flex-1"
+                                onClick={() => {
+                                    localStorage.removeItem("token");
+                                    window.location.href = "/";
+                                }}>Logout</button>
                     </div>
                 </GlassCard>
-                {showPwdModal && <ChangePasswordModal onClose={() => setShowPwdModal(false)} />}
             </div>
     );
 }

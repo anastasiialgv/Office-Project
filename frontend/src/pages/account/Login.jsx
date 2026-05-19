@@ -13,8 +13,7 @@ export default function Login() {
         setError("");
 
         try {
-            // 1. Отправляем данные на бэк (PostgreSQL проверит их через твой бэкенд)
-            const response = await api.post("/office/auth/login", { email, password });
+            const response = await api.post("/office/login", { email, password });
 
             // 2. Достаем токен и роль из ответа (структура зависит от твоего бэка)
             const { token, role, userId } = response.data;
@@ -24,7 +23,6 @@ export default function Login() {
             localStorage.setItem("role", role);
             localStorage.setItem("userId", userId);
 
-            // 4. Умный редирект в зависимости от роли
             if (role === "ADMIN") {
                 navigate("/admin/cases");
             } else if (role === "EMPLOYEE") {
