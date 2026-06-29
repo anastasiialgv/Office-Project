@@ -1,0 +1,203 @@
+[
+  {
+    "violationDate": "2026-05-10",
+    "fineAmount": 250.00,
+    "address": "A2 Highway, 104 km, Poznań",
+    "driver": {
+      "name": "Jan",
+      "surname": "Kowalski",
+      "birthDate": "1985-05-12",
+      "passportNumber": "A1B234567",
+      "pesel": "85051212345",
+      "phone": "501234567",
+      "email": "jan.kowalski@gmail.com"
+    },
+    "vehicle": {
+      "plateNumber": "WI12345",
+      "brand": "Skoda",
+      "model": "Octavia",
+      "color": "Silver"
+    }
+  },
+  {
+    "violationDate": "2026-05-12",
+    "fineAmount": 500.00,
+    "address": "Warszawa, Aleje Jerozolimskie 45",
+    "driver": {
+      "name": "Jan",
+      "surname": "Kowalski",
+      "birthDate": "1985-05-12",
+      "passportNumber": "A1B234567",
+      "pesel": "85051212345",
+      "phone": "501234567",
+      "email": "jan.kowalski@gmail.com"
+    },
+    "vehicle": {
+      "plateNumber": "WI12345",
+      "brand": "Skoda",
+      "model": "Octavia",
+      "color": "Silver"
+    }
+  },
+  {
+    "violationDate": "2026-05-14",
+    "fineAmount": 100.00,
+    "address": "Kraków, ul. Floriańska 10",
+    "driver": {
+      "name": "Anna",
+      "surname": "Nowak",
+      "birthDate": "1992-09-23",
+      "passportNumber": "CD9876543",
+      "pesel": "92092354321",
+      "phone": "602345678",
+      "email": "anna.nowak@yahoo.com"
+    },
+    "vehicle": {
+      "plateNumber": "KR77889",
+      "brand": "Toyota",
+      "model": "Yaris",
+      "color": "Red"
+    }
+  },
+  {
+    "violationDate": "2026-05-15",
+    "fineAmount": 300.00,
+    "address": "A4 Highway, Katowice",
+    "driver": {
+      "name": "Anna",
+      "surname": "Nowak",
+      "birthDate": "1992-09-23",
+      "passportNumber": "CD9876543",
+      "pesel": "92092354321",
+      "phone": "602345678",
+      "email": "anna.nowak@yahoo.com"
+    },
+    "vehicle": {
+      "plateNumber": "KR11223",
+      "brand": "Skoda",
+      "model": "Fabia",
+      "color": "White"
+    }
+  },
+  {
+    "violationDate": "2026-04-28",
+    "fineAmount": 1500.00,
+    "address": "Gdańsk, Tunel pod Martwą Wisłą",
+    "driver": {
+      "name": "Piotr",
+      "surname": "Wiśniewski",
+      "birthDate": "1978-11-02",
+      "passportNumber": "EX1122334",
+      "pesel": "78110298765",
+      "phone": "703456789",
+      "email": "piotr.wisnia@gmail.com"
+    },
+    "vehicle": {
+      "plateNumber": "GD9900A",
+      "brand": "Audi",
+      "model": "A6",
+      "color": "Black"
+    }
+  },
+  {
+    "violationDate": "2026-05-01",
+    "fineAmount": 400.00,
+    "address": "Wrocław, ul. Legnicka",
+    "driver": {
+      "name": "Katarzyna",
+      "surname": "Wójcik",
+      "birthDate": "1988-02-14",
+      "passportNumber": "FX4455667",
+      "pesel": "88021411223",
+      "phone": "804567890",
+      "email": "kasia.wojcik@outlook.com"
+    },
+    "vehicle": {
+      "plateNumber": "DW5544X",
+      "brand": "Volkswagen",
+      "model": "Golf",
+      "color": "Blue"
+    }
+  },
+  {
+    "violationDate": "2026-05-05",
+    "fineAmount": 200.00,
+    "address": "Poznań, ul. Głogowska",
+    "driver": {
+      "name": "Tomasz",
+      "surname": "Mazur",
+      "birthDate": "1995-07-07",
+      "passportNumber": "GZ9988776",
+      "pesel": "95070733445",
+      "phone": "905678901",
+      "email": "tomasz.mazur@infomail.pl"
+    },
+    "vehicle": {
+      "plateNumber": "PO6677A",
+      "brand": "Ford",
+      "model": "Focus",
+      "color": "Grey"
+    }
+  },
+  {
+    "violationDate": "2026-05-08",
+    "fineAmount": 800.00,
+    "address": "S7 Expressway, blisko Radomia",
+    "driver": {
+      "name": "Michał",
+      "surname": "Krawczyk",
+      "birthDate": "1983-12-30",
+      "passportNumber": "HX5566771",
+      "pesel": "83123044556",
+      "phone": "509876543",
+      "email": "m.krawczyk@gmail.com"
+    },
+    "vehicle": {
+      "plateNumber": "WR1200C",
+      "brand": "BMW",
+      "model": "3 Series",
+      "color": "Dark Blue"
+    }
+  },
+  {
+    "violationDate": "2026-05-11",
+    "fineAmount": 150.00,
+    "address": "Łódź, ul. Piotrkowska",
+    "driver": {
+      "name": "Agnieszka",
+      "surname": "Zielińska",
+      "birthDate": "1991-03-18",
+      "passportNumber": "JX4433221",
+      "pesel": "91031855667",
+      "phone": "601112233",
+      "email": "aga.zielinska@onet.pl"
+    },
+    "vehicle": {
+      "plateNumber": "EL88997",
+      "brand": "Kia",
+      "model": "Ceed",
+      "color": "Orange"
+    }
+  },
+  {
+    "violationDate": "2026-05-16",
+    "fineAmount": 600.00,
+    "address": "S8 Expressway, Białystok",
+    "driver": {
+      "name": "Paweł",
+      "surname": "Szymański",
+      "birthDate": "1980-06-25",
+      "passportNumber": "KX9900112",
+      "pesel": "80062577889",
+      "phone": "702223344",
+      "email": "pawel.szym@gmail.com"
+    },
+    "vehicle": {
+      "plateNumber": "BI4433C",
+      "brand": "Hyundai",
+      "model": "Tucson",
+      "color": "Green"
+    }
+  }
+]
+

@@ -1,0 +1,107 @@
+[
+  {
+    "violationDate": "2026-05-01",
+    "fineAmount": 500.00,
+    "address": "A2 Highway, Łódź",
+    "driver": { "passportNumber": "PAS882211", "name": "Mariusz", "surname": "Pudzianowski", "birthDate": "1977-02-07", "phone": "601111222" },
+    "vehicle": { "plateNumber": "W0PUDZIO", "brand": "Mercedes", "model": "S-Class", "color": "Black" }
+  },
+  {
+    "violationDate": "2026-05-02",
+    "fineAmount": 250.00,
+    "address": "Warszawa, ul. Belwederska",
+    "driver": { "passportNumber": "PAS882211", "name": "Mariusz", "surname": "Pudzianowski", "birthDate": "1977-02-07", "phone": "601111222" },
+    "vehicle": { "plateNumber": "W0PUDZIO", "brand": "Mercedes", "model": "S-Class", "color": "Black" }
+  },
+  {
+    "violationDate": "2026-05-03",
+    "fineAmount": 300.00,
+    "address": "Kraków, ul. Dietla",
+    "driver": { "passportNumber": "PAS882211", "name": "Mariusz", "surname": "Pudzianowski", "birthDate": "1977-02-07", "phone": "601111222" },
+    "vehicle": { "plateNumber": "W0PUDZIO", "brand": "Mercedes", "model": "S-Class", "color": "Black" }
+  },
+  {
+    "violationDate": "2026-05-04",
+    "fineAmount": 400.00,
+    "address": "Gdańsk, Al. Grunwaldzka",
+    "driver": { "passportNumber": "KPT443322", "name": "Robert", "surname": "Makłowicz", "birthDate": "1963-08-12", "phone": "602222333" },
+    "vehicle": { "plateNumber": "KR1122A", "brand": "Fiat", "model": "Multipla", "color": "Silver" }
+  },
+  {
+    "violationDate": "2026-05-05",
+    "fineAmount": 150.00,
+    "address": "Wrocław, Rynek",
+    "driver": { "passportNumber": "KPT443322", "name": "Robert", "surname": "Makłowicz", "birthDate": "1963-08-12", "phone": "602222333" },
+    "vehicle": { "plateNumber": "KR1122A", "brand": "Fiat", "model": "Multipla", "color": "Silver" }
+  },
+  {
+    "violationDate": "2026-05-06",
+    "fineAmount": 600.00,
+    "address": "A4 Highway, Opole",
+    "driver": { "passportNumber": "KPT443322", "name": "Robert", "surname": "Makłowicz", "birthDate": "1963-08-12", "phone": "602222333" },
+    "vehicle": { "plateNumber": "KR1122A", "brand": "Fiat", "model": "Multipla", "color": "Silver" }
+  },
+  {
+    "violationDate": "2026-05-07",
+    "fineAmount": 1200.00,
+    "address": "S7 Expressway, Radom",
+    "driver": { "passportNumber": "ZAL990011", "name": "Krzysztof", "surname": "Krawczyk", "birthDate": "1946-09-08", "phone": "603333444" },
+    "vehicle": { "plateNumber": "WI9999X", "brand": "Porsche", "model": "Panamera", "color": "White" }
+  },
+  {
+    "violationDate": "2026-05-08",
+    "fineAmount": 800.00,
+    "address": "Poznań, ul. Głogowska",
+    "driver": { "passportNumber": "ZAL990011", "name": "Krzysztof", "surname": "Krawczyk", "birthDate": "1946-09-08", "phone": "603333444" },
+    "vehicle": { "plateNumber": "WI9999X", "brand": "Porsche", "model": "Panamera", "color": "White" }
+  },
+  {
+    "violationDate": "2026-05-09",
+    "fineAmount": 350.00,
+    "address": "Łódź, ul. Piotrkowska",
+    "driver": { "passportNumber": "ZAL990011", "name": "Krzysztof", "surname": "Krawczyk", "birthDate": "1946-09-08", "phone": "603333444" },
+    "vehicle": { "plateNumber": "WI9999X", "brand": "Porsche", "model": "Panamera", "color": "White" }
+  },
+  {
+    "violationDate": "2026-05-10",
+    "fineAmount": 150.00,
+    "address": "Szczecin, ul. Portowa",
+    "driver": { "passportNumber": "NOS112233", "name": "Janusz", "surname": "Polak", "birthDate": "1970-01-01", "phone": "604444555" },
+    "vehicle": { "plateNumber": "PO7766X", "brand": "Volkswagen", "model": "Passat", "color": "Green" }
+  },
+  {
+    "violationDate": "2026-05-11",
+    "fineAmount": 500.00,
+    "address": "A1 Highway, Toruń",
+    "driver": { "passportNumber": "NOS112233", "name": "Janusz", "surname": "Polak", "birthDate": "1970-01-01", "phone": "604444555" },
+    "vehicle": { "plateNumber": "PO7766X", "brand": "Volkswagen", "model": "Passat", "color": "Green" }
+  },
+  {
+    "violationDate": "2026-05-12",
+    "fineAmount": 200.00,
+    "address": "Gdynia, Skwer Kościuszki",
+    "driver": { "passportNumber": "NOS112233", "name": "Janusz", "surname": "Polak", "birthDate": "1970-01-01", "phone": "604444555" },
+    "vehicle": { "plateNumber": "PO7766X", "brand": "Volkswagen", "model": "Passat", "color": "Green" }
+  },
+  {
+    "violationDate": "2026-05-13",
+    "fineAmount": 300.00,
+    "address": "Katowice, ul. Korfantego",
+    "driver": { "passportNumber": "SND554433", "name": "Monika", "surname": "Brodka", "birthDate": "1987-02-07", "phone": "605555666" },
+    "vehicle": { "plateNumber": "DW555AA", "brand": "Volkswagen", "model": "Golf", "color": "Red" }
+  },
+  {
+    "violationDate": "2026-05-14",
+    "fineAmount": 450.00,
+    "address": "S8 Expressway, Syców",
+    "driver": { "passportNumber": "SND554433", "name": "Monika", "surname": "Brodka", "birthDate": "1987-02-07", "phone": "605555666" },
+    "vehicle": { "plateNumber": "DW555AA", "brand": "Volkswagen", "model": "Golf", "color": "Red" }
+  },
+  {
+    "violationDate": "2026-05-15",
+    "fineAmount": 900.00,
+    "address": "Lublin, ul. Lipowa",
+    "driver": { "passportNumber": "SND554433", "name": "Monika", "surname": "Brodka", "birthDate": "1987-02-07", "phone": "605555666" },
+    "vehicle": { "plateNumber": "DW555AA", "brand": "Volkswagen", "model": "Golf", "color": "Red" }
+  }
+]
