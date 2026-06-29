@@ -1,0 +1,22 @@
+[
+  {
+    "violationDate": "2026-06-01",
+    "fineAmount": 250.00,
+    "address": "ul. Marszałkowska 100, Warszawa",
+    "driver": {
+      "name": "Piotr",
+      "surname": "Nowak",
+      "passportNumber": "APA987654",
+      "pesel": "95010203456",
+      "phone": "501234567",
+      "email": "piotr.nowak@gmail.com",
+      "birthDate": "1995-01-02"
+    },
+    "vehicle": {
+      "plateNumber": "WI34567",
+      "brand": "Toyota",
+      "model": "Yaris",
+      "color": "Silver"
+    }
+  }
+]

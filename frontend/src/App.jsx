@@ -3,20 +3,19 @@ import { useState } from "react";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 
 import CasesList from "./pages/employee/Case/CaseList.jsx";
-import CaseDetail from "./pages/employee/Case/CaseDetail.jsx";
 import Profile from "./pages/account/Profile.jsx";
 import Files from "./pages/employee/File/Files.jsx";
-import FileDetail from "./pages/employee/File/FileDetail.jsx";
-import Statistics from "./pages/accountant/Statistics.jsx";
 import Contacts from "./pages/employee/Contact/Contacts.jsx";
 import ContactDetail from "./pages/employee/Contact/ContactDetail.jsx";
 import DocumentGenerator from "./pages/employee/Case/DocumentGenerator.jsx";
 
-import caseData from "../test/caseData.jsx";
 import Login from "./pages/account/Login.jsx";
 import AdminCases from "./pages/admin/Cases.jsx";
 import AdminUsers from "./pages/admin/Users.jsx";
-import {AdminTopBar, Sidebar, TopBar} from "./components/Mini.jsx";
+import {AccountantTopBar, AdminTopBar, Sidebar, TopBar} from "./components/Mini.jsx";
+import CaseDetail from "./pages/employee/Case/CaseDetail.jsx";
+import ReportGenerator from "./pages/accountant/ReportGenerator.jsx";
+import Dashboard from "./pages/accountant/Dashboard.jsx";
 // Список ссылок для меню
 const NAV_ITEMS = [
     { path: "/cases",   label: "Cases",   icon: "⚖️" },
@@ -31,10 +30,8 @@ function EmployeeLayout({ children, title }) {
 
     return (
         <div className="page-wrap">
-            {/* Сайдбар общий для всех сотрудников */}
             <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} navItems={NAV_ITEMS} />
 
-            {/* Передаем title в TopBar, чтобы он менялся */}
             <TopBar
                 title={title || "LegalDesk"}
                 onMenuClick={() => setSidebarOpen(true)}
@@ -57,18 +54,17 @@ function AdminLayout({ children }) {
     );
 }
 
-// Оболочка для Бухгалтера (будущая)
+// Оболочка для Бухгалтера (с TopBar-кнопками)
 function AccountantLayout({ children }) {
     return (
         <div className="acc-shell">
-            <div className="acc-topbar">📊 Отчеты и Статистика</div>
+            <AccountantTopBar/>
             <main>{children}</main>
         </div>
     );
 }
 
 export default function App() {
-// const role = localStorage.getItem("role");
     return (
         <BrowserRouter>
             <Routes>
@@ -81,7 +77,7 @@ export default function App() {
                         <Routes>
                             <Route path="cases" element={<AdminCases />} />
                             <Route path="users" element={<AdminUsers />} />
-                            <Route path="/profile" element={<Profile />} />
+                            <Route path="profile" element={<Profile />} />
                         </Routes>
                     </AdminLayout>
                 } />
@@ -94,13 +90,13 @@ export default function App() {
                 } />
                 <Route path="/cases/:id" element={
                     <EmployeeLayout title="Case Detail">
-                        <CaseDetail caseData={caseData}/>
+                        <CaseDetail/>
                     </EmployeeLayout>
                 } />
 
                 <Route path="/generator" element={
                     <EmployeeLayout title="Document Generator">
-                        <DocumentGenerator caseData={caseData}/>
+                        <DocumentGenerator/>
                     </EmployeeLayout>
                 } />
 
@@ -109,11 +105,7 @@ export default function App() {
                         <Files />
                     </EmployeeLayout>
                 } />
-                <Route path="/files/:id" element={
-                    <EmployeeLayout title="FileDetail">
-                        <FileDetail />
-                    </EmployeeLayout>
-                } />
+
 
                 <Route path="/contacts" element={
                     <EmployeeLayout title="Contacts">
@@ -137,7 +129,9 @@ export default function App() {
                 <Route path="/accountant/*" element={
                     <AccountantLayout>
                         <Routes>
-                            <Route path="stats" element={<Statistics />} />
+                            <Route path="dashboard" element={<Dashboard/>} />
+                            <Route path="generator" element={<ReportGenerator />} />
+                            <Route path="profile" element={<Profile />} />
                         </Routes>
                     </AccountantLayout>
                 } />

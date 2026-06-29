@@ -1,140 +1,162 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// components/ContactHistory.jsx — блок «История контактов»
-//
-// Встраивается в CaseDetail.
-// Функции:
-//   • Вертикальный Timeline (дата, тип, результат/комментарий)
-//   • Иконка-тип: Call / Email
-//   • Кнопка «Add New Contact» → inline-форма под списком
-// ─────────────────────────────────────────────────────────────────────────────
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GlassCard, CardTitle, PhoneIcon, MailIcon, PlusIcon } from "./Mini.jsx";
-
-
-// ── Начальные данные (заглушка, в проекте — из props / API) ───────────────
-const INITIAL_HISTORY = [
-    {
-        id: 1,
-        date: "2025-09-12",
-        type: "call",
-        comment: "Spoke with client. Agreed to pay the fine by September 20th.",
-    },
-    {
-        id: 2,
-        date: "2025-09-08",
-        type: "email",
-        comment: "Sent payment reminder. No response yet.",
-    },
-    {
-        id: 3,
-        date: "2025-08-30",
-        type: "call",
-        comment: "First contact. Client disputes the violation date.",
-    },
-];
-
-// ── Иконка по типу контакта ───────────────────────────────────────────────
-function TypeIcon({ type }) {
-    return type === "call" ? <PhoneIcon size={12} /> : <MailIcon size={12} />;
-}
-
-// ── Одна запись Timeline ──────────────────────────────────────────────────
+import axios from "axios";
+import Loader from "./Loader.jsx";
+const API_BASE = "http://localhost:8080/office";
 function TimelineEntry({ entry }) {
-    return (
-        <div className="ch-entry">
-            <div className={`ch-dot ${entry.type}`}>
-                <TypeIcon type={entry.type} />
-            </div>
-            <div className="ch-body">
-                <div className="ch-meta">
-                    <span className="ch-date">{entry.date}</span>
-                    <span className={`ch-type-badge ${entry.type}`}>
-            {entry.type === "call" ? "Call" : "Email"}
-          </span>
-                </div>
-                <div className="ch-comment">{entry.comment}</div>
-            </div>
-        </div>
-    );
-}
-
-// ── Форма добавления нового контакта ─────────────────────────────────────
-function AddContactForm({ onAdd, onCancel }) {
-    const [form, setForm] = useState({ type: "call", comment: "", date: new Date().toISOString().slice(0, 10) });
-    const set = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
-
-    const submit = () => {
-        if (!form.comment.trim()) return;
-        // TODO: POST /api/contacts с данными формы
-        onAdd({ id: Date.now(), ...form });
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "—";
+        try {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString("ru-RU") + " " + date.toLocaleTimeString("ru-RU", { hour: '2-digit', minute: '2-digit' });
+        } catch (e) {
+            return dateStr;
+        }
     };
 
     return (
-        <div className="ch-form">
-            <div className="ch-form-row">
-                <div className="ch-form-label">Date</div>
-                <input type="date" className="glass-input" value={form.date} onChange={set("date")} />
+        <div className="timeline-entry-row">
+            <div>
+                <div className="timeline-entry-type">
+                    {entry.contactType === "PHONE" ?
+                        <PhoneIcon size={14}/> : <MailIcon size={14}/>}
+                    <strong style={{ textTransform: "uppercase" }}>
+                        {((entry.contactType) || "CONTACT").replace(/_/g, " ")}
+                    </strong>
+                </div>
+                <p className="timeline-entry-result">
+                    {entry.result || "No description provided"}
+                </p>
             </div>
-            <div className="ch-form-row">
-                <div className="ch-form-label">Type</div>
-                <select className="glass-select" value={form.type} onChange={set("type")}>
-                    <option value="call">Call</option>
-                    <option value="email">Email</option>
-                </select>
-            </div>
-            <div className="ch-form-row">
-                <div className="ch-form-label">Result / Comment</div>
-                <textarea
-                    className="glass-input"
-                    rows={3}
-                    style={{ resize: "vertical" }}
-                    placeholder="Describe the contact result…"
-                    value={form.comment}
-                    onChange={set("comment")}
-                />
-            </div>
-            <div className="ch-form-footer">
-                <button className="btn-danger" onClick={onCancel}>Cancel</button>
-                <button className="btn-primary" onClick={submit}>Save Contact</button>
+            <div className="timeline-entry-meta">
+                <div>{formatDate(entry.contactDate)}</div>
             </div>
         </div>
     );
 }
 
-// ── Главный экспортируемый компонент ─────────────────────────────────────
-export default function ContactHistory({ caseId }) {
-    const [history, setHistory] = useState(INITIAL_HISTORY);
-    const [showForm, setShowForm] = useState(false);
+function AddContactForm({onAdd, onCancel, caseId}) {
+    const [ContactType, setContactType] = useState("PHONE");
+    const [Result, setResult] = useState("");
 
-    const handleAdd = (entry) => {
-        setHistory((prev) => [entry, ...prev]); // новый контакт сверху
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!Result.trim()) {
+            alert("Please enter a comment");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.post(`${API_BASE}/cases/${caseId}/contact-history`, {
+                contactType: ContactType,
+                result: Result
+            }, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            alert("Contact logged successfully!");
+            onAdd();
+        } catch (err) {
+            console.error("Error saving contact log:", err);
+            alert("Failed to save contact log");
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="ch-form">
+            <div>
+                <div className="ap-label">Type</div>
+                <select
+                    className="glass-input"
+                    value={ContactType}
+                    onChange={(e) => setContactType(e.target.value)}
+                    style={{ background: "rgba(0,0,0,0.2)", color: "#fff" }}
+                >
+                    <option value="PHONE">Phone Call</option>
+                    <option value="EMAIL">Email</option>
+                    <option value="LETTER">Official Letter</option>
+                </select>
+            </div>
+            <div>
+                <div className="ap-label">Result</div>
+                <textarea
+                    className="glass-input"
+                    value={Result}
+                    onChange={(e) => setResult(e.target.value)}
+                    placeholder="Enter description..."
+                />
+            </div>
+            <div className="ch-form-bottom">
+                <button type="button" className="btn-danger" onClick={onCancel}>Cancel</button>
+                <button type="submit" className="btn-primary">Save Log</button>
+            </div>
+        </form>
+    );
+}
+
+export default function ContactHistory({ caseId, onContactAdded }) {
+    const [history, setHistory] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    const fetchHistory = async () => {
+        if (!caseId) return;
+        try {
+            setLoading(true);
+            const token = localStorage.getItem("token");
+            const response = await axios.get(`${API_BASE}/cases/${caseId}/contact-history`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setHistory(response.data);
+        } catch (e) {
+            console.error("Error loading contact history:", e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchHistory();
+    }, [caseId]);
+
+    const handleAddSuccess = () => {
+        setTimeout(() => {
+            fetchHistory();
+        }, 300);
+        onContactAdded();
         setShowForm(false);
     };
 
+    if (loading) return <Loader/>;
+
     return (
-        <>
-            <div className="ch-wrap">
-                <GlassCard>
-                    <CardTitle>Contact History</CardTitle>
+        <div className="ch-wrap">
+            <GlassCard>
+                <CardTitle>Contact History</CardTitle>
 
-                    {/* Timeline */}
-                    <div className="ch-timeline">
-                        {history.map((entry) => (
-                            <TimelineEntry key={entry.id} entry={entry} />
-                        ))}
-                    </div>
-
-                    {/* Форма или кнопка */}
-                    {showForm ? (
-                        <AddContactForm onAdd={handleAdd} onCancel={() => setShowForm(false)} />
+                <div className="ch-timeline">
+                    {history.length === 0 ? (
+                        <div className="ch-empty-state">
+                            No contact attempts registered for this case yet.
+                        </div>
                     ) : (
-                        <button className="ch-add-btn" onClick={() => setShowForm(true)}>
-                            <PlusIcon /> Add New Contact
-                        </button>
+                        history.map((entry) => (
+                            <TimelineEntry key={entry.id} entry={entry} />
+                        ))
                     )}
-                </GlassCard>
-            </div>
-        </>
+                </div>
+
+                {showForm ? (
+                    <AddContactForm caseId={caseId} onAdd={handleAddSuccess} onCancel={() => setShowForm(false)} />
+                ) : (
+                    <button
+                        className="ch-add-btn btn-primary"
+                        onClick={() => setShowForm(true)}
+                    >
+                        <PlusIcon /> Add New Contact
+                    </button>
+                )}
+            </GlassCard>
+        </div>
     );
 }

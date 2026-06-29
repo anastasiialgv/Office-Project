@@ -4,6 +4,7 @@ import {
     Modal,
 } from "../../components/Mini.jsx";
 import axios from "axios";
+import Loader from "../../components/Loader.jsx";
 const ROLES = ["EMPLOYEE", "ADMIN", "ACCOUNTANT"];
 
 const ROLE_COLORS = {
@@ -12,34 +13,13 @@ const ROLE_COLORS = {
     ACCOUNTANT: { color: "#6ddd8a" },
 };
 
-const STATUS_COLORS = {
-    Active:   "#6ddd8a",
-    Inactive: "#888",
-};
-
-
-/** Two-letter initials from full name */
 function initials(name) {
     const parts = name.trim().split(" ");
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-/** Avatar background */
-const AVATAR_COLORS = ["#7c5cbf", "#5b7abf", "#5ba08c", "#8c5b8c", "#bf7c5c", "#5c8cbf", "#7cbf5c", "#bf5c7c"];
-const getUserId = (user) => {
-    if (!user) return "0";
-    return user.userId || user.id || "0";
-};
 
-function avatarColor(user) {
-    const userIdStr = String(getUserId(user));
-    const numericId = userIdStr.replace(/\D/g, "");
-    const idx = (numericId ? parseInt(numericId, 10) : userIdStr.length) % AVATAR_COLORS.length;
-    return AVATAR_COLORS[idx] || AVATAR_COLORS[0];
-}
-
-/** Generate a random 10-character password */
 function generatePassword() {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%";
     return Array.from({ length: 10 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
@@ -51,15 +31,19 @@ function RoleBadge({ role }) {
 }
 
 function Avatar({ user }) {
+    const baseColor = ROLE_COLORS[user?.role]?.color || "#7c5cbf";
+    const pastelBg = `${baseColor}22`;
     return (
-        <div style={{
-            width: 34, height: 34, borderRadius: "50%",
-            background: avatarColor(user), // ПЕРЕДАЕМ ВЕСЬ ОБЪЕКТ user
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 12, fontWeight: 700, color: "#fff",
-            flexShrink: 0, letterSpacing: "0.03em",
-        }}>
-            {initials(user.name || "Unknown")}
+        <div
+            className="user-avatar-circle"
+            style={{
+                background: pastelBg,
+                border: `1px solid ${baseColor}`
+            }}
+        >
+            <span style={{color: baseColor}}>
+                {initials(user.name || "Unknown")}
+            </span>
         </div>
     );
 }
@@ -68,7 +52,7 @@ function Avatar({ user }) {
 // NEW: Reset Password Modal
 // ─────────────────────────────────────────────────────────────────────────────
 function ResetPasswordModal({ user, onClose }) {
-    const [step, setStep] = useState("confirm"); // confirm | success
+    const [step, setStep] = useState("confirm");
     const [newPass, setNewPass] = useState("");
     const [copied, setCopied] = useState(false);
 
@@ -97,12 +81,12 @@ function ResetPasswordModal({ user, onClose }) {
     return (
         <Modal title={step === "confirm" ? "Reset Password" : "New Password Generated"} onClose={onClose}>
             {step === "confirm" ? (
-                <div style={{ textAlign: "center", padding: "10px 0" }}>
-                    <div style={{ fontSize: 40, marginBottom: 15 }}>🔐</div>
-                    <div style={{ color: "#fff", fontWeight: 600, marginBottom: 10 }}>
+                <div className="reset-password-confirm-layout">
+                    <div className="reset-password-icon">🔐</div>
+                    <div className="reset-password-confirm-title">
                         Are you sure you want to reset password for {user.name}?
                     </div>
-                    <div style={{ color: "var(--text-muted)", fontSize: 13, marginBottom: 25 }}>
+                    <div className="reset-password-confirm-text">
                         The old password will stop working immediately.
                     </div>
                     <div className="ap-footer" style={{ justifyContent: "center" }}>
@@ -112,7 +96,7 @@ function ResetPasswordModal({ user, onClose }) {
                 </div>
             ) : (
                 <div>
-                    <div style={{ color: "var(--accent-green)", fontWeight: 600, marginBottom: 15, textAlign: "center" }}>
+                    <div className="reset-password-success-msg">
                         ✓ Password has been reset successfully!
                     </div>
                     <div className="ap-field">
@@ -129,7 +113,7 @@ function ResetPasswordModal({ user, onClose }) {
                             </button>
                         </div>
                     </div>
-                    <div style={{ color: "var(--accent-orange)", fontSize: 12, marginTop: 15 }}>
+                    <div className="reset-password-warning">
                         ⚠ Please copy and send this password to the user. It won't be shown again.
                     </div>
                     <div className="ap-footer">
@@ -226,7 +210,6 @@ function EditUserModal({user, onClose, onSave}) {
     const handleSave = async () => {
         try {
             const token = localStorage.getItem("token");
-            // Отправляем PUT запрос на бэкенд
             await axios.put(`http://localhost:8080/office/admin/user/${user.userId || user.id}`,
                 { role, active: isActive },
                 { headers: { Authorization: `Bearer ${token}` } }
@@ -242,9 +225,12 @@ function EditUserModal({user, onClose, onSave}) {
 
     return (
         <Modal title={`Edit — ${user.name}`} onClose={onClose}>
-            <div style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: "12px 16px", marginBottom: 20 }}>
+            <div className="adm-icon">
                 <Avatar user={user} />
-                <div><div style={{ fontWeight: 600, fontSize: 14 }}>{user.name}</div><div style={{ fontSize: 12, color: "var(--text-muted)" }}>{user.email}</div></div>
+                <div>
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>{user.name}</div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{user.email}</div>
+                </div>
             </div>
             <div className="ap-field">
                 <div className="ap-label">Role</div>
@@ -261,8 +247,8 @@ function EditUserModal({user, onClose, onSave}) {
                 </select>
             </div>
             {wantsDeactivate && (
-                <div style={{ background: "rgba(240,112,112,0.08)", border: "1px solid rgba(240,112,112,0.25)", borderRadius: 10, padding: "12px 14px", marginBottom: 10 }}>
-                    <div style={{ fontSize: 12, color: "var(--accent-red)", marginBottom: 4 }}>⚠ Confirm account deactivation?</div>
+                <div className="edit-user-deactivate-notice">
+                    <div className="edit-user-deactivate-title">⚠ Confirm account deactivation?</div>
                     <input type="checkbox" checked={confirm} onChange={e => setConfirm(e.target.checked)} /> Confirm
                 </div>
             )}
@@ -306,7 +292,7 @@ export default function AdminUsers() {
         return userName.toLowerCase().includes(q) || userEmail.toLowerCase().includes(q);
     });
 
-    if (loading) return <div style={{ color: "#fff", padding: 40 }}>Loading...</div>;
+    if (loading) return <Loader/>;
 
     return (
         <>
@@ -353,17 +339,15 @@ export default function AdminUsers() {
 
             <div style={{padding: "0 20px 40px"}}>
                 <GlassCard>
-                    <div className="adm-table-head" style={{gridTemplateColumns: "2fr 1.5fr 120px 100px 180px"}}>
-                        <span>User</span><span>Email</span><span>Role</span><span>Status</span><span>Actions</span>
+                    <div className="adm-table-head">
+                        <span>User</span><span>Email</span><span>Phone</span><span>Role</span><span>Status</span><span>Actions</span>
                     </div>
                     {filtered.map((u, i) => (
-                        <div key={u.userId || u.id || i} className="adm-table-row" style={{
-                            gridTemplateColumns: "2fr 1.5fr 120px 100px 180px",
-                            animationDelay: `${i * 0.04}s`
-                        }}>
-                            <div style={{display: "flex", alignItems: "center", gap: 10}}><Avatar user={u}/> <span
-                                style={{fontWeight: 600, fontSize: 13}}>{u.name}</span></div>
+                        <div key={u.id || i} className="adm-table-row">
+                            <div style={{display: "flex", alignItems: "center", gap: 10}}><Avatar user={u} /> <span
+                                style={{fontWeight: 600, fontSize: 13}}>{u.name} {u.surname}</span></div>
                             <span style={{fontSize: 12, color: "var(--text-muted)"}}>{u.email}</span>
+                            <span style={{fontSize: 12, color: "var(--text-muted)"}}>{u.phone}</span>
                             <RoleBadge role={u.role}/>
                             <span style={{
                                 fontSize: 12,
@@ -372,7 +356,7 @@ export default function AdminUsers() {
                             }}>
                                 ● {u.active ? "Active" : "Inactive"}
                             </span>
-                            <div style={{display: "flex", gap: 8}}>
+                            <div className="adm-row-actions">
                                 <button className="adm-btn-ghost" style={{padding: "5px 10px", fontSize: 11}}
                                         onClick={() => setEditTgt(u)}>Edit
                                 </button>

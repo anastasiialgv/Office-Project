@@ -1,0 +1,53 @@
+# ==========================================
+# BACKEND (Spring Boot / Maven / Gradle)
+# ==========================================
+**/target/
+**/.gradle/
+**/build/
+**/*.class
+**/*.jar
+**/*.war
+
+# Lokalne pliki konfiguracyjne i logi backendu
+**/log/
+**/*.log
+.lighthouse/
+
+# ==========================================
+# FRONTEND (React / Node.js)
+# ==========================================
+**/node_modules/
+**/dist/
+**/build/
+**/.pnpm-debug.log*
+
+# Lokalne pliki środowiskowe (zawierające np. klucze API)
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+
+# ==========================================
+# SYSTEMOWE STORAGE & IDEs (IntelliJ, VS Code)
+# ==========================================
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# Systemowe pliki operacyjne
+Thumbs.db
+.DS_Store
+
+# ==========================================
+# LOKALNE REPOZYTORIUM PLIKÓW (UPLOADS)
+# ==========================================
+# Ignorujemy zawartość folderu z plikami PDF/CSV, ale zachowujemy sam folder
+**/uploads/*
+!**/uploads/.gitkeep

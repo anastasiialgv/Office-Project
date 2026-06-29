@@ -1,23 +1,19 @@
-// =============================================================================
-// pages/admin/AdminCaseRegistry.jsx
-// Administrator · Case Registry (Синхронизировано с БД и DTO)
-// =============================================================================
-
-import { useState, useEffect } from "react";
+import {useState, useEffect, useRef} from "react";
 import {
     GlassCard,
     StatusBadge,
     Modal,
 } from "../../components/Mini.jsx";
 import axios from "axios";
+import Loader from "../../components/Loader.jsx";
 
 const API_BASE = "http://localhost:8080/office/admin";
 
 const FILTERS = [
-    { key: "REGISTERED",          label: "Unassigned",          color: "#c8a0ff" },
+    { key: "REGISTERED",          label: "Registered",          color: "#c8a0ff" },
+    { key: "WAITING_FOR_CONTACT", label: "Waiting for Contact", color: "#56ccf2" },
     { key: "IN_PROGRESS",         label: "In Progress",         color: "#ffa03c" },
-    { key: "DISPUTED",            label: "Disputed",            color: "#f07070" },
-    { key: "WAITING_FOR_CONTACT", label: "Waiting for Contact", color: "#6ab0ff" },
+    { key: "IN_COURT",            label: "In Court",            color: "#ff65b2" },
     { key: "CLOSED",              label: "Closed",              color: "#6ddd8a" },
 ];
 
@@ -32,8 +28,8 @@ function CreateDriverModal({ onClose, onSave }) {
         email: "",
         passportNumber: "",
         pesel: "",
-        birthDate: "", // Добавили поле даты рождения под требования валидации БД
-        notes: "Registered via admin panel" // Дефолтное значение для notes, чтобы не было @NotBlank ошибки
+        birthDate: "",
+        notes: "Registered via admin panel"
     });
     const [err, setErr] = useState("");
 
@@ -142,7 +138,7 @@ function CreateCarModal({drivers, onClose, onSave}) {
                 <input className="glass-input" placeholder="Black" value={form.color} onChange={e => setForm({...form, color: e.target.value})} />
             </div>
             <div className="ap-field">
-                <div className="ap-label">Assign Owner (Driver)</div>
+                <div className="ap-label">Assign Driver</div>
                 <select className="glass-select" value={form.idDriver} onChange={e => setForm({...form, idDriver: e.target.value})}>
                     <option value="">-- Choose Driver --</option>
                     {drivers.map(d => <option key={d.idDriver} value={d.idDriver}>{d.name} {d.surname}</option>)}
@@ -161,7 +157,6 @@ function CreateCarModal({drivers, onClose, onSave}) {
 // Модалка: Регистрация Нового Дела (AdminCaseDTO)
 // ─────────────────────────────────────────────────────────────────────────────
 function RegisterCaseModal({ drivers, cars, onClose, onSave }) {
-    // Убрали employeeId из состояния
     const [form, setForm] = useState({
         violationDate: "",
         fineAmount: "",
@@ -170,6 +165,7 @@ function RegisterCaseModal({ drivers, cars, onClose, onSave }) {
         address: ""
     });
     const [err, setErr]   = useState("");
+    const [photoFile, setPhotoFile] = useState(null);
 
     const set = (k, v) => { setForm(p => ({ ...p, [k]: v })); setErr(""); };
 
@@ -182,15 +178,23 @@ function RegisterCaseModal({ drivers, cars, onClose, onSave }) {
 
         try {
             const token = localStorage.getItem("token");
-            const payload = {
-                violationDate: form.violationDate,
-                fineAmount: fine,
-                idDriver: parseInt(form.idDriver, 10),
-                plateNumber: form.plateNumber,
-                address: form.address
-            };
+            const formData = new FormData();
+            formData.append("violationDate", form.violationDate);
+            formData.append("fineAmount", fine);
+            formData.append("idDriver", parseInt(form.idDriver, 10));
+            formData.append("plateNumber", form.plateNumber);
+            formData.append("address", form.address);
 
-            await axios.post(`${API_BASE}/case`, payload, { headers: { Authorization: `Bearer ${token}` } });
+            if (photoFile) {
+                formData.append("photo", photoFile);
+            }
+
+            await axios.post(`${API_BASE}/case`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data"
+                }
+            });
             onSave();
             onClose();
         } catch (e) {
@@ -205,29 +209,34 @@ function RegisterCaseModal({ drivers, cars, onClose, onSave }) {
                 <div className="ap-label">Select Driver</div>
                 <select className="glass-select" value={form.idDriver} onChange={e => set("idDriver", e.target.value)}>
                     <option value="">-- Choose Driver --</option>
-                    {drivers.map(d => <option key={d.idDriver} value={d.idDriver}>{d.name} {d.surname} {d.passportNumber}</option>)}
+                    {drivers.map(d => <option key={d.idDriver}
+                                              value={d.idDriver}>{d.name} {d.surname} {d.email}</option>)}
                 </select>
             </div>
 
             {/* 2. Выбор Машины */}
             <div className="ap-field">
                 <div className="ap-label">Select Car (Plate)</div>
-                <select className="glass-select" value={form.plateNumber} onChange={e => set("plateNumber", e.target.value)}>
+                <select className="glass-select" value={form.plateNumber}
+                        onChange={e => set("plateNumber", e.target.value)}>
                     <option value="">-- Choose Vehicle --</option>
-                    {cars.map(c => <option key={c.plateNumber} value={c.plateNumber}>{c.brand} {c.model} {c.plateNumber}</option>)}
+                    {cars.map(c => <option key={c.plateNumber}
+                                           value={c.plateNumber}>{c.brand} {c.model} {c.plateNumber}</option>)}
                 </select>
             </div>
 
             {/* 3. Адрес Нарушения */}
             <div className="ap-field">
                 <div className="ap-label">Violation / Incident Address</div>
-                <input className="glass-input" placeholder="e.g. A2 Highway, 104 km, Poznań" value={form.address} onChange={e => set("address", e.target.value)} />
+                <input className="glass-input" placeholder="e.g. A2 Highway, 104 km, Poznań" value={form.address}
+                       onChange={e => set("address", e.target.value)}/>
             </div>
 
             {/* 4. Дата Нарушения */}
             <div className="ap-field">
                 <div className="ap-label">Violation Date</div>
-                <input className="glass-input" type="date" value={form.violationDate} onChange={e => set("violationDate", e.target.value)} />
+                <input className="glass-input" type="date" value={form.violationDate}
+                       onChange={e => set("violationDate", e.target.value)}/>
             </div>
 
             {/* 5. Сумма Штрафа */}
@@ -236,8 +245,19 @@ function RegisterCaseModal({ drivers, cars, onClose, onSave }) {
                 <div className="ap-amount-wrap">
                     <span className="ap-currency">PLN</span>
                     <input className="ap-amount-input" type="number" min="0" step="0.01" placeholder="0.00"
-                           value={form.fineAmount} onChange={e => set("fineAmount", e.target.value)} />
+                           value={form.fineAmount} onChange={e => set("fineAmount", e.target.value)}/>
                 </div>
+            </div>
+
+            {/* ПОЛЕ ЗАГРУЗКИ ФАЙЛА */}
+            <div className="ap-field">
+                <div className="ap-label">Upload Violation Photo</div>
+                <input
+                    className="glass-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={e => setPhotoFile(e.target.files[0])} // Сохраняем файл в стейт
+                />
             </div>
 
             {err && <div className="ap-error">{err}</div>}
@@ -249,10 +269,11 @@ function RegisterCaseModal({ drivers, cars, onClose, onSave }) {
         </Modal>
     );
 }
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Модалка: Архивация Дела
 // ─────────────────────────────────────────────────────────────────────────────
-function ArchiveModal({ caseItem, onClose, onConfirm }) {
+function ArchiveModal({caseItem, onClose, onConfirm}) {
     const today = new Date().toISOString().split("T")[0];
     const [closedDate, setClosedDate] = useState(today);
 
@@ -280,12 +301,11 @@ function ArchiveModal({ caseItem, onClose, onConfirm }) {
             </div>
             <div className="ap-footer">
                 <button className="btn-danger" onClick={onClose}>Cancel</button>
-                <button className="adm-confirm-archive-btn" onClick={handleConfirm}>✓ Confirm Archive</button>
+                <button className="btn-primary" onClick={handleConfirm}>✓ Confirm Archive</button>
             </div>
         </Modal>
     );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Главная Страница Реестра Дел
 // ─────────────────────────────────────────────────────────────────────────────
@@ -305,6 +325,8 @@ export default function AdminCases() {
     const [showAddCar, setAddCar]       = useState(false);
     const [archiveTarget, setTarget]    = useState(null);
 
+    const fileInputRef = useRef(null);
+
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -313,9 +335,9 @@ export default function AdminCases() {
 
             const [casesRes, driversRes, carsRes, empRes] = await Promise.all([
                 axios.get(`${API_BASE}/cases`, config),
-                axios.get(`${API_BASE}/drivers`, config),
+                axios.get(`http://localhost:8080/office/drivers/short`, config),
                 axios.get(`${API_BASE}/vehicles`, config),
-                axios.get(`http://localhost:8080/office/admin/users`, config)
+                axios.get(`${API_BASE}/users`, config)
             ]);
 
             setCases(casesRes.data);
@@ -344,6 +366,34 @@ export default function AdminCases() {
         }
     };
 
+    const handleJsonImport = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const jsonData = JSON.parse(e.target.result);
+
+                const token = localStorage.getItem("token");
+                await axios.post(`${API_BASE}/cases/import`, jsonData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                alert("JSON cases imported successfully!");
+                fetchData();
+            } catch (err) {
+                alert("Import failed. Ensure the file contains a valid JSON list of cases.");
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = "";
+    };
+
     const visible = cases.filter(c => {
         if (!c) return false;
         if (!showArchived && c.status === "ARCHIVED")  return false;
@@ -361,46 +411,73 @@ export default function AdminCases() {
     const unassigned    = cases.filter(c => c.status !== "ARCHIVED" && !c.employeeId).length;
     const readyClose    = cases.filter(c => c.status === "CLOSED").length;
 
-    if (loading) return <div style={{ color: "#fff", padding: 40, textAlign: "center" }}>Loading system registry...</div>;
+    if (loading) return <Loader/>;
 
     return (
         <>
-            {/* Статистические плашки */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                style={{display: "none"}}
+                accept=".json"
+                onChange={handleJsonImport}
+            />
+
             <div className="adm-stat-row">
                 {[
-                    { label: "Active Cases",     value: totalActive,   color: "var(--accent-purple)" },
-                    { label: "Unassigned",        value: unassigned,    color: "var(--accent-orange)" },
-                    { label: "Ready to Archive",  value: readyClose,    color: "var(--accent-green)" },
-                    { label: "Archived Total",    value: totalArchived, color: "var(--text-muted)" },
+                    {label: "Active Cases", value: totalActive, color: "var(--accent-purple)"},
+                    {label: "Unassigned", value: unassigned, color: "var(--accent-orange)"},
+                    {label: "Ready to Archive", value: readyClose, color: "var(--accent-green)"},
+                    {label: "Archived Total", value: totalArchived, color: "var(--text-muted)"},
                 ].map(s => (
                     <div key={s.label} className="adm-stat-chip">
-                        <span className="adm-stat-value" style={{ color: s.color }}>{s.value}</span>
+                        <span className="adm-stat-value" style={{color: s.color}}>{s.value}</span>
                         <span className="adm-stat-label">{s.label}</span>
                     </div>
                 ))}
             </div>
 
-            {/* Панель инструментов */}
             <div className="adm-toolbar">
-                <input className="glass-input adm-search" placeholder="Search by ID or status…" value={search} onChange={e => setSearch(e.target.value)} />
-                <div className="adm-toolbar-actions" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    <button className="btn-primary" onClick={() => setRegister(true)}>+ Register Case</button>
-                    <button className="adm-btn-ghost" style={{ borderColor: "#6ab0ff", color: "#6ab0ff" }} onClick={() => setAddDriver(true)}>+ Driver</button>
-                    <button className="adm-btn-ghost" style={{ borderColor: "#6ddd8a", color: "#6ddd8a" }} onClick={() => setAddCar(true)}>+ Car</button>
+                <input className="glass-input adm-search" placeholder="Search by ID" value={search}
+                       onChange={e => setSearch(e.target.value)}/>
+                <div className="adm-toolbar-actions" style={{display: "flex", gap: 8, flexWrap: "wrap"}}>
                     <button
                         className="adm-btn-ghost"
-                        style={showArchived ? { borderColor: "var(--accent-purple)", color: "var(--accent-purple)" } : {}}
-                        onClick={() => { setShowArch(p => !p); setFilter(null); }}
+                        style={{borderColor: "#c8a0ff", color: "#c8a0ff"}}
+                        onClick={() => fileInputRef.current.click()}
                     >
-                        {showArchived ? "← Active Cases" : "📦 Archived"}
+                        Import
+                    </button>
+                    <button
+                        className="adm-btn-ghost"
+                        style={{borderColor: "#FF69B4", color: "#FF69B4"}}
+                        onClick={() => setRegister(true)}
+                    >
+                        Register Case
+                    </button>
+                    <button className="adm-btn-ghost" style={{borderColor: "#6ab0ff", color: "#6ab0ff"}}
+                            onClick={() => setAddDriver(true)}>Driver
+                    </button>
+                    <button className="adm-btn-ghost" style={{borderColor: "#6ddd8a", color: "#6ddd8a"}}
+                            onClick={() => setAddCar(true)}>Car
+                    </button>
+                    <button
+                        className="adm-btn-ghost"
+                        style={showArchived ? {borderColor: "var(--accent-purple)", color: "var(--accent-purple)"} : {}}
+                        onClick={() => {
+                            setShowArch(p => !p);
+                            setFilter(null);
+                        }}
+                    >
+                        {showArchived ? "←Active Cases" : "Archived"}
                     </button>
                 </div>
             </div>
 
-            {/* Фильтры по статусам */}
             {!showArchived && (
                 <div className="adm-filter-row">
-                    <div className={`adm-filter-chip ${activeFilter === null ? "active" : ""}`} onClick={() => setFilter(null)}>
+                    <div className={`adm-filter-chip ${activeFilter === null ? "active" : ""}`}
+                         onClick={() => setFilter(null)}>
                         All Active
                     </div>
                     {FILTERS.map(f => (
@@ -409,15 +486,14 @@ export default function AdminCases() {
                             className={`adm-filter-chip ${activeFilter === f.key ? "active" : ""}`}
                             onClick={() => setFilter(p => p === f.key ? null : f.key)}
                         >
-                            <span className="adm-chip-dot" style={{ background: f.color }} />
+                            <span className="adm-chip-dot" style={{background: f.color}}/>
                             {f.label}
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Таблица */}
-            <div style={{ padding: "0 20px 40px" }}>
+            <div style={{padding: "0 20px 40px"}}>
                 <GlassCard>
                     <div className="adm-table-head">
                         <span>Case ID</span>
@@ -425,7 +501,7 @@ export default function AdminCases() {
                         <span>Fine Amount</span>
                         <span>Status</span>
                         <span>Assigned To</span>
-                        <span>Actions</span>
+                        {!showArchived?<span>Archiving</span>:<span/>}
                     </div>
 
                     {visible.length === 0
@@ -433,43 +509,50 @@ export default function AdminCases() {
                         : visible.map((c, i) => {
                             const isArchivedCase = c.status === "ARCHIVED";
                             const canArchive = c.status === "CLOSED";
-                            // Формируем имя ответственного сотрудника из DTO
-                            const currentWorkerName = c.employeeName ? `${c.employeeName} ${c.employeeSurname || ""}` : "";
+                            const currentWorkerName = c.name ? `${c.name} ${c.surname || ""}` : "";
 
                             return (
-                                <div key={c.numberCase} className="adm-table-row" style={{ animationDelay: `${i * 0.04}s` }}>
+                                <div key={c.numberCase} className="adm-table-row"
+                                     style={{animationDelay: `${i * 0.04}s`}}>
                                     <span className="adm-case-id">CD-{c.numberCase}</span>
                                     <span className="adm-cell-muted">{c.violationDate}</span>
-                                    <span style={{ color: "var(--accent-orange)", fontWeight: 600 }}>{Number(c.fineAmount).toFixed(2)} PLN</span>
+                                    <span style={{
+                                        color: "var(--accent-orange)",
+                                        fontWeight: 600
+                                    }}>{Number(c.fineAmount).toFixed(2)} PLN</span>
                                     <StatusBadge status={c.status} />
 
                                     {isArchivedCase ? (
-                                        <div style={{ fontSize: 11, lineHeight: 1.5 }}>
-                                            <div style={{ color: "#fff" }}>{currentWorkerName || "—"}</div>
-                                            <div style={{ color: "var(--text-muted)" }}>{c.closedDate || "—"}</div>
+                                        <div style={{fontSize: 11, lineHeight: 1.5}}>
+                                            <div style={{color: "#fff"}}>{currentWorkerName || "—"}</div>
                                         </div>
                                     ) : (
                                         <select
                                             className="adm-assign-select glass-select"
-                                            value={c.employeeId || ""}
+                                            value={c.employeeId || " "}
                                             onChange={e => handleAssign(c.numberCase, e.target.value)}
                                             onClick={e => e.stopPropagation()}
                                         >
                                             <option value="">— Unassigned —</option>
-                                            {employees.map(e => (
-                                                <option key={e.userId || e.id} value={e.userId || e.id}>{e.name} {e.surname}</option>
-                                            ))}
+                                            {employees
+                                                .filter(emp => (emp.role === "EMPLOYEE") && emp.active === true)
+                                                .map(e => {
+                                                    const empId = e.userId || e.id || e.employeeId;
+                                                    return (
+                                                        <option key={empId} value={empId}>
+                                                            {e.name} {e.surname}
+                                                        </option>
+                                                    );
+                                                })
+                                            }
                                         </select>
                                     )}
 
                                     <div className="adm-row-actions">
                                         {canArchive && (
                                             <button className="adm-archive-btn" onClick={() => setTarget(c)}>
-                                                ✓ Archive
+                                                Archive
                                             </button>
-                                        )}
-                                        {isArchivedCase && (
-                                            <span className="adm-archived-tag">Archived</span>
                                         )}
                                     </div>
                                 </div>
@@ -479,11 +562,12 @@ export default function AdminCases() {
                 </GlassCard>
             </div>
 
-            {/* Менеджмент модалок */}
-            {showRegister && <RegisterCaseModal drivers={drivers} cars={cars} onClose={() => setRegister(false)} onSave={fetchData} />}
-            {showAddDriver && <CreateDriverModal onClose={() => setAddDriver(false)} onSave={fetchData} />}
-            {showAddCar && <CreateCarModal drivers={drivers} onClose={() => setAddCar(false)} onSave={fetchData} />}
-            {archiveTarget && <ArchiveModal caseItem={archiveTarget} onClose={() => setTarget(null)} onConfirm={fetchData} />}
+            {showRegister && <RegisterCaseModal drivers={drivers} cars={cars} onClose={() => setRegister(false)}
+                                                onSave={fetchData}/>}
+            {showAddDriver && <CreateDriverModal onClose={() => setAddDriver(false)} onSave={fetchData}/>}
+            {showAddCar && <CreateCarModal drivers={drivers} onClose={() => setAddCar(false)} onSave={fetchData}/>}
+            {archiveTarget &&
+                <ArchiveModal caseItem={archiveTarget} onClose={() => setTarget(null)} onConfirm={fetchData}/>}
         </>
     );
 }

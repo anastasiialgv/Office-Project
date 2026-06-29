@@ -3,6 +3,7 @@ import {GlassCard,
     PencilIcon, CheckIcon, UserIcon,
 } from "../../components/Mini.jsx";
 import axios from "axios";
+import Loader from "../../components/Loader.jsx";
 
 function EditableField({ label, value, onChange }) {
     const [editing, setEditing] = useState(false);
@@ -66,21 +67,20 @@ export default function Profile() {
     const updateProfile = async (updatedData) => {
         try {
             const token = localStorage.getItem("token");
-            // Используем уже созданный нами метод PutMapping("/{employeeId}")
             await axios.put(`http://localhost:8080/office/${profile.userId || profile.id}`,
                 updatedData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            fetchProfile(); // Перезагружаем данные
+            fetchProfile();
         } catch (error) {
             alert("Failed to update profile");
         }
     };
 
-    if (loading) return <div style={{color: '#fff', padding: '40px', textAlign: 'center'}}>Loading profile...</div>;
+    if (loading) return Loader;
     if (!profile) return <div style={{color: '#fff', padding: '40px', textAlign: 'center'}}>Profile not found</div>;
     return (
-            <div className="profile-card-wrap" style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
+            <div className="profile-card-wrap" >
                 <GlassCard className="profile-narrow-card">
                     <div className="profile-header">
                         <div className="profile-avatar">

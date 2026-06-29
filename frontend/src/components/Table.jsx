@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { STATUS_STYLES, TYPES_STYLES, CONTACT_TYPES_STYLES } from "./Mini.jsx";
 
 const pageSize = 9;
 
 export default function Table({
                                   data = [],
                                   filterStatuses = [],
-                                  filterKey = "status", // Указываем, по какому полю фильтровать (по умолчанию status)
+                                  filterKey = "status",
                                   columns = [],
                                   renderRow
                               }) {
@@ -13,10 +14,7 @@ export default function Table({
     const [page, setPage] = useState(1);
     const [activeFilters, setFilters] = useState(new Set());
     const [showFiltersPanel, setShowFiltersPanel] = useState(false);
-
-    // В твоем CSS классы называются chip-CLOSED, chip-IN_PROGRESS.
-    // Функция меняет пробелы на подчеркивания для корректной работы стилей.
-    const getChipClass = (val) => String(val).replace(/\s+/g, '_');
+    const getChipClass = (val) => String(val).toLowerCase();
 
     const toggleFilter = (val) => {
         setFilters((prev) => {
@@ -29,7 +27,6 @@ export default function Table({
     };
 
     const filtered = data.filter((item) => {
-        // matchF: берем значение из поля, которое передано в filterKey
         const currentValue = item[filterKey];
         const matchF = activeFilters.size === 0 || activeFilters.has(currentValue);
 
@@ -68,21 +65,29 @@ export default function Table({
 
                 {showFiltersPanel && (
                     <div className="cl-chips">
-                        {filterStatuses.map((s) => (
-                            <div
-                                key={s}
-                                className={`cl-chip chip-${getChipClass(s)}`}
-                                onClick={() => toggleFilter(s)}
-                                style={{
-                                    cursor: 'pointer',
-                                    // Подсветка выбранного фильтра белой рамкой[cite: 2]
-                                    border: activeFilters.has(s) ? '1px solid #fff' : '1px solid transparent'
-                                }}
-                            >
-                                {s}
-                                {activeFilters.has(s) && <span className="cl-chip-x" style={{marginLeft: '5px'}}>✓</span>}
-                            </div>
-                        ))}
+                        {filterStatuses.map((s) => {
+                            const statusColor =
+                                (typeof STATUS_STYLES !== 'undefined' && STATUS_STYLES[s]?.color) ||
+                                (typeof CONTACT_TYPES_STYLES !== 'undefined' && CONTACT_TYPES_STYLES[s]?.color) ||
+                                (typeof TYPES_STYLES !== 'undefined' && TYPES_STYLES[s]?.color) ||
+                                "#eee";
+
+                            const isActive = activeFilters.has(s);
+
+                            return (
+                                <div
+                                    key={s}
+                                    className={`cl-chip chip-${getChipClass(s)} ${isActive ? "active" : ""}`}
+                                    onClick={() => toggleFilter(s)}
+                                    style={{"--chip-color": statusColor}}
+                                >
+                                    <span className="cl-chip-dot"/>
+
+                                    {/* 🌟 Единственное место, где мы убираем подчеркивания для пользователя */}
+                                    {s ? String(s).replace(/_/g, " ") : ""}
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
             </div>
@@ -92,7 +97,7 @@ export default function Table({
             <div className="cl-table-wrap">
                 <div className="cl-table-head">
                     {columns.map((col, idx) => <span key={idx}>{col}</span>)}
-                    <span />
+                    <span/>
                 </div>
 
                 {slice.length === 0 ? (
@@ -104,7 +109,7 @@ export default function Table({
 
             <div className="cl-pag">
                 <button className="cl-pag-btn" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>‹ Prev</button>
-                {Array.from({ length: pages }, (_, i) => (
+                {Array.from({length: pages}, (_, i) => (
                     <button
                         key={i + 1}
                         className={`cl-pag-btn ${currentPage === i + 1 ? "active" : ""}`}

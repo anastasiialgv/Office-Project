@@ -9,16 +9,13 @@ export default function Login() {
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-        e.preventDefault(); // Чтобы страница не перезагружалась
+        e.preventDefault();
         setError("");
 
         try {
             const response = await api.post("/office/login", { email, password });
-
-            // 2. Достаем токен и роль из ответа (структура зависит от твоего бэка)
             const { token, role, userId } = response.data;
 
-            // 3. Сохраняем самое важное в браузер
             localStorage.setItem("token", token);
             localStorage.setItem("role", role);
             localStorage.setItem("userId", userId);
@@ -28,10 +25,9 @@ export default function Login() {
             } else if (role === "EMPLOYEE") {
                 navigate("/cases");
             } else if (role === "ACCOUNTANT") {
-                navigate("/accountant/stats");
+                navigate("/accountant/dashboard");
             }
         } catch (err) {
-            // Если пароль неверный или юзер не найден
             setError(err.response?.data?.message || "Invalid credentials");
         }
     };
@@ -44,7 +40,7 @@ export default function Login() {
 
                 <form className="login-form" onSubmit={handleLogin}>
                     <div className="login-input-group">
-                        <label className="mc-fl" style={{ marginBottom: '8px', display: 'block' }}>Email Address</label>
+                        <label className="mc-fl">Email Address</label>
                         <input
                             type="email"
                             className="glass-input"
@@ -56,7 +52,7 @@ export default function Login() {
                     </div>
 
                     <div className="login-input-group">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <div className="login-password-label-wrapper">
                             <label className="mc-fl">Password</label>
                         </div>
                         <input
@@ -69,7 +65,7 @@ export default function Login() {
                         />
                     </div>
 
-                    <button type="submit" className="btn-doc login-btn" style={{ background: 'var(--accent-purple)', color: '#fff' }}>
+                    <button type="submit" className="btn-doc login-btn" >
                         Sign In
                     </button>
                 </form>

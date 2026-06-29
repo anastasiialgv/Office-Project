@@ -8,14 +8,12 @@ export default function ContactDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // Моковые данные для контакта
     const data = {
         id: id || "1287327123",
         subject: "Debt Inquiry",
         contact_type: "EMAIL",
         sent_at: "Jan 11, 2050",
-        numbercase: "12263",
-        // Тело сообщения
+        numberCase: "12263",
         body: "Hello! I am writing to clarify the details regarding the last notice I received. Can you please provide more information about the payment deadline?"
     };
 
@@ -36,7 +34,7 @@ export default function ContactDetail() {
 
                         <Field label="Sent At">{data.sent_at}</Field>
 
-                        <Field label="Numbercase">{data.numbercase}</Field>
+                        <Field label="Numbercase">{data.numberCase}</Field>
 
                         {/* Поле с текстом сообщения */}
                         <div className="contact-body-section">
@@ -60,7 +58,7 @@ export default function ContactDetail() {
                         </button>
                         <button
                             className="btn-danger flex-1"
-                            onClick={() => navigate(`/cases/${data.numbercase}`)}
+                            onClick={() => navigate(`/cases/${data.numberCase}`)}
                         >
                             Go to Case
                         </button>

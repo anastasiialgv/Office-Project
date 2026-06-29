@@ -1,52 +1,66 @@
-import {TopBar, ArrButton, ContactTypeBadge} from "../../../components/Mini.jsx";
+import { useEffect, useState } from "react";
+import {ArrButton, ContactTypeBadge } from "../../../components/Mini.jsx";
 import { useNavigate } from "react-router-dom";
 import Table from "../../../components/Table.jsx";
+import axios from "axios";
+import Loader from "../../../components/Loader.jsx";
 
-// 1. Моковые данные (Пример)
-export const ALL_CONTACTS = [
-    {
-        id: "1287327123",
-        subject: "Debt Inquiry",
-        contact_type: "EMAIL",
-        sent_at: "Jan 11, 2050",
-    },
-    {
-        id: "1287327124",
-        subject: "Call regarding case",
-        contact_type: "PHONE",
-        sent_at: "Jan 16, 2049",
-    }
-].concat(Array(15).fill({
-    id: "5555555555",
-    subject: "Auto Notification",
-    contact_type: "SMS",
-    sent_at: "Jan 18, 2050",
-}));
-
-// 2. Список типов для фильтрации
-const ALL_FILTER_TYPES_CONTACTS = ["EMAIL", "PHONE", "SMS"];
+const API_BASE = "http://localhost:8080/office";
+const ALL_FILTER_TYPES_CONTACTS = ["PHONE", "EMAIL", "LETTER"];
 
 export default function Contacts() {
     const navigate = useNavigate();
+    const [contacts, setContacts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "—";
+        try {
+            const date = new Date(dateStr);
+            // Форматирует в вид: 21.06.2026 16:20
+            return date.toLocaleDateString("ru-RU") + " " + date.toLocaleTimeString("ru-RU", { hour: '2-digit', minute: '2-digit' });
+        } catch (e) {
+            return dateStr; // Если что-то пошло не так, вернет исходную строку, чтоб не падало
+        }
+    };
+
+    useEffect(() => {
+        const fetchAllContacts = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await axios.get(`${API_BASE}/contacts/my`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setContacts(response.data); // Сюда прилетит чистый массив DTO
+            } catch (e) {
+                console.error("Error fetching contacts:", e);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAllContacts();
+    }, []);
+
+    if (loading) return <Loader/>;
 
     return (
         <>
             <Table
-                data={ALL_CONTACTS}
-                filterKey="contact_type"
+                data={contacts}
+                filterKey="contactType"
                 filterStatuses={ALL_FILTER_TYPES_CONTACTS}
-                columns={["Number", "Subject", "Type", "Sent at"]}
+                columns={["Number", "Result/Comment", "Type", "Sent at"]}
                 renderRow={(c, index) => (
                     <div
                         className="cl-table-row"
-                        key={c.id + index}
-                        onClick={() => navigate(`/contacts/${c.id}`)}
+                        key={c.idMessage || index}
+                        onClick={() => navigate(`/cases/${c.numberCase || c.caseId || 32}`)}
                     >
-                        <span>{c.id}</span>
-                        <span style={{ fontWeight: '500' }}>{c.subject}</span>
-                        <ContactTypeBadge type={c.contact_type}/>
-                        <span>{c.sent_at}</span>
-                        <ArrButton onClick={() => navigate(`/contacts/${c.id}`)}/>
+                        <span>{c.idMessage}</span>
+                        <span style={{ fontWeight: '500' }}>{c.result || "—"}</span>
+                        <ContactTypeBadge type={c.contactType}/>
+                        <span>{formatDate(c.contactDate)}</span>
+                        <ArrButton onClick={() => navigate(`/cases/${c.numberCase || c.caseId || 32}`)}/>
                     </div>
                 )}
             />

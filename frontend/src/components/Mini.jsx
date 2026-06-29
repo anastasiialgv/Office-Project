@@ -1,45 +1,28 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// components/ui/index.jsx — переиспользуемые «атомарные» компоненты.
-// Импортируй нужное: import { GlassCard, Field, TopBar, Modal } from '../ui'
-// ─────────────────────────────────────────────────────────────────────────────
 import {NavLink} from "react-router-dom";
 
 export const STATUS_STYLES = {
     "CLOSED":              { color: "#6ddd8a" },
-    "IN PROGRESS":         { color: "#ffa03c" },
-    "DISPUTED":            { color: "#f07070" },
-    "WAITING FOR CONTACT": { color: "#6ab0ff" },
-    "REGISTERED":          { color: "#c8a0ff" },
+    "IN_PROGRESS":         { color: "#ffa03c" },
+    "REGISTERED":            { color: "#c8a0ff" },
+    "WAITING_FOR_CONTACT": { color: "#56ccf2" },
+    "IN_COURT":            { color: "#ff65b2" },
 };
 
 export const TYPES_STYLES = {
-    "Payment Demand Notice": { color: "#6ddd8a" },
-    "Pre-litigation Payment Demand": { color: "#ffa03c" },
-    "Notice of Case Referral to Court": { color: "#f07070" },
-    "Official Note": { color: "#6ab0ff" },
-    "Payment Confirmation": { color: "#c8a0ff" },
-    "Client Contact Report":            { color: "#ff84c1" },
-    "Mail Labels":                      { color: "#eee" },
-    "Vehicle Evidence":                 { color: "#fbff96" }
+    "PAYMENT_DEMAND_NOTICE":            { color: "#6ddd8a" },
+    "PRE_LITIGATION_PAYMENT_DEMAND":    { color: "#ffa03c" },
+    "NOTICE_OF_CASE_REFERRAL_TO_COURT": { color: "#f07070" },
+    "OFFICIAL_NOTE":                    { color: "#6ab0ff" },
+    "PAYMENT_CONFIRMATION":             { color: "#c8a0ff" },
+    "CLIENT_CONTACT_REPORT":            { color: "#ff84c1" },
 };
 
 export const CONTACT_TYPES_STYLES = {
-    "EMAIL": { color: "#6ab0ff" }, // Синий
-    "PHONE": { color: "#6ddd8a" }, // Зеленый
-    "SMS":   { color: "#ffa03c" }, // Оранжевый
+    "EMAIL":  { color: "#6ab0ff" },
+    "PHONE":  { color: "#6ddd8a" },
+    "LETTER": { color: "#ffa03c" },
 };
 
-/* ── Гамбургер-кнопка ── */
-function MenuIcon() {
-    return (
-        <button className="mc-menu-btn" aria-label="Menu">
-            <span /><span /><span />
-        </button>
-    );
-}
-
-/* ── Верхняя панель страницы ── */
-// Mini.jsx
 export function TopBar({ title, onMenuClick }) {
     return (
         <div className="mc-topbar">
@@ -51,44 +34,44 @@ export function TopBar({ title, onMenuClick }) {
     );
 }
 
-/* ── Цветной статус-бейдж ── */
 export function StatusBadge({ status, style, onClick, ...props }) {
-    // Получаем базовый цвет из стилей
-    const baseStyle = STATUS_STYLES[status] || {};
+    const normalizedStatus = status ? String(status).toUpperCase() : "";
+    const baseStyle = STATUS_STYLES[normalizedStatus] || {};
 
     return (
         <span
             className="mc-status"
-            // Склеиваем базовый цвет и дополнительные стили (например, курсор)
             style={{ ...baseStyle, ...style }}
-            // Передаем функцию клика, чтобы меню открывалось
             onClick={onClick}
-            // Прокидываем остальные системные пропсы, если будут
             {...props}
         >
-            {status}
+            {status ? String(status).replace(/_/g, " ") : ""}
         </span>
     );
 }
 
 export function TypeBadge({ type }) {
-    const style = TYPES_STYLES[type] || {};
+    const normalizedType = type ? String(type).toUpperCase() : "";
+    const style = TYPES_STYLES[normalizedType] || {};
+
     return (
         <span className="mc-status" style={style}>
-      {type}
-    </span>
+            {type ? String(type).replace(/_/g, " ") : ""}
+        </span>
     );
 }
 
 export function ContactTypeBadge({ type }) {
-    const style = CONTACT_TYPES_STYLES[type] || {};
+    const normalizedType = type ? String(type).toUpperCase() : "";
+    const style = CONTACT_TYPES_STYLES[normalizedType] || {};
+
     return (
         <span className="mc-status" style={style}>
-      {type}
-    </span>
+            {type ? String(type).replace(/_/g, " ") : ""}
+        </span>
     );
 }
-/* ── Стеклянная карточка с shimmer ── */
+
 export function GlassCard({ children, style, className = "" }) {
     return (
         <div className={`glass-card ${className}`} style={style}>
@@ -97,12 +80,10 @@ export function GlassCard({ children, style, className = "" }) {
     );
 }
 
-/* ── Заголовок внутри карточки ── */
 export function CardTitle({ children }) {
     return <div className="card-title">{children}</div>;
 }
 
-/* ── Строка поле/значение ── */
 export function Field({ label, children }) {
     return (
         <div className="mc-field">
@@ -111,7 +92,6 @@ export function Field({ label, children }) {
         </div>
     );
 }
-
 
 export function ArrButton({ onClick }) {
     return (
@@ -132,8 +112,6 @@ export function SideButton ( {onClick}){
     return(
         <div className="card-side-action"
              onClick={(e) => {
-            // Останавливаем событие, чтобы клик по полоске
-            // не считался кликом по всей карточке
             e.stopPropagation();
             if (onClick) onClick();
         }}
@@ -143,8 +121,6 @@ export function SideButton ( {onClick}){
     );
 }
 
-
-/* ── Кнопка «Назад» ── */
 export function BackButton({ onClick, label = "← Back" }) {
     return (
         <button className="mc-back-btn" onClick={onClick}>
@@ -153,7 +129,6 @@ export function BackButton({ onClick, label = "← Back" }) {
     );
 }
 
-/* ── Модальное окно ── */
 export function Modal({ title, onClose, children }) {
     return (
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
@@ -168,7 +143,6 @@ export function Modal({ title, onClose, children }) {
     );
 }
 
-/* ── Иконка карандаша (SVG) ── */
 export function PencilIcon({ size = 14 }) {
     return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -179,7 +153,6 @@ export function PencilIcon({ size = 14 }) {
     );
 }
 
-/* ── Иконка галочки ── */
 export function CheckIcon({ size = 14 }) {
     return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -189,7 +162,6 @@ export function CheckIcon({ size = 14 }) {
     );
 }
 
-/* ── Иконка телефона ── */
 export function PhoneIcon({ size = 16 }) {
     return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -199,7 +171,6 @@ export function PhoneIcon({ size = 16 }) {
     );
 }
 
-/* ── Иконка письма ── */
 export function MailIcon({ size = 16 }) {
     return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -210,7 +181,6 @@ export function MailIcon({ size = 16 }) {
     );
 }
 
-/* ── Иконка плюса ── */
 export function PlusIcon({ size = 14 }) {
     return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -221,7 +191,6 @@ export function PlusIcon({ size = 14 }) {
     );
 }
 
-/* ── Иконка пользователя ── */
 export function UserIcon({ size = 40 }) {
     return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -259,11 +228,36 @@ export function AdminTopBar() {
     );
 }
 
-/* ── Боковая панель навигации (Sidebar) ── */
+export function AccountantTopBar() {
+    return (
+        <div className="mc-topbar" style={{justifyContent: 'center'}}>
+            <div className="adm-top-nav-centered">
+                <NavLink
+                    to="/accountant/dashboard"
+                    className={({isActive}) => `adm-nav-link-wide ${isActive ? "active" : ""}`}
+                >
+                    📁 Dashboard
+                </NavLink>
+                <NavLink
+                    to="/accountant/generator"
+                    className={({isActive}) => `adm-nav-link-wide ${isActive ? "active" : ""}`}
+                >
+                    👥 Report Generator
+                </NavLink>
+                <NavLink
+                    to="/accountant/profile"
+                    className={({isActive}) => `adm-nav-link-wide ${isActive ? "active" : ""}`}
+                >
+                    👤 Profile
+                </NavLink>
+            </div>
+        </div>
+    );
+}
+
 export function Sidebar({isOpen, onClose, navItems}) {
     return (
         <>
-            {/* Сама панель */}
             <div className={`sidebar ${isOpen ? "open" : ""}`}>
                 <button className="sidebar-close" onClick={onClose} aria-label="Close">
                     ×
@@ -274,7 +268,7 @@ export function Sidebar({isOpen, onClose, navItems}) {
                             key={item.path}
                             to={item.path}
                             className={({isActive}) => `sidebar-item ${isActive ? "active" : ""}`}
-                            onClick={onClose} // Закрываем при клике на ссылку
+                            onClick={onClose}
                         >
                             <span className="sidebar-icon">{item.icon}</span>
                             {item.label}
@@ -283,7 +277,6 @@ export function Sidebar({isOpen, onClose, navItems}) {
                 </div>
             </div>
 
-            {/* Оверлей (затемнение), который закрывает меню при клике вне его */}
             {isOpen && (
                 <div className="sidebar-overlay" onClick={onClose} />
             )}
