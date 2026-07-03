@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GlassCard } from "../../components/Mini.jsx";
-import { useNavigate } from "react-router-dom"; // Для редиректа
-import api from "../../api";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/index.jsx";
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
