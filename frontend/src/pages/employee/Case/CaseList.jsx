@@ -17,7 +17,7 @@ export default function CasesList() {
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
-            const response = await axios.get("http://localhost:8080/office/cases", {
+            const response = await axios.get("https://office-project-production-80ea.up.railway.app/office/cases", {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

@@ -17,7 +17,7 @@ import AddPenaltyModal from "../../../components/AddPenalty.jsx";
 import axios from "axios";
 import Loader from "../../../components/Loader.jsx";
 
-const API_BASE = "http://localhost:8080/office";
+const API_BASE = "https://office-project-production-80ea.up.railway.app/office";
 const STATUS_OPTIONS = ["WAITING_FOR_CONTACT", "IN_PROGRESS", "DISPUTED", "IN_COURT", "CLOSED"];
 
 // ── Вспомогательные компоненты ──────────────────────────────────────────────
@@ -137,7 +137,7 @@ function VehicleCard({ vehicle, photoUrl }) {
                     <div className="photo-container" style={{ marginTop: '15px' }}>
                         <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '5px' }}>Evidence Photo:</div>
                         <img
-                            src={`http://localhost:8080${photoUrl}`}
+                            src={`https://office-project-production-80ea.up.railway.app${photoUrl}`}
                             alt="Violation Evidence"
                             style={{ width: '100%', maxWidth: '400px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}
                         />

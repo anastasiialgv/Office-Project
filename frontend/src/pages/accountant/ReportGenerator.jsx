@@ -3,7 +3,7 @@ import { useState} from "react";
 import axios from "axios";
 import {generateReport} from "../../utils/reportGenerator.js";
 import Loader from "../../components/Loader.jsx";
-const API_BASE = "http://localhost:8080/office/reports";
+const API_BASE = "https://office-project-production-80ea.up.railway.app/office/reports";
 
 const REPORTS_CONFIG = {
     row1: [

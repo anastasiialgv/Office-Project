@@ -3,7 +3,7 @@ import { GlassCard, CardTitle } from "../../components/Mini.jsx";
 import axios from "axios";
 import Loader from "../../components/Loader.jsx";
 
-const API_BASE = "http://localhost:8080/office/reports";
+const API_BASE = "https://office-project-production-80ea.up.railway.app/office/reports";
 
 export default function Dashboard() {
     const [stats, setStats] = useState(null);

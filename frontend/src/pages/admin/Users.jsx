@@ -60,7 +60,7 @@ function ResetPasswordModal({ user, onClose }) {
         const generated = generatePassword();
         try {
             const token = localStorage.getItem("token");
-            await axios.put(`http://localhost:8080/office/admin/user/${user.userId || user.id}/reset-password`,
+            await axios.put(`https://office-project-production-80ea.up.railway.app/office/admin/user/${user.userId || user.id}/reset-password`,
                 { password: generated },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -149,7 +149,7 @@ function CreateUserModal({ onClose, onCreate }) {
     const handleSaveUser = async () => {
         try {
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:8080/office/admin/user", { ...form, active: true }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.post("https://office-project-production-80ea.up.railway.app/office/admin/user", { ...form, active: true }, { headers: { Authorization: `Bearer ${token}` } });
             onCreate(); onClose();
         } catch (e) {
             console.error("Бэкенд ругается тут:", e.response?.data);
@@ -210,7 +210,7 @@ function EditUserModal({user, onClose, onSave}) {
     const handleSave = async () => {
         try {
             const token = localStorage.getItem("token");
-            await axios.put(`http://localhost:8080/office/admin/user/${user.userId || user.id}`,
+            await axios.put(`https://office-project-production-80ea.up.railway.app/office/admin/user/${user.userId || user.id}`,
                 { role, active: isActive },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -273,7 +273,7 @@ export default function AdminUsers() {
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
-            const res = await axios.get("http://localhost:8080/office/admin/users", { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.get("https://office-project-production-80ea.up.railway.app/office/admin/users", { headers: { Authorization: `Bearer ${token}` } });
             setUsers(res.data);
         } catch (e) { console.error(e); } finally { setLoading(false); }
     };

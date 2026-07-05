@@ -2,7 +2,7 @@ import { GlassCard, Modal } from "../../../components/Mini.jsx";
 import {useEffect, useState} from "react";
 import { generateCasePDF } from "../../../utils/pdfGenerator.js";
 import axios from "axios";
-const API_BASE = "http://localhost:8080/office";
+const API_BASE = "https://office-project-production-80ea.up.railway.app/office";
 const DOCS_CONFIG = {
     row1: [
         { id: 'payment_demand_notice', name: 'Payment Demand Notice', type: 'interactive' },
