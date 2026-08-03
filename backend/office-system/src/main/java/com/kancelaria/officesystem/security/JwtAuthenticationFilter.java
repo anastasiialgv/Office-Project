@@ -21,6 +21,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod()) || request.getServletPath().contains("/office/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (request.getServletPath().contains("/office/login")) {
             filterChain.doFilter(request, response);
             return;
