@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,13 +66,6 @@ public class CaseService {
                 .build();
     }
 
-    @Transactional
-    public void updateStatus(Integer caseId, CaseStatus newStatus) {
-        Case lawCase = caseRepository.findById(caseId)
-                .orElseThrow(() -> new RuntimeException("Case not found"));
-        lawCase.setStatus(newStatus);
-        caseRepository.save(lawCase);
-    }
 
 
     //====================================EMPLOYEE===============================

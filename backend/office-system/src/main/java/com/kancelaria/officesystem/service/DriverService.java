@@ -15,11 +15,7 @@ public class DriverService {
     @Transactional
     public void updateDriverContacts(Integer driverId, String phone, String address, String email) {
         Driver driver = driverRepository.findById(driverId)
-                .orElseThrow(() -> new RuntimeException("Driver not found"));
-        driver.setPhone(phone);
-        driver.setAddress(address);
-        driver.setEmail(email);
-        driverRepository.save(driver);
+                .orElseThrow(() -> new RuntimeException("Driver not found"));  
     }
 
     @Transactional
