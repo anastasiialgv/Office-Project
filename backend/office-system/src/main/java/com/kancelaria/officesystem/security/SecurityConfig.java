@@ -30,11 +30,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/office/login").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/office/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/office/files/download/**").permitAll()
+
+                        .requestMatchers("/office/admin/**").hasAuthority("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
