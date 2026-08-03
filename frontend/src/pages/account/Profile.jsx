@@ -49,7 +49,7 @@ export default function Profile() {
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://office-project-production-80ea.up.railway.app/office/profile", {
+            const response = await axios.get("https://office-project-production-3ce4.up.railway.app/office/profile", {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setProfile(response.data);
@@ -67,7 +67,7 @@ export default function Profile() {
     const updateProfile = async (updatedData) => {
         try {
             const token = localStorage.getItem("token");
-            await axios.put(`https://office-project-production-80ea.up.railway.app/office/${profile.userId || profile.id}`,
+            await axios.put(`https://office-project-production-3ce4.up.railway.app/office/${profile.userId || profile.id}`,
                 updatedData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
