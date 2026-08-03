@@ -51,7 +51,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
-                "https://office-project-omega.vercel.app",
+                "https://*.vercel.app",
                 "http://localhost:3000",
                 "http://localhost:5173"
         ));
