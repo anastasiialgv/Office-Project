@@ -30,7 +30,9 @@ public class CaseService {
     private final FileRepository fileRepository;
     private final DTOMapper dtoMapper;
 //====================================EMPLOYEE====================================
-    public List<EmployeeListCaseDTO> getCasesByEmployee(String email){
+@Transactional(readOnly = true)
+
+public List<EmployeeListCaseDTO> getCasesByEmployee(String email){
         User employee = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Employee not found with email: " + email));
 
@@ -71,6 +73,7 @@ public class CaseService {
     //====================================EMPLOYEE===============================
 
     //===================================ADMIN===================================
+    @Transactional(readOnly = true)
     public List<AdminCaseDTO> getAllCases(){
         return caseRepository.findAll()
                 .stream()
