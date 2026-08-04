@@ -24,15 +24,20 @@ public class EmailService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    // API Token from Mailtrap -> Settings -> API Tokens (NOT the SMTP username/password)
+    @Value("${mailtrap.api-token}")
     private String mailtrapApiToken;
 
+    // ID of your Sandbox inbox, visible in its URL in the Mailtrap UI
     @Value("${mailtrap.inbox-id}")
     private String mailtrapInboxId;
 
     @Value("${mailtrap.from-email:no-reply@officesystem.com}")
     private String fromEmail;
 
-
+    // URL of the actual frontend app (Vercel/Netlify/etc), NOT this backend's Railway URL.
+    // The payment page /pay/{id} is a frontend route - if this points at the backend,
+    // Spring Security will reject the request with 403 before it ever reaches a controller.
     @Value("${frontend.base-url}")
     private String FRONTEND_BASE_URL;
     // Helper method for sending HTML emails
