@@ -147,8 +147,17 @@ public class CaseController {
 
 //==========================================ADMIN==========================================
     @GetMapping("/admin/cases")
-    public ResponseEntity<List<AdminCaseDTO>> getAllCases(){
-        return ResponseEntity.ok(caseService.getAllCases());
+    public ResponseEntity<?> getAllCases(){
+        try {
+            List<AdminCaseDTO> cases = caseService.getAllCases();
+            return ResponseEntity.ok(cases);
+        } catch (Exception e) {
+            e.printStackTrace(); // Теперь ошибка будет гореть красным в логах Railway!
+            return ResponseEntity.internalServerError().body("Real backend error: " + e.getMessage());
+        } catch (Error err) {
+            err.printStackTrace(); // Ловим StackOverflowError, если это рекурсия
+            return ResponseEntity.internalServerError().body("Critical Server Error: " + err.getMessage());
+        }
     }
 
     @PatchMapping("/admin/cases/{numberCase}/assign")
