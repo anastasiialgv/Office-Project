@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { GlassCard, CardTitle, PhoneIcon, MailIcon, PlusIcon } from "./Mini.jsx";
 import axios from "axios";
 import Loader from "./Loader.jsx";
-const API_BASE = "https://office-project-production-3ce4.up.railway.app/office";
+const API_BASE = "https://office-project-production-3ce4.up.railway.app /office";
 function TimelineEntry({ entry }) {
     const formatDate = (dateStr) => {
         if (!dateStr) return "—";

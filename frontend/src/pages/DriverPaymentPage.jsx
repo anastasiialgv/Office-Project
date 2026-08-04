@@ -15,7 +15,7 @@ const DriverPaymentPage = () => {
     useEffect(() => {
         const fetchCaseInfo = async () => {
             try {
-                const response = await fetch(`https://office-project-production-3ce4.up.railway.app/office/public/cases/${caseId}`); //https://office-project-production-3ce4.up.railway.app
+                const response = await fetch(`https://office-project-production-3ce4.up.railway.app /office/public/cases/${caseId}`); //https://office-project-production-3ce4.up.railway.app 
 
                 if (!response.ok) {
                     throw new Error('Not found');
@@ -39,7 +39,7 @@ const DriverPaymentPage = () => {
         setError(null);
 
         try {
-            const response = await fetch(`https://office-project-production-3ce4.up.railway.app/office/payments/init/${caseId}`, { // https://office-project-production-3ce4.up.railway.app
+            const response = await fetch(`https://office-project-production-3ce4.up.railway.app /office/payments/init/${caseId}`, { // https://office-project-production-3ce4.up.railway.app 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

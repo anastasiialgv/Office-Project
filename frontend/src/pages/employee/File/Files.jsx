@@ -4,7 +4,7 @@ import Table from "../../../components/Table.jsx";
 import axios from "axios";
 import Loader from "../../../components/Loader.jsx";
 
-const API_BASE = "https://office-project-production-3ce4.up.railway.app/office";
+const API_BASE = "https://office-project-production-3ce4.up.railway.app /office";
 const ALL_FILTER_TYPES_DOCUMENTS = ["PAYMENT_DEMAND_NOTICE",
     "PRE_LITIGATION_PAYMENT_DEMAND",
     "NOTICE_OF_CASE_REFERRAL_TO_COURT",
@@ -39,7 +39,7 @@ export default function Files() {
             return;
         }
 
-        const BASE_URL = "https://office-project-production-3ce4.up.railway.app";
+        const BASE_URL = "https://office-project-production-3ce4.up.railway.app ";
         const fileUrl = `${BASE_URL}/office/files/download/${fileId}`;
 
         window.open(fileUrl, '_blank', 'noopener,noreferrer');
