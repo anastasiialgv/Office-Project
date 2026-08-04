@@ -24,18 +24,17 @@ public class EmailService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // API Token from Mailtrap -> Settings -> API Tokens (NOT the SMTP username/password)
-    @Value("${mailtrap.api-token}")
     private String mailtrapApiToken;
 
-    // ID of your Sandbox inbox, visible in its URL in the Mailtrap UI
     @Value("${mailtrap.inbox-id}")
     private String mailtrapInboxId;
 
     @Value("${mailtrap.from-email:no-reply@officesystem.com}")
     private String fromEmail;
 
-    private final String FRONTEND_BASE_URL = "https://office-project-production-3ce4.up.railway.app";
+
+    @Value("${frontend.base-url}")
+    private String FRONTEND_BASE_URL;
     // Helper method for sending HTML emails
     private void sendHtmlEmail(String to, String subject, String htmlContent) {
         try {
