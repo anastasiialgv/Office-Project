@@ -1,14 +1,20 @@
 package com.kancelaria.officesystem.service;
 
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -16,21 +22,51 @@ import java.math.BigDecimal;
 @Async
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    // API Token from Mailtrap -> Settings -> API Tokens (NOT the SMTP username/password)
+    @Value("${mailtrap.api-token}")
+    private String mailtrapApiToken;
+
+    // ID of your Sandbox inbox, visible in its URL in the Mailtrap UI
+    @Value("${mailtrap.inbox-id}")
+    private String mailtrapInboxId;
+
+    @Value("${mailtrap.from-email:no-reply@officesystem.com}")
+    private String fromEmail;
+
     private final String FRONTEND_BASE_URL = "https://office-project-production-3ce4.up.railway.app";
     // Helper method for sending HTML emails
     private void sendHtmlEmail(String to, String subject, String htmlContent) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(mailtrapApiToken);
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            helper.setFrom("no-reply@officesystem.com");
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlContent, true);
+            Map<String, Object> fromMap = new HashMap<>();
+            fromMap.put("email", fromEmail);
+            fromMap.put("name", "Office System");
 
-            mailSender.send(message);
-            log.info("Email successfully sent to {}", to);
+            Map<String, Object> toMap = new HashMap<>();
+            toMap.put("email", to);
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("from", fromMap);
+            body.put("to", List.of(toMap));
+            body.put("subject", subject);
+            body.put("html", htmlContent);
+            body.put("category", "office-system-notification");
+
+            String url = "https://sandbox.api.mailtrap.io/api/send/" + mailtrapInboxId;
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("Email successfully sent to {}", to);
+            } else {
+                log.error("Mailtrap API returned non-2xx status {} for {}", response.getStatusCode(), to);
+            }
         } catch (Exception e) {
             log.error("Failed to send email to {}: {}", to, e.getMessage());
         }
