@@ -3,6 +3,7 @@ package com.kancelaria.officesystem.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -37,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/office/files/download/**").permitAll()
                         .requestMatchers("/office/payments/**").permitAll()
                         .requestMatchers("/office/admin/**").hasAuthority("ADMIN")
-
+                        .requestMatchers(HttpMethod.GET, "/office/public/cases/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

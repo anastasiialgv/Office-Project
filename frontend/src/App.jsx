@@ -7,7 +7,7 @@ import Files from "./pages/employee/File/Files.jsx";
 import Contacts from "./pages/employee/Contact/Contacts.jsx";
 import ContactDetail from "./pages/employee/Contact/ContactDetail.jsx";
 import DocumentGenerator from "./pages/employee/Case/DocumentGenerator.jsx";
-
+import DriverPaymentPage from "./pages/DriverPaymentPage.jsx"
 import Login from "./pages/account/Login.jsx";
 import AdminCases from "./pages/admin/Cases.jsx";
 import AdminUsers from "./pages/admin/Users.jsx";
@@ -134,6 +134,8 @@ export default function App() {
                         </Routes>
                     </AccountantLayout>
                 } />
+
+                <Route path="/pay/:caseId" element={<DriverPaymentPage />} />
             </Routes>
         </BrowserRouter>
     );

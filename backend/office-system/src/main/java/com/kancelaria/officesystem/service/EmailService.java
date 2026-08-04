@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class EmailService {
 
     private final JavaMailSender mailSender;
-
+    private final String FRONTEND_BASE_URL = "https://office-project-production-3ce4.up.railway.app";
     // Helper method for sending HTML emails
     private void sendHtmlEmail(String to, String subject, String htmlContent) {
         try {
@@ -39,12 +39,20 @@ public class EmailService {
     /**
      * 1. Notification about a new fine
      */
-    public void sendNewCaseNotification(String toEmail, String driverName, String plateNumber, BigDecimal amount) {
+    public void sendNewCaseNotification(String toEmail, String driverName, String plateNumber, BigDecimal amount, Integer caseId) {
         String subject = "🚨 New Penalty Registered - Vehicle: " + plateNumber;
+        String paymentLink = FRONTEND_BASE_URL + "/pay/" + caseId;
         String html = "<h2>Hello " + driverName + ",</h2>" +
                 "<p>A new traffic penalty has been registered in our system for the vehicle with license plate number: <b>" + plateNumber + "</b>.</p>" +
                 "<p>Total amount due: <span style='color:red; font-weight:bold;'>" + amount + " PLN</span>.</p>" +
-                "<p>Please review the details and settle the payment within 14 days or submit an appeal through the driver portal.</p>" +
+                "<p>Please review the details and settle the payment within 14 days.</p>" +
+
+                // Красивая кнопка для оплаты
+                "<div style='margin: 25px 0;'>" +
+                "  <a href='" + paymentLink + "' style='background-color: #7c3aed; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;'>Pay Fine Online</a>" +
+                "</div>" +
+
+                "<p style='font-size: 12px; color: #666;'>If the button doesn't work, copy and paste this link into your browser:<br><a href='" + paymentLink + "'>" + paymentLink + "</a></p>" +
                 "<br><p>Best regards,<br>Office System Team</p>";
 
         sendHtmlEmail(toEmail, subject, html);
@@ -53,12 +61,16 @@ public class EmailService {
     /**
      * 2. Notification about an increased fine (Additional penalty added)
      */
-    public void sendPenaltyIncreasedNotification(String toEmail, String driverName, BigDecimal addedAmount, BigDecimal totalAmount) {
+    public void sendPenaltyIncreasedNotification(String toEmail, String driverName, BigDecimal addedAmount, BigDecimal totalAmount, Integer caseId) {
+        String paymentLink = FRONTEND_BASE_URL + "/pay/" + caseId;
         String subject = "⚠️ Case Update: Additional Fee Applied";
         String html = "<h2>Hello " + driverName + ",</h2>" +
                 "<p>We would like to inform you that the outstanding balance for your case has been updated due to a payment delay.</p>" +
                 "<p>An additional late fee has been applied: <b>+" + addedAmount + " PLN</b>.</p>" +
                 "<p>The total current amount due is now: <span style='color:orange; font-weight:bold;'>" + totalAmount + " PLN</span>.</p>" +
+                "<div style='margin: 25px 0;'>" +
+                "  <a href='" + paymentLink + "' style='background-color: #ea580c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;'>Settle Updated Balance</a>" +
+                "</div>" +
                 "<p>Please settle the outstanding balance immediately to avoid further escalation.</p>" +
                 "<br><p>Best regards,<br>Office System Team</p>";
 

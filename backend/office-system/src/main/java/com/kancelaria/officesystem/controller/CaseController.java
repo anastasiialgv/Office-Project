@@ -3,6 +3,7 @@ package com.kancelaria.officesystem.controller;
 import com.kancelaria.officesystem.model.dto.Case.AdminCaseDTO;
 import com.kancelaria.officesystem.model.dto.Case.EmployeeCaseDetailDTO;
 import com.kancelaria.officesystem.model.dto.Case.EmployeeListCaseDTO;
+import com.kancelaria.officesystem.model.dto.Case.PublicCaseDTO;
 import com.kancelaria.officesystem.model.entity.*;
 import com.kancelaria.officesystem.model.enums.CaseStatus;
 import com.kancelaria.officesystem.model.enums.ContactType;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.nio.file.StandardCopyOption;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -83,7 +85,8 @@ public class CaseController {
                 foundCase.getDriver().getEmail(),
                 foundCase.getDriver().getName(),
                 amount,
-                foundCase.getFineAmount()
+                foundCase.getFineAmount(),
+                foundCase.getNumberCase()
         );
 
         return ResponseEntity.ok("Penalty increased by " + amount + ". History record added.");
@@ -197,7 +200,8 @@ public class CaseController {
                     savedCase.getDriver().getEmail(),
                     savedCase.getDriver().getName(),
                     savedCase.getVehicle().getPlateNumber(),
-                    savedCase.getFineAmount()
+                    savedCase.getFineAmount(),
+                    savedCase.getNumberCase()
             );
 
             if (photo != null && !photo.isEmpty()) {
@@ -304,7 +308,8 @@ public class CaseController {
                         savedCase.getDriver().getEmail(),
                         savedCase.getDriver().getName(),
                         savedCase.getVehicle().getPlateNumber(),
-                        savedCase.getFineAmount()
+                        savedCase.getFineAmount(),
+                        savedCase.getNumberCase()
                 );
 
                 if (item.containsKey("file") && item.get("file") != null) {
@@ -343,11 +348,23 @@ public class CaseController {
             return ResponseEntity.badRequest().body("Mega Import failed: " + e.getMessage());
         }
     }
+//==========================================ADMIN==========================================
+
+// ==========================================DRIVER==========================================
+    @GetMapping("/public/cases/{caseId}")
+    public ResponseEntity<PublicCaseDTO> getPublicCaseInfo(@PathVariable("caseId") int caseId) {
+        Case caseEntity = caseRepository.findById(caseId).orElseThrow(() -> new RuntimeException("Case not found"));;
+
+        PublicCaseDTO publicData = PublicCaseDTO.builder().fineAmount(caseEntity.getFineAmount())
+                .plateNumber(caseEntity.getVehicle().getPlateNumber())
+                .status(caseEntity.getStatus()).build();
+
+        return ResponseEntity.ok(publicData);
+    }
 }
 
 
 
-//==========================================ADMIN==========================================
 
 
 
