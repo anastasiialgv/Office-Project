@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/office/login").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/office/files/download/**").permitAll()
-
+                        .requestMatchers("/office/payments/**").permitAll()
                         .requestMatchers("/office/admin/**").hasAuthority("ADMIN")
 
                         .anyRequest().authenticated()
