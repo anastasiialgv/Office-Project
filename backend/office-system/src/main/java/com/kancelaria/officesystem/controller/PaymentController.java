@@ -56,7 +56,6 @@ public class PaymentController {
         }
     }
 
-    // Вызывается сервером PayU (Асинхронный Вебхук)
     @PostMapping("/notify")
     @Transactional
     public ResponseEntity<?> handlePayUNotification(@RequestBody Map<String, Object> payload) {
