@@ -1,6 +1,6 @@
 import axios from 'axios';
 const api = axios.create({
-    baseURL: 'https://office-project-production-3ce4.up.railway.app ',
+    baseURL: 'https://office-project-production-3ce4.up.railway.app',
 });
 
 api.interceptors.request.use(

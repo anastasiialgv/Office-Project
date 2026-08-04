@@ -5,7 +5,7 @@ import Table from "../../../components/Table.jsx";
 import axios from "axios";
 import Loader from "../../../components/Loader.jsx";
 
-const API_BASE = "https://office-project-production-3ce4.up.railway.app /office";
+const API_BASE = "https://office-project-production-3ce4.up.railway.app/office";
 const ALL_FILTER_TYPES_CONTACTS = ["PHONE", "EMAIL", "LETTER"];
 
 export default function Contacts() {

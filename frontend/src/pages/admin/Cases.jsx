@@ -7,7 +7,7 @@ import {
 import axios from "axios";
 import Loader from "../../components/Loader.jsx";
 
-const API_BASE = "https://office-project-production-3ce4.up.railway.app /office/admin";
+const API_BASE = "https://office-project-production-3ce4.up.railway.app/office/admin";
 
 const FILTERS = [
     { key: "REGISTERED",          label: "Registered",          color: "#c8a0ff" },
@@ -335,7 +335,7 @@ export default function AdminCases() {
 
             const [casesRes, driversRes, carsRes, empRes] = await Promise.all([
                 axios.get(`${API_BASE}/cases`, config),
-                axios.get(`https://office-project-production-3ce4.up.railway.app /office/drivers/short`, config),
+                axios.get(`https://office-project-production-3ce4.up.railway.app/office/drivers/short`, config),
                 axios.get(`${API_BASE}/vehicles`, config),
                 axios.get(`${API_BASE}/users`, config)
             ]);
