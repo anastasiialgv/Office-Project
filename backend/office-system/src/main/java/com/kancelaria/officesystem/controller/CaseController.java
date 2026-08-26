@@ -1,6 +1,5 @@
 package com.kancelaria.officesystem.controller;
 
-import com.kancelaria.officesystem.model.dto.Case.AdminCaseDTO;
 import com.kancelaria.officesystem.model.dto.Case.EmployeeCaseDetailDTO;
 import com.kancelaria.officesystem.model.dto.Case.EmployeeListCaseDTO;
 import com.kancelaria.officesystem.model.dto.Case.PublicCaseDTO;
@@ -30,7 +29,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.nio.file.StandardCopyOption;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor

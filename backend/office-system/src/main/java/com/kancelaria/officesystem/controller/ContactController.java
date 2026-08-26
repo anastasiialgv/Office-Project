@@ -6,6 +6,7 @@ import com.kancelaria.officesystem.repository.ContactRepository;
 import com.kancelaria.officesystem.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class ContactController {
     }
 
     @GetMapping("/contacts/my")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<ContactDTO>> getMyContacts(java.security.Principal principal) {
         try {
             String username = principal.getName();

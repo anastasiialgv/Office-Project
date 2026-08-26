@@ -3,11 +3,12 @@ import {
     GlassCard,
     StatusBadge,
     Modal,
+    Loader
 } from "../../components/Mini.jsx";
 import axios from "axios";
-import Loader from "../../components/Loader.jsx";
+import {SearchableSelect} from "../../components/SearchableSelect.jsx";
 
-const API_BASE = "https://office-project-production-3ce4.up.railway.app/office/admin";
+const API_BASE = import.meta.env.VITE_API_URL+"/admin";
 
 const FILTERS = [
     { key: "REGISTERED",          label: "Registered",          color: "#c8a0ff" },
@@ -120,30 +121,38 @@ function CreateCarModal({drivers, onClose, onSave}) {
     return (
         <Modal title="Add New Vehicle" onClose={onClose}>
             <div className="ap-field">
-                <div className="ap-label">Plate Number</div>
-                <input className="glass-input" placeholder="e.g. WI12345" value={form.plateNumber} onChange={e => setForm({...form, plateNumber: e.target.value})} />
+                <div className="ap-label">Assign Driver</div>
+                <SearchableSelect
+                    options={drivers}
+                    value={form.idDriver}
+                    onChange={(val) => setForm({...form, idDriver: val})}
+                    placeholder="Choose Driver"
+                    displayKey={(d) => `${d.name} ${d.surname}`}
+                />
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div className="ap-field">
+                <div className="ap-label">Plate Number</div>
+                <input className="glass-input" placeholder="e.g. WI12345" value={form.plateNumber}
+                       onChange={e => setForm({...form, plateNumber: e.target.value})}/>
+            </div>
+            <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12}}>
                 <div className="ap-field">
                     <div className="ap-label">Brand</div>
-                    <input className="glass-input" placeholder="e.g. Skoda" value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} />
+                    <input className="glass-input" placeholder="e.g. Skoda" value={form.brand}
+                           onChange={e => setForm({...form, brand: e.target.value})}/>
                 </div>
                 <div className="ap-field">
                     <div className="ap-label">Model</div>
-                    <input className="glass-input" placeholder="e.g. Octavia" value={form.model} onChange={e => setForm({...form, model: e.target.value})} />
+                    <input className="glass-input" placeholder="e.g. Octavia" value={form.model}
+                           onChange={e => setForm({...form, model: e.target.value})}/>
                 </div>
             </div>
             <div className="ap-field">
                 <div className="ap-label">Color</div>
-                <input className="glass-input" placeholder="Black" value={form.color} onChange={e => setForm({...form, color: e.target.value})} />
+                <input className="glass-input" placeholder="Black" value={form.color}
+                       onChange={e => setForm({...form, color: e.target.value})}/>
             </div>
-            <div className="ap-field">
-                <div className="ap-label">Assign Driver</div>
-                <select className="glass-select" value={form.idDriver} onChange={e => setForm({...form, idDriver: e.target.value})}>
-                    <option value="">-- Choose Driver --</option>
-                    {drivers.map(d => <option key={d.idDriver} value={d.idDriver}>{d.name} {d.surname}</option>)}
-                </select>
-            </div>
+
             {err && <div className="ap-error">{err}</div>}
             <div className="ap-footer">
                 <button className="btn-danger" onClick={onClose}>Cancel</button>
@@ -156,7 +165,7 @@ function CreateCarModal({drivers, onClose, onSave}) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Модалка: Регистрация Нового Дела (AdminCaseDTO)
 // ─────────────────────────────────────────────────────────────────────────────
-function RegisterCaseModal({ drivers, cars, onClose, onSave }) {
+function RegisterCaseModal({drivers, cars, onClose, onSave}) {
     const [form, setForm] = useState({
         violationDate: "",
         fineAmount: "",
@@ -207,22 +216,25 @@ function RegisterCaseModal({ drivers, cars, onClose, onSave }) {
             {/* 1. Выбор Водителя */}
             <div className="ap-field">
                 <div className="ap-label">Select Driver</div>
-                <select className="glass-select" value={form.idDriver} onChange={e => set("idDriver", e.target.value)}>
-                    <option value="">-- Choose Driver --</option>
-                    {drivers.map(d => <option key={d.idDriver}
-                                              value={d.idDriver}>{d.name} {d.surname} {d.email}</option>)}
-                </select>
+                <SearchableSelect
+                    options={drivers}
+                    value={form.idDriver}
+                    onChange={(val) => set("idDriver", val)}
+                    placeholder="Choose Driver"
+                    displayKey={(d) => `${d.name} ${d.surname} ${d.email || ""}`}
+                />
             </div>
 
             {/* 2. Выбор Машины */}
             <div className="ap-field">
                 <div className="ap-label">Select Car (Plate)</div>
-                <select className="glass-select" value={form.plateNumber}
-                        onChange={e => set("plateNumber", e.target.value)}>
-                    <option value="">-- Choose Vehicle --</option>
-                    {cars.map(c => <option key={c.plateNumber}
-                                           value={c.plateNumber}>{c.brand} {c.model} {c.plateNumber}</option>)}
-                </select>
+                <SearchableSelect
+                    options={cars}
+                    value={form.plateNumber}
+                    onChange={(val) => set("plateNumber", val)}
+                    placeholder="Choose Vehicle"
+                    displayKey={(c) => `${c.brand} ${c.model} ${c.plateNumber}`}
+                />
             </div>
 
             {/* 3. Адрес Нарушения */}
@@ -251,13 +263,24 @@ function RegisterCaseModal({ drivers, cars, onClose, onSave }) {
 
             {/* ПОЛЕ ЗАГРУЗКИ ФАЙЛА */}
             <div className="ap-field">
-                <div className="ap-label">Upload Violation Photo</div>
-                <input
-                    className="glass-input"
-                    type="file"
-                    accept="image/*"
-                    onChange={e => setPhotoFile(e.target.files[0])} // Сохраняем файл в стейт
-                />
+                <div className="ap-label">
+                    Upload Violation Photo
+                </div>
+                <div className="file-upload-wrapper">
+                    <input
+                        id="violation-file-input"
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={e => setPhotoFile(e.target.files[0])}
+                    />
+                    <label htmlFor="violation-file-input" className="glass-input file-upload-btn">
+                        <span className="file-upload-icon">📁</span>
+                        <span className="file-upload-text">
+                             {photoFile ? photoFile.name : "Choose image file..."}
+                         </span>
+                    </label>
+                </div>
             </div>
 
             {err && <div className="ap-error">{err}</div>}

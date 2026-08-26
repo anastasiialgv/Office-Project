@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import {
-    TopBar, GlassCard, CardTitle,
+    GlassCard, CardTitle,
     Field, TypeBadge, BackButton
 } from "../../../components/Mini.jsx";
 

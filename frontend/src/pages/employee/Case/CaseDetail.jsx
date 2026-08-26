@@ -6,19 +6,16 @@ import {
     CardTitle,
     StatusBadge,
     Field,
-    SideButton,
     Modal,
     PencilIcon,
     CheckIcon,
-    STATUS_STYLES,
+    Loader
 } from "../../../components/Mini.jsx";
 import ContactHistory from "../../../components/ContactHistory.jsx";
 import AddPenaltyModal from "../../../components/AddPenalty.jsx";
 import axios from "axios";
-import Loader from "../../../components/Loader.jsx";
 
-const API_BASE = "https://office-project-production-3ce4.up.railway.app/office";
-const STATUS_OPTIONS = ["WAITING_FOR_CONTACT", "IN_PROGRESS", "DISPUTED", "IN_COURT", "CLOSED"];
+const API_BASE = import.meta.env.VITE_API_URL;
 
 // ── Вспомогательные компоненты ──────────────────────────────────────────────
 
@@ -44,12 +41,14 @@ function ContactCard({ driver = {}, onSave }) {
                 <Field label="Phone">{driver.phone || "—"}</Field>
                 <Field label="Address">{driver.address || "—"}</Field>
                 <Field label="Email">{driver.email || "—"}</Field>
-                <SideButton onClick={handleOpen} />
+                <button className="edit-btn" onClick={() => handleOpen()}>
+                    Edit
+                </button>
             </GlassCard>
 
             {editing && (
                 <Modal title="Edit Contact Info" onClose={() => setEditing(false)}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                         {["phone", "address", "email"].map((field) => (
                             <div key={field}>
                                 <div className="ap-label" style={{ textTransform: "capitalize" }}>{field}</div>
@@ -118,7 +117,7 @@ function DriverCard({ driver = {}, onSaveNotes }) {
 
 function VehicleCard({ vehicle, photoUrl }) {
     const [lightbox, setLightbox] = useState(null);
-
+    const fullPhotoUrl = photoUrl ? API_BASE+`${photoUrl}` : null;
     return (
         <>
             <GlassCard className="cd-card-vehicle">
@@ -133,25 +132,32 @@ function VehicleCard({ vehicle, photoUrl }) {
                 </div>
 
 
-                {photoUrl ? (
-                    <div className="photo-container" style={{ marginTop: '15px' }}>
-                        <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '5px' }}>Evidence Photo:</div>
-                        <img
-                            src={`https://office-project-production-3ce4.up.railway.app${photoUrl}`}
-                            alt="Violation Evidence"
-                            style={{ width: '100%', maxWidth: '400px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}
-                        />
-                    </div>
-                ) : (
-                    <div style={{ fontSize: '12px', color: '#666', marginTop: '15px' }}>No photo attached to this case.</div>
-                )}
+                <div className="cd-evidence-section">
+                    <div className="ap-label" style={{marginBottom: "8px"}}>Evidence Photo</div>
+                    {fullPhotoUrl ? (
+                        <a
+                            href={fullPhotoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="cd-evidence-thumb"
+                        >
+                            <img src={fullPhotoUrl} alt="Violation Evidence" className="cd-evidence-img"/>
+                            <span className="cd-evidence-text">View Photo</span>
+                        </a>
+                    ) : (
+                        <div className="cd-evidence-empty">
+                            <span>No evidence photo attached</span>
+                        </div>
+                    )}
+                </div>
             </GlassCard>
 
             {lightbox && (
                 <div className="modal-overlay" onClick={() => setLightbox(null)} style={{zIndex: 2000}}>
-                    <div className="modal-box" style={{maxWidth: '80%', textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
+                    <div className="modal-box" style={{maxWidth: '80%', textAlign: 'center'}}
+                         onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setLightbox(null)}>×</button>
-                        <img src={lightbox.url} alt={lightbox.label} style={{ maxWidth: '100%', borderRadius: '12px' }} />
+                        <img src={lightbox.url} alt={lightbox.label} style={{maxWidth: '100%', borderRadius: '12px'}}/>
                     </div>
                 </div>
             )}
@@ -163,7 +169,7 @@ function VehicleCard({ vehicle, photoUrl }) {
 
 export default function CaseDetail() {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const {id} = useParams();
     const [data, setData] = useState(null);
     const [showPenaltyModal, setShowPenaltyModal] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -265,25 +271,26 @@ export default function CaseDetail() {
             <div className="cd-grid">
                 <GlassCard className="cd-card-case">
                     <CardTitle>Case</CardTitle>
+
                     <div className="mc-field">
                         <span className="mc-fl">Status</span>
-                        <StatusBadge status={data.status} />
+                        <StatusBadge status={data.status}/>
                     </div>
 
                     <Field label="Violation date">{data.violationDate || "—"}</Field>
-                    <Field label="Due Date">{data.violationDate ? (new Date(new Date(data.violationDate).getTime() + 14 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0] : "—"}</Field>
+                    <Field
+                        label="Due Date">{data.violationDate ? (new Date(new Date(data.violationDate).getTime() + 14 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0] : "—"}</Field>
 
                     <div className="mc-field">
                         <span className="mc-fl">Fine amount</span>
-                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                            <span style={{ color: "var(--accent-orange)", fontWeight: 600 }}>
+                        <div style={{display: "flex", alignItems: "center", gap: 12}}>
+                            <span style={{color: "var(--accent-orange)", fontWeight: 600}}>
                                 {data.fineAmount ? Number(data.fineAmount).toFixed(2) : "0.00"} PLN
                             </span>
-                            <button className="cd-penalty-btn" onClick={() => setShowPenaltyModal(true)}>
-                                + Penalty
-                            </button>
+
                         </div>
                     </div>
+
 
                     <Field label="Overdue count">{data.overdueCount || 0}</Field>
                     <Field label="Address">{data.address || "—"}</Field>
@@ -293,14 +300,16 @@ export default function CaseDetail() {
                         <div style={{display: "flex", gap: "10px", alignItems: "center"}}>
                             {data.status === "CLOSED" || localUploaded ? (
                                 <button
-                                    onClick={async() => {
-                                        try{
-                                        const token = localStorage.getItem("token");
-                                        window.open(`${API_BASE}/files/download/${data.paymentProofFileId}?token=${token}`, "_blank", "noopener,noreferrer");                                    } catch (err) {
+                                    onClick={async () => {
+                                        try {
+                                            const token = localStorage.getItem("token");
+                                            window.open(`${API_BASE}/files/download/${data.paymentProofFileId}?token=${token}`, "_blank", "noopener,noreferrer");
+                                        } catch (err) {
 
-                                        console.error("Error opening file:", err);
-                                        alert("Failed to download file from server.");
-                                    }}}
+                                            console.error("Error opening file:", err);
+                                            alert("Failed to download file from server.");
+                                        }
+                                    }}
                                     className="cd-add-link"
                                     style={{
                                         background: 'none',
@@ -343,6 +352,9 @@ export default function CaseDetail() {
                             )}
                         </div>
                     </div>
+                    <button className="edit-btn" onClick={() => setShowPenaltyModal(true)}>
+                        Add Penalty
+                    </button>
                 </GlassCard>
 
                 {/* Остальные карточки */}

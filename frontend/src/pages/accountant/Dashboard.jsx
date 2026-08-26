@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { GlassCard, CardTitle } from "../../components/Mini.jsx";
+import { GlassCard, CardTitle, Loader } from "../../components/Mini.jsx";
 import axios from "axios";
-import Loader from "../../components/Loader.jsx";
 
-const API_BASE = "https://office-project-production-3ce4.up.railway.app/office/reports";
+const API_BASE = import.meta.env.VITE_API_URL+"/reports";
 
 export default function Dashboard() {
     const [stats, setStats] = useState(null);

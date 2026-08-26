@@ -1,9 +1,8 @@
-import { GlassCard, Modal } from "../../components/Mini.jsx";
+import { GlassCard, Modal, Loader } from "../../components/Mini.jsx";
 import { useState} from "react";
 import axios from "axios";
 import {generateReport} from "../../utils/reportGenerator.js";
-import Loader from "../../components/Loader.jsx";
-const API_BASE = "https://office-project-production-3ce4.up.railway.app/office/reports";
+const API_BASE = import.meta.env.VITE_API_URL+"/reports";
 
 const REPORTS_CONFIG = {
     row1: [

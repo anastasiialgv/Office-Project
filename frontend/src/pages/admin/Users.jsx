@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import {
     GlassCard,
     Modal,
+    Loader
 } from "../../components/Mini.jsx";
 import axios from "axios";
-import Loader from "../../components/Loader.jsx";
+
+const API_BASE = import.meta.env.VITE_API_URL+"/admin";
+
 const ROLES = ["EMPLOYEE", "ADMIN", "ACCOUNTANT"];
 
 const ROLE_COLORS = {
@@ -60,7 +63,7 @@ function ResetPasswordModal({ user, onClose }) {
         const generated = generatePassword();
         try {
             const token = localStorage.getItem("token");
-            await axios.put(`https://office-project-production-3ce4.up.railway.app/office/admin/user/${user.userId || user.id}/reset-password`,
+            await axios.put(API_BASE+`/admin/user/${user.userId || user.id}/reset-password`,
                 { password: generated },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -149,7 +152,7 @@ function CreateUserModal({ onClose, onCreate }) {
     const handleSaveUser = async () => {
         try {
             const token = localStorage.getItem("token");
-            await axios.post("https://office-project-production-3ce4.up.railway.app/office/admin/user", { ...form, active: true }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.post(API_BASE+"/user", { ...form, active: true }, { headers: { Authorization: `Bearer ${token}` } });
             onCreate(); onClose();
         } catch (e) {
             console.error("Бэкенд ругается тут:", e.response?.data);
@@ -210,7 +213,7 @@ function EditUserModal({user, onClose, onSave}) {
     const handleSave = async () => {
         try {
             const token = localStorage.getItem("token");
-            await axios.put(`https://office-project-production-3ce4.up.railway.app/office/admin/user/${user.userId || user.id}`,
+            await axios.put(API_BASE+`/user/${user.userId || user.id}`,
                 { role, active: isActive },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -273,7 +276,7 @@ export default function AdminUsers() {
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
-            const res = await axios.get("https://office-project-production-3ce4.up.railway.app/office/admin/users", { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.get(API_BASE+"/users", { headers: { Authorization: `Bearer ${token}` } });
             setUsers(res.data);
         } catch (e) { console.error(e); } finally { setLoading(false); }
     };

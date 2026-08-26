@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Loader from "../components/Loader.jsx";
 
-import { GlassCard, CardTitle, Field, StatusBadge } from '../components/Mini.jsx';
+import { GlassCard, CardTitle, Field, StatusBadge, Loader } from '../components/Mini.jsx';
+const API_BASE = import.meta.env.VITE_API_URL+"/reports";
 
 const DriverPaymentPage = () => {
     const { caseId } = useParams();
@@ -15,7 +15,7 @@ const DriverPaymentPage = () => {
     useEffect(() => {
         const fetchCaseInfo = async () => {
             try {
-                const response = await fetch(`https://office-project-production-3ce4.up.railway.app/office/public/cases/${caseId}`); //https://office-project-production-3ce4.up.railway.app
+                const response = await fetch(API_BASE+`/public/cases/${caseId}`);
 
                 if (!response.ok) {
                     throw new Error('Not found');

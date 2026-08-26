@@ -108,20 +108,9 @@ export function ArrButton({ onClick }) {
     );
 }
 
-export function SideButton ( {onClick}){
-    return(
-        <div className="card-side-action"
-             onClick={(e) => {
-            e.stopPropagation();
-            if (onClick) onClick();
-        }}
-             aria-label="Open details">
-            <span className="side-arrow">→</span>
-        </div>
-    );
-}
 
-export function BackButton({ onClick, label = "← Back" }) {
+
+export function BackButton({onClick, label = "← Back" }) {
     return (
         <button className="mc-back-btn" onClick={onClick}>
             {label}
@@ -281,5 +270,14 @@ export function Sidebar({isOpen, onClose, navItems}) {
                 <div className="sidebar-overlay" onClick={onClose} />
             )}
         </>
+    );
+}
+
+export  function Loader({ text = "Loading..." }) {
+    return (
+        <div className="loader-container">
+            <div className="loader-spinner"></div>
+            <span className="loader-text">{text}</span>
+        </div>
     );
 }

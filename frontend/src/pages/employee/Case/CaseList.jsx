@@ -1,11 +1,11 @@
-import { StatusBadge, ArrButton } from "../../../components/Mini.jsx";
+import { StatusBadge, ArrButton, Loader } from "../../../components/Mini.jsx";
 import Table  from "../../../components/Table.jsx"
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {useEffect, useState} from "react";
-import Loader from "../../../components/Loader.jsx";
 
 const ALL_FILTER_STATUSES = ["WAITING_FOR_CONTACT", "IN_PROGRESS", "IN_COURT", "CLOSED"];
+const API_BASE = import.meta.env.VITE_API_URL;
 
 export default function CasesList() {
     const navigate = useNavigate();
@@ -17,7 +17,7 @@ export default function CasesList() {
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://office-project-production-3ce4.up.railway.app/office/cases", {
+            const response = await axios.get(API_BASE+"/cases", {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

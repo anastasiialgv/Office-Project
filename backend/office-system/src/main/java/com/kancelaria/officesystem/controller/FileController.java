@@ -71,6 +71,7 @@ public class FileController {
     }
 
     @GetMapping("/my")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<FileDTO>> getMyFiles(Principal principal) {
         try {
             String username = principal.getName();

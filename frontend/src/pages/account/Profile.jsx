@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import {GlassCard,
-    PencilIcon, CheckIcon, UserIcon,
+    PencilIcon, CheckIcon, UserIcon, Loader
 } from "../../components/Mini.jsx";
 import axios from "axios";
-import Loader from "../../components/Loader.jsx";
-
+const API_BASE = import.meta.env.VITE_API_URL;
 function EditableField({ label, value, onChange }) {
     const [editing, setEditing] = useState(false);
     const [draft, setDraft] = useState(value);
@@ -49,7 +48,7 @@ export default function Profile() {
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://office-project-production-3ce4.up.railway.app/office/profile", {
+            const response = await axios.get(API_BASE+"/profile", {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setProfile(response.data);
@@ -67,7 +66,7 @@ export default function Profile() {
     const updateProfile = async (updatedData) => {
         try {
             const token = localStorage.getItem("token");
-            await axios.put(`https://office-project-production-3ce4.up.railway.app/office/${profile.userId || profile.id}`,
+            await axios.put(API_BASE+`/${profile.userId || profile.id}`,
                 updatedData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -77,7 +76,7 @@ export default function Profile() {
         }
     };
 
-    if (loading) return Loader;
+    if (loading) return <Loader/>;
     if (!profile) return <div style={{color: '#fff', padding: '40px', textAlign: 'center'}}>Profile not found</div>;
     return (
             <div className="profile-card-wrap" >

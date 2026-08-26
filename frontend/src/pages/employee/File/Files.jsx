@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { TopBar, ArrButton, TypeBadge } from "../../../components/Mini.jsx";
+import { TopBar, ArrButton, TypeBadge, Loader } from "../../../components/Mini.jsx";
 import Table from "../../../components/Table.jsx";
 import axios from "axios";
-import Loader from "../../../components/Loader.jsx";
 
-const API_BASE = "https://office-project-production-3ce4.up.railway.app/office";
+const API_BASE = import.meta.env.VITE_API_URL;
 const ALL_FILTER_TYPES_DOCUMENTS = ["PAYMENT_DEMAND_NOTICE",
     "PRE_LITIGATION_PAYMENT_DEMAND",
     "NOTICE_OF_CASE_REFERRAL_TO_COURT",
@@ -20,7 +19,7 @@ export default function Files() {
         const fetchAllFiles = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get(`${API_BASE}/files/my`, {
+                const response = await axios.get(API_BASE+"/files/my", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setFiles(response.data);
