@@ -9,6 +9,7 @@ import com.kancelaria.officesystem.model.enums.FileType;
 import com.kancelaria.officesystem.repository.CaseRepository;
 import com.kancelaria.officesystem.repository.FileRepository;
 import com.kancelaria.officesystem.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -32,6 +33,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("office/files")
 public class FileController {
+    @Value("${app.upload-dir}")
+    private String uploadDir;
     private final FileRepository fileRepository;
     private final CaseRepository caseRepository;
     private final UserRepository userRepository;
@@ -44,11 +47,12 @@ public class FileController {
             File dbFile = fileRepository.findById(fileId)
                     .orElseThrow(() -> new RuntimeException("File record not found in database"));
 
-            String purePath = dbFile.getFilePath().startsWith("/")
-                    ? dbFile.getFilePath().substring(1)
-                    : dbFile.getFilePath();
+            String webPath = dbFile.getFilePath();
+            String relativeTail = webPath.startsWith("/uploads/")
+                    ? webPath.substring("/uploads/".length())
+                    : webPath;
 
-            Path filePath = Paths.get(purePath).toAbsolutePath().normalize();
+            Path filePath = Paths.get(uploadDir).resolve(relativeTail).toAbsolutePath().normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
             if (!resource.exists()) {
@@ -109,7 +113,7 @@ public class FileController {
             if (caseId != null) {
                 lawCase = caseRepository.findById(caseId).orElse(null);
             }
-            String relativeDir = "uploads/generated/";
+            String relativeDir = uploadDir + "/generated/";
             Path uploadPath = Paths.get(relativeDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);

@@ -10,7 +10,6 @@ import com.kancelaria.officesystem.repository.CaseRepository;
 import com.kancelaria.officesystem.repository.ContactRepository;
 import com.kancelaria.officesystem.repository.FileRepository;
 import com.kancelaria.officesystem.service.PayUService;
-import com.kancelaria.officesystem.service.CaseService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +20,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
+
 
 @RestController
 @RequestMapping("/office/payments")
 @RequiredArgsConstructor
 public class PaymentController {
+
+    @Value("${app.upload-dir}")
+    private String uploadDir;
 
     private final PayUService payUService;
     private final CaseRepository caseRepository;
@@ -76,7 +79,7 @@ public class PaymentController {
                 paidCase.setClosedDate(LocalDate.now());
                 caseRepository.save(paidCase);
 
-                Path uploadPath = Paths.get("uploads/payments");
+                Path uploadPath = Paths.get(uploadDir, "payments");
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
