@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import {
     GlassCard, CardTitle,
-    Field, TypeBadge, BackButton
+    Field, TypeBadge
 } from "../../../components/Mini.jsx";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 export default function ContactDetail() {
     const { id } = useParams();
@@ -19,7 +20,9 @@ export default function ContactDetail() {
 
     return (
         <>
-            <BackButton onClick={() => navigate(-1)} />
+            <button className="mc-back-btn" onClick={() => navigate(-1)}>
+                <ArrowBackIosIcon style={{fontSize: 16, marginRight: 4}}/>
+            </button>
             <div className="single-card-container">
                 <GlassCard className="detail-view-card">
                     <CardTitle>{data.subject}</CardTitle>
@@ -29,7 +32,7 @@ export default function ContactDetail() {
                         <Field label="Contact ID">{data.id}</Field>
 
                         <Field label="Type">
-                            <TypeBadge type={data.contact_type} />
+                            <TypeBadge type={data.contact_type}/>
                         </Field>
 
                         <Field label="Sent At">{data.sent_at}</Field>
@@ -38,7 +41,7 @@ export default function ContactDetail() {
 
                         {/* Поле с текстом сообщения */}
                         <div className="contact-body-section">
-                            <label className="profile-label" style={{ marginBottom: '8px', display: 'block' }}>
+                            <label className="profile-label" style={{marginBottom: '8px', display: 'block'}}>
                                 Message Body
                             </label>
                             <div className="contact-body-text">
@@ -49,7 +52,7 @@ export default function ContactDetail() {
                     </div>
 
                     {/* Две кнопки в стиле профиля */}
-                    <div className="profile-actions" style={{ marginTop: '24px' }}>
+                    <div className="profile-actions" style={{marginTop: '24px'}}>
                         <button
                             className="btn-primary flex-1"
                             onClick={() => navigate(-1)}

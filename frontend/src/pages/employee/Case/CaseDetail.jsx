@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-    BackButton,
     GlassCard,
     CardTitle,
     StatusBadge,
@@ -14,7 +13,7 @@ import {
 import ContactHistory from "../../../components/ContactHistory.jsx";
 import AddPenaltyModal from "../../../components/AddPenalty.jsx";
 import axios from "axios";
-
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 const API_BASE = import.meta.env.VITE_API_URL;
 
 // ── Вспомогательные компоненты ──────────────────────────────────────────────
@@ -117,20 +116,18 @@ function DriverCard({ driver = {}, onSaveNotes }) {
 
 function VehicleCard({ vehicle, photoUrl }) {
     const [lightbox, setLightbox] = useState(null);
-    const fullPhotoUrl = photoUrl ? API_BASE+`${photoUrl}` : null;
+    const backendRoot = import.meta.env.VITE_API_URL.replace('/office', '');
+    const fullPhotoUrl = photoUrl ? `${backendRoot}${photoUrl}` : null;
+
     return (
         <>
             <GlassCard className="cd-card-vehicle">
                 <CardTitle>Vehicle</CardTitle>
-                <div className="cd-vehicle-grid">
-                    {[["Number", vehicle.plateNumber], ["Model", vehicle.model], ["Brand", vehicle.brand], ["Color", vehicle.color]].map(([label, val]) => (
-                        <div className="mc-field" key={label}>
-                            <span className="mc-fl">{label}</span>
-                            <span className="mc-fv">{val || "—"}</span>
-                        </div>
-                    ))}
-                </div>
 
+                <Field label="Number">{vehicle.plateNumber || "—"}</Field>
+                <Field label="Model">{vehicle.model || "—"}</Field>
+                <Field label="Brand">{vehicle.brand || "—"}</Field>
+                <Field label="Color">{vehicle.color || "—"}</Field>
 
                 <div className="cd-evidence-section">
                     <div className="ap-label" style={{marginBottom: "8px"}}>Evidence Photo</div>
@@ -168,6 +165,7 @@ function VehicleCard({ vehicle, photoUrl }) {
 // ── Основной компонент страницы ──────────────────────────────────────────────
 
 export default function CaseDetail() {
+    const fileInputRef = useRef(null);
     const navigate = useNavigate();
     const {id} = useParams();
     const [data, setData] = useState(null);
@@ -266,8 +264,9 @@ export default function CaseDetail() {
 
     return (
         <>
-            <BackButton onClick={() => navigate(-1)} />
-
+            <button className="mc-back-btn" onClick={() => navigate(-1)}>
+                <ArrowBackIosIcon style={{ fontSize: 16, marginRight: 4 }} />
+            </button>
             <div className="cd-grid">
                 <GlassCard className="cd-card-case">
                     <CardTitle>Case</CardTitle>
@@ -295,8 +294,7 @@ export default function CaseDetail() {
                     <Field label="Overdue count">{data.overdueCount || 0}</Field>
                     <Field label="Address">{data.address || "—"}</Field>
 
-                    <div className="mc-field">
-                        <span className="mc-fl">Payment Proof</span>
+                    <div className="button-row">
                         <div style={{display: "flex", gap: "10px", alignItems: "center"}}>
                             {data.status === "CLOSED" || localUploaded ? (
                                 <button
@@ -310,23 +308,16 @@ export default function CaseDetail() {
                                             alert("Failed to download file from server.");
                                         }
                                     }}
-                                    className="cd-add-link"
-                                    style={{
-                                        background: 'none',
-                                        border: 'none',
-                                        padding: 0,
-                                        color: "var(--accent-green)",
-                                        cursor: "pointer"
-                                    }}
+                                    className="payment-btn"
                                 >
-                                    DOWNLOAD
+                                    Download Payment Proof
                                 </button>
                             ) : (
-                                <label className="cd-add-link" style={{cursor: "pointer"}}>
-                                    ADD
+                                <>
                                     <input
                                         type="file"
-                                        style={{display: "none"}}
+                                        ref={fileInputRef}
+                                        style={{ display: "none" }}
                                         onChange={async (e) => {
                                             if (!e.target.files[0]) return;
                                             const formData = new FormData();
@@ -338,23 +329,30 @@ export default function CaseDetail() {
                                                         Authorization: `Bearer ${token}`,
                                                         "Content-Type": "multipart/form-data"
                                                     }
-                                                })
+                                                });
                                                 setLocalUploaded(true);
                                                 alert("Payment proof uploaded successfully!");
-
                                                 fetchCaseDetails();
                                             } catch (err) {
                                                 alert("Error uploading file");
                                             }
                                         }}
                                     />
-                                </label>
+
+                                    <button
+                                        className="payment-btn"
+                                        onClick={() => fileInputRef.current.click()}
+                                    >
+                                        Add Payment Proof
+                                    </button>
+                                </>
                             )}
                         </div>
+                        <button className="edit-btn" onClick={() => setShowPenaltyModal(true)}>
+                            Add Penalty
+                        </button>
                     </div>
-                    <button className="edit-btn" onClick={() => setShowPenaltyModal(true)}>
-                        Add Penalty
-                    </button>
+
                 </GlassCard>
 
                 {/* Остальные карточки */}
@@ -365,7 +363,7 @@ export default function CaseDetail() {
                 <DriverCard driver={data.driver} onSaveNotes={handleNotesSave}/>
             </div>
 
-            <div style={{padding: "0 20px 32px"}}>
+            <div style={{padding: "0 80px"}}>
                 <ContactHistory caseId={data.numberCase} onContactAdded={fetchCaseDetails}/>
             </div>
 

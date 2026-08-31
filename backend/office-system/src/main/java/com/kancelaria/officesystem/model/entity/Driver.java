@@ -57,7 +57,7 @@ public class Driver {
     private String address;
 
     @NotBlank
-    @Lob //big object text >255
-    @Column(name = "notes")
+    @Size(max = 1000)
+    @Column(name = "notes", length = 1000)
     private String notes;
 }

@@ -15,20 +15,17 @@ function TimelineEntry({ entry }) {
 
     return (
         <div className="timeline-entry-row">
-            <div>
+            <div className="timeline-entry-content">
                 <div className="timeline-entry-type">
-                    {entry.contactType === "PHONE" ?
-                        <PhoneIcon size={14}/> : <MailIcon size={14}/>}
-                    <strong style={{ textTransform: "uppercase" }}>
-                        {((entry.contactType) || "CONTACT").replace(/_/g, " ")}
-                    </strong>
+                    {entry.contactType === "PHONE" ? <PhoneIcon size={14}/> : <MailIcon size={14}/>}
+                    <span>{((entry.contactType) || "CONTACT").replace(/_/g, " ")}</span>
                 </div>
                 <p className="timeline-entry-result">
                     {entry.result || "No description provided"}
                 </p>
             </div>
             <div className="timeline-entry-meta">
-                <div>{formatDate(entry.contactDate)}</div>
+                {formatDate(entry.contactDate)}
             </div>
         </div>
     );
@@ -85,7 +82,7 @@ function AddContactForm({onAdd, onCancel, caseId}) {
                     placeholder="Enter description..."
                 />
             </div>
-            <div className="ch-form-bottom">
+            <div className="button-row">
                 <button type="button" className="btn-danger" onClick={onCancel}>Cancel</button>
                 <button type="submit" className="btn-primary">Save Log</button>
             </div>

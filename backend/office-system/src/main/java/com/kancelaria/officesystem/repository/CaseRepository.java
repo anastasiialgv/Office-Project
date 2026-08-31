@@ -20,6 +20,9 @@ public interface CaseRepository extends JpaRepository<Case, Integer> {
         WHERE c.employee.userId = :userId AND c.status != 'ARCHIVED'
     """)
     List<EmployeeListCaseDTO> findCasesByEmployeeId(@Param("userId") Integer userId);
+
+    @Query("SELECT c FROM Case c JOIN FETCH c.driver JOIN FETCH c.vehicle LEFT JOIN FETCH c.employee")
+    List<Case> findAllWithRelations();
 }
 
 

@@ -270,7 +270,7 @@ export default function AdminUsers() {
     const [roleFilter, setRoleF] = useState(null);
     const [showCreate, setCreate] = useState(false);
     const [editTarget, setEditTgt] = useState(null);
-    const [resetTarget, setResetTgt] = useState(null); // Состояние для сброса пароля
+    const [resetTarget, setResetTgt] = useState(null);
 
     const fetchUsers = async () => {
         try {
@@ -343,7 +343,7 @@ export default function AdminUsers() {
             <div style={{padding: "0 20px 40px"}}>
                 <GlassCard>
                     <div className="adm-table-head">
-                        <span>User</span><span>Email</span><span>Phone</span><span>Role</span><span>Status</span><span>Actions</span>
+                        <span>User</span><span>Email</span><span>Phone</span><span>Role</span><span>Actions</span>
                     </div>
                     {filtered.map((u, i) => (
                         <div key={u.id || i} className="adm-table-row">
@@ -352,19 +352,12 @@ export default function AdminUsers() {
                             <span style={{fontSize: 12, color: "var(--text-muted)"}}>{u.email}</span>
                             <span style={{fontSize: 12, color: "var(--text-muted)"}}>{u.phone}</span>
                             <RoleBadge role={u.role}/>
-                            <span style={{
-                                fontSize: 12,
-                                fontWeight: 600,
-                                color: u.active ? "#6ddd8a" : "#888"
-                            }}>
-                                ● {u.active ? "Active" : "Inactive"}
-                            </span>
+
                             <div className="adm-row-actions">
-                                <button className="adm-btn-ghost" style={{padding: "5px 10px", fontSize: 11}}
+                                <button className="btn-primary"
                                         onClick={() => setEditTgt(u)}>Edit
                                 </button>
-                                <button className="adm-btn-ghost"
-                                        style={{padding: "5px 10px", fontSize: 11, color: "var(--accent-orange)"}}
+                                <button className="btn-danger" style={{fontSize: 12}}
                                         onClick={() => setResetTgt(u)}>Reset Password
                                 </button>
                             </div>

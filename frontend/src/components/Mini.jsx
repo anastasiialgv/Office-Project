@@ -110,13 +110,7 @@ export function ArrButton({ onClick }) {
 
 
 
-export function BackButton({onClick, label = "← Back" }) {
-    return (
-        <button className="mc-back-btn" onClick={onClick}>
-            {label}
-        </button>
-    );
-}
+
 
 export function Modal({ title, onClose, children }) {
     return (

@@ -176,7 +176,19 @@ function RegisterCaseModal({drivers, cars, onClose, onSave}) {
     const [err, setErr]   = useState("");
     const [photoFile, setPhotoFile] = useState(null);
 
-    const set = (k, v) => { setForm(p => ({ ...p, [k]: v })); setErr(""); };
+    const set = (k, v) => {
+        setForm(p => {
+            if (k === "idDriver") {
+                return { ...p, [k]: v, plateNumber: "" };
+            }
+            return { ...p, [k]: v };
+        });
+        setErr("");
+    };
+
+    const filteredCars = form.idDriver
+        ? cars.filter(c => String(c.idDriver) === String(form.idDriver))
+        : [];
 
     const handleSave = async () => {
         if (!form.violationDate.trim() || !form.idDriver || !form.plateNumber || !form.address.trim()) {
@@ -229,11 +241,12 @@ function RegisterCaseModal({drivers, cars, onClose, onSave}) {
             <div className="ap-field">
                 <div className="ap-label">Select Car (Plate)</div>
                 <SearchableSelect
-                    options={cars}
+                    options={filteredCars}
                     value={form.plateNumber}
                     onChange={(val) => set("plateNumber", val)}
-                    placeholder="Choose Vehicle"
+                    placeholder={form.idDriver ? "Choose Vehicle" : "First select a driver..."}
                     displayKey={(c) => `${c.brand} ${c.model} ${c.plateNumber}`}
+                    disabled={!form.idDriver}
                 />
             </div>
 
@@ -271,7 +284,7 @@ function RegisterCaseModal({drivers, cars, onClose, onSave}) {
                         id="violation-file-input"
                         type="file"
                         accept="image/*"
-                        style={{ display: "none" }}
+                        style={{display: "none"}}
                         onChange={e => setPhotoFile(e.target.files[0])}
                     />
                     <label htmlFor="violation-file-input" className="glass-input file-upload-btn">
@@ -303,7 +316,7 @@ function ArchiveModal({caseItem, onClose, onConfirm}) {
     const handleConfirm = async () => {
         try {
             const token = localStorage.getItem("token");
-            await axios.patch(`${API_BASE}/cases/${caseItem.numberCase}/archive`, { closedDate }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.patch(`${API_BASE}/cases/${caseItem.numberCase}/archive`, {closedDate}, {headers: {Authorization: `Bearer ${token}`}});
             onConfirm();
             onClose();
         } catch (e) {
@@ -358,7 +371,7 @@ export default function AdminCases() {
 
             const [casesRes, driversRes, carsRes, empRes] = await Promise.all([
                 axios.get(`${API_BASE}/cases`, config),
-                axios.get(`https://office-project-production-3ce4.up.railway.app/office/drivers/short`, config),
+                axios.get(`${import.meta.env.VITE_API_URL}/drivers/short`, config),
                 axios.get(`${API_BASE}/vehicles`, config),
                 axios.get(`${API_BASE}/users`, config)
             ]);
@@ -521,9 +534,8 @@ export default function AdminCases() {
                     <div className="adm-table-head">
                         <span>Case ID</span>
                         <span>Violation Date</span>
-                        <span>Fine Amount</span>
                         <span>Status</span>
-                        <span>Assigned To</span>
+                        {!showArchived ? <span>Assigned To</span> : <span></span>}
                         {!showArchived?<span>Archiving</span>:<span/>}
                     </div>
 
@@ -532,24 +544,15 @@ export default function AdminCases() {
                         : visible.map((c, i) => {
                             const isArchivedCase = c.status === "ARCHIVED";
                             const canArchive = c.status === "CLOSED";
-                            const currentWorkerName = c.name ? `${c.name} ${c.surname || ""}` : "";
 
                             return (
                                 <div key={c.numberCase} className="adm-table-row"
                                      style={{animationDelay: `${i * 0.04}s`}}>
                                     <span className="adm-case-id">CD-{c.numberCase}</span>
                                     <span className="adm-cell-muted">{c.violationDate}</span>
-                                    <span style={{
-                                        color: "var(--accent-orange)",
-                                        fontWeight: 600
-                                    }}>{Number(c.fineAmount).toFixed(2)} PLN</span>
                                     <StatusBadge status={c.status} />
 
-                                    {isArchivedCase ? (
-                                        <div style={{fontSize: 11, lineHeight: 1.5}}>
-                                            <div style={{color: "#fff"}}>{currentWorkerName || "—"}</div>
-                                        </div>
-                                    ) : (
+                                    {(!isArchivedCase) && (
                                         <select
                                             className="adm-assign-select glass-select"
                                             value={c.employeeId || " "}

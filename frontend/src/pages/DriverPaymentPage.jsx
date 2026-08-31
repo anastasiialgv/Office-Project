@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { GlassCard, CardTitle, Field, StatusBadge, Loader } from '../components/Mini.jsx';
-const API_BASE = import.meta.env.VITE_API_URL+"/reports";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const DriverPaymentPage = () => {
     const { caseId } = useParams();
@@ -39,7 +39,7 @@ const DriverPaymentPage = () => {
         setError(null);
 
         try {
-            const response = await fetch(`https://office-project-production-3ce4.up.railway.app/office/payments/init/${caseId}`, { // https://office-project-production-3ce4.up.railway.app
+            const response = await fetch(API_BASE+`/payments/init/${caseId}`, { // https://office-project-production-3ce4.up.railway.app
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ const DriverPaymentPage = () => {
 
             if (!response.ok) {
                 const errData = await response.json();
-                throw new Error(errData.error || 'Ошибка при инициализации платежа');
+                throw new Error(errData.error || 'Payment initiation failed');
             }
 
             const data = await response.json();
@@ -65,10 +65,8 @@ const DriverPaymentPage = () => {
     };
 
     return (
-        // Используем login-wrap для темного градиентного фона и центрирования
         <div className="login-wrap">
 
-            {/* Заменяем белый квадрат на твою стеклянную карточку */}
             <GlassCard className="login-card">
                 <CardTitle>Payment | Case № {caseId}</CardTitle>
 

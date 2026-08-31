@@ -24,8 +24,8 @@ api.interceptors.response.use(
             localStorage.removeItem("role");
             localStorage.removeItem("userId");
 
-            if (window.location.pathname !== '/login') {
-                window.location.href = '/login';
+            if (window.location.pathname !== '/') {
+                window.location.href = '/';
             }
         }
         return Promise.reject(error);

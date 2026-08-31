@@ -65,6 +65,19 @@ export default function Login() {
                         />
                     </div>
 
+                    {error && (
+                        <div style={{
+                            color: "var(--accent-red, #ff6b6b)",
+                            fontSize: "13px",
+                            marginTop: "-4px",
+                            marginBottom: "12px",
+                            textAlign: "center"
+                        }}>
+                            {error}
+                        </div>
+                    )}
+
+
                     <button type="submit" className="btn-doc login-btn" >
                         Sign In
                     </button>

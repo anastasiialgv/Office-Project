@@ -1,5 +1,6 @@
 package com.kancelaria.officesystem.controller;
 
+import com.kancelaria.officesystem.DTOMapper;
 import com.kancelaria.officesystem.model.dto.Case.EmployeeCaseDetailDTO;
 import com.kancelaria.officesystem.model.dto.Case.EmployeeListCaseDTO;
 import com.kancelaria.officesystem.model.dto.Case.PublicCaseDTO;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.nio.file.StandardCopyOption;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +44,7 @@ public class CaseController {
     private final FileRepository fileRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final DTOMapper dtoMapper;
 //==========================================EMPLOYEE==========================================
     @GetMapping("/cases")
     public ResponseEntity<List<EmployeeListCaseDTO>> getCasesByEmployee(
@@ -144,10 +147,14 @@ public class CaseController {
 //==========================================EMPLOYEE==========================================
 
 //==========================================ADMIN==========================================
+        @Transactional
         @GetMapping("/admin/cases")
         public ResponseEntity<?> getAllCases(){
             try {
-                return ResponseEntity.ok(caseService.getAllCases());
+                return ResponseEntity.ok(caseRepository.findAllWithRelations()
+                        .stream()
+                        .map(dtoMapper::mapToAdminCaseDTO)
+                        .collect(Collectors.toList()));
             } catch (Exception e) {
                 e.printStackTrace();
                 return ResponseEntity.status(500).body("REAL ERROR: " + e.getMessage() + " | CAUSE: " + e.getCause());
