@@ -116,7 +116,7 @@ function DriverCard({ driver = {}, onSaveNotes }) {
 
 function VehicleCard({ vehicle, photoUrl }) {
     const [lightbox, setLightbox] = useState(null);
-    const backendRoot = import.meta.env.VITE_API_URL.replace('/office', '');
+    const backendRoot = import.meta.env.VITE_BACKEND_ROOT;
     const fullPhotoUrl = photoUrl ? `${backendRoot}${photoUrl}` : null;
 
     return (
