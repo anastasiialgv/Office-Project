@@ -13,6 +13,7 @@ import com.kancelaria.officesystem.service.CaseService;
 import com.kancelaria.officesystem.service.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,6 +37,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/office")
 public class CaseController {
+    @Value("${app.upload-dir}")
+    private String uploadDir;
     private final CaseService caseService;
     private final CaseRepository caseRepository;
     private final ContactRepository contactRepository;
@@ -113,8 +116,7 @@ public class CaseController {
             Case lawCase = caseRepository.findById(caseId)
                     .orElseThrow(() -> new RuntimeException("Case not found"));
 
-            String relativeDir = "uploads/payments";
-            Path uploadPath = Paths.get(relativeDir);
+            Path uploadPath = Paths.get(uploadDir, "payments");
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
@@ -215,9 +217,9 @@ public class CaseController {
             );
 
             if (photo != null && !photo.isEmpty()) {
-                java.io.File dir = new java.io.File("uploads/photos/");
-                if (!dir.exists()) {
-                    dir.mkdirs();
+                Path dir = Paths.get(uploadDir, "photos");
+                if (!Files.exists(dir)) {
+                    Files.createDirectories(dir);
                 }
 
                 String originalFilename = photo.getOriginalFilename();
@@ -226,7 +228,7 @@ public class CaseController {
 
                 String newFileName = "photo_" + savedCase.getNumberCase() + extension;
 
-                Path path = Paths.get("uploads/photos/" + newFileName);
+                Path path = dir.resolve(newFileName);
                 Files.write(path, photo.getBytes());
 
                 String savedFilePath = "/uploads/photos/" + newFileName;
