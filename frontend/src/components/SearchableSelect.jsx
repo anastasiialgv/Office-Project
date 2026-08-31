@@ -57,7 +57,7 @@ export function SearchableSelect({ options, value, onChange, placeholder, displa
                             <div className="searchable-option-empty">Not found</div>
                         ) : (
                             filteredOptions.map(o => {
-                                const idVal = o.idDriver ?? o.plateNumber ?? o.id;
+                                const idVal = o.plateNumber ?? o.idDriver ?? o.id;
                                 return (
                                     <div
                                         key={idVal}
