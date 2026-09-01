@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -16,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeCaseDetailDTO {
-    // --- Case infotmation ---
+    // Case infotmation
     private Integer numberCase;
     private CaseStatus status;
     private LocalDate violationDate;
@@ -24,15 +23,15 @@ public class EmployeeCaseDetailDTO {
     private String address;
     private Integer overdueCount;
 
-    // --- Driver and vehicle information ---
+    // Driver and vehicle information
     private DriverDTO driver;
     private VehicleDTO vehicle;
 
-    // --- Payment Proof ---
+    // Payment Proof
     private boolean isPaymentProofUploaded;
     private String paymentProofDownloadUrl;
     private Integer paymentProofFileId;
 
-    // --- Photo ----
+    // Photo
     private String photoUrl;
 }

@@ -5,13 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct; // Важно для инициализации
-//Когда Spring создает объект JwtService, поле secret сначала пустое.
-//Если мы попытаемся создать key прямо в объявлении поля,
-//мы получим ошибку или пустой ключ.
-//Аннотация @PostConstruct говорит:
-// «Сначала подставь все значения из настроек,
-// а потом выполни этот метод, чтобы подготовить ключ к работе»
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -22,6 +16,7 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+
 @Service
 public class JwtService {
 
@@ -30,8 +25,7 @@ public class JwtService {
 
     private Key key;
 
-    // Этот метод выполнится СРАЗУ после того, как Spring создаст сервис
-    // и подставит значение секретной строки из свойств
+
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());

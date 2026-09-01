@@ -1,13 +1,14 @@
 package com.kancelaria.officesystem.service;
 
 import com.kancelaria.officesystem.DTOMapper;
-import com.kancelaria.officesystem.model.dto.File.FileCaseDTO;
 import com.kancelaria.officesystem.model.dto.File.FileDTO;
 import com.kancelaria.officesystem.model.entity.Case;
 import com.kancelaria.officesystem.model.entity.File;
+import com.kancelaria.officesystem.model.entity.User;
 import com.kancelaria.officesystem.model.enums.FileType;
 import com.kancelaria.officesystem.repository.CaseRepository;
 import com.kancelaria.officesystem.repository.FileRepository;
+import com.kancelaria.officesystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,48 +16,95 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
 
 @Service
 @RequiredArgsConstructor
 public class FileService {
+    @Value("${app.upload-dir}")
+    private String uploadDir;
     private final FileRepository fileRepository;
     private final CaseRepository caseRepository;
+    private final UserRepository userRepository;
     private final DTOMapper dtoMapper;
-    //#########-------------7-------------#########//
-    public List<FileCaseDTO> getFilesByCaseId(Integer caseId) {
-        return fileRepository.findByLawCase_NumberCase(caseId)
-                .stream()
-                .map(dtoMapper::mapToFileCaseDTO)
-                .collect(Collectors.toList());
+
+
+    public record FileDownloadResult(Resource resource, String contentType, String filename) {
     }
 
-    //#########-------------10-------------#########//
-    public List<FileDTO> getFilesByEmployeeId(Integer userId) {
-        return fileRepository.findByLawCase_Employee_UserId(userId)
-                .stream()
+    @Transactional(readOnly = true)
+    public FileDownloadResult prepareDownload(int fileId) throws IOException {
+        File dbFile = fileRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("File record not found in database"));
+
+        String webPath = dbFile.getFilePath();
+        String relativeTail = webPath.startsWith("/uploads/")
+                ? webPath.substring("/uploads/".length())
+                : webPath;
+
+        Path filePath = Paths.get(uploadDir).resolve(relativeTail).toAbsolutePath().normalize();
+        Resource resource = new UrlResource(filePath.toUri());
+
+        if (!resource.exists()) {
+            return null;
+        }
+
+        String contentType = Files.probeContentType(filePath);
+        String downloadFileName = resource.getFilename();
+
+        return new FileDownloadResult(resource, contentType, downloadFileName);
+    }
+
+    @Transactional(readOnly = true)
+    public List<FileDTO> getMyFiles(String username) {
+        return fileRepository.findAll().stream()
+                .filter(f -> f.getGeneratedBy() != null
+                        && username.equals(f.getGeneratedBy().getEmail()))
                 .map(dtoMapper::mapToFileDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    //#########-------------13-------------#########//
-    public FileDTO getFileById(Integer fileId) {
-        File file = fileRepository.findById(fileId)
-                .orElseThrow(() -> new RuntimeException("File not found"));
-        return dtoMapper.mapToFileDTO(file);
-    }
+    @Transactional
+    public void uploadGeneratedDocument(Integer caseId, MultipartFile file, String fileTypeStr, String username) throws IOException {
+        User employee = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Logged in user not found in database"));
 
-    public void uploadPaymentProof(Integer caseId, MultipartFile fileData) throws IOException {
-        Case lawCase = caseRepository.findById(caseId)
-                .orElseThrow(() -> new RuntimeException("Case not found"));
+        Case lawCase = null;
+        if (caseId != null) {
+            lawCase = caseRepository.findById(caseId).orElse(null);
+        }
+        String relativeDir = uploadDir + "/generated/";
+        Path uploadPath = Paths.get(relativeDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
 
-        File fileEntity = new File();
-        fileEntity.setLawCase(lawCase);
-        fileEntity.setFileType(FileType.PAYMENT_CONFIRMATION);
-        fileEntity.setUploadedAt(LocalDate.now());
-        String fileName = fileData.getOriginalFilename();
-        fileEntity.setFilePath("/uploads/" + fileName);
+        String fileTypeLower = fileTypeStr.toLowerCase();
+        String filePrefix = (caseId != null) ? String.valueOf(caseId) : "user_" + employee.getUserId();
+        String uniqueFileName = filePrefix + "_" + fileTypeLower + "_" + System.currentTimeMillis() + ".pdf";
+        Path filePath = uploadPath.resolve(uniqueFileName);
 
-        fileRepository.save(fileEntity);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        String webUrlPath = "/uploads/generated/" + uniqueFileName;
+
+        File dbFile = new File();
+        dbFile.setLawCase(lawCase);
+        dbFile.setGeneratedBy(employee);
+        dbFile.setFilePath(webUrlPath);
+        dbFile.setFileType(FileType.valueOf(fileTypeStr));
+        dbFile.setUploadedAt(LocalDate.now());
+
+        fileRepository.save(dbFile);
     }
 }

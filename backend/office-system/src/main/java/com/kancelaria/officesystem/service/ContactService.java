@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,7 +47,16 @@ public class ContactService {
             lawCase.setStatus(CaseStatus.IN_PROGRESS);
             caseRepository.save(lawCase);
         }
+    }
 
+    @Transactional(readOnly = true)
+    public List<ContactDTO> getMyContacts(String username) {
+        return contactRepository.findAll().stream()
+                .filter(c -> c.getLawCase() != null
+                        && c.getLawCase().getEmployee() != null
+                        && username.equals(c.getLawCase().getEmployee().getEmail()))
+                .map(dtoMapper::mapToContactDTO)
+                .toList();
     }
 
 

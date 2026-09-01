@@ -1,13 +1,10 @@
 package com.kancelaria.officesystem.controller;
 
 import com.kancelaria.officesystem.model.entity.Case;
-import com.kancelaria.officesystem.model.entity.Contact;
 import com.kancelaria.officesystem.model.entity.File;
 import com.kancelaria.officesystem.model.enums.CaseStatus;
-import com.kancelaria.officesystem.model.enums.ContactType;
 import com.kancelaria.officesystem.model.enums.FileType;
 import com.kancelaria.officesystem.repository.CaseRepository;
-import com.kancelaria.officesystem.repository.ContactRepository;
 import com.kancelaria.officesystem.repository.FileRepository;
 import com.kancelaria.officesystem.service.PayUService;
 import jakarta.transaction.Transactional;
@@ -84,7 +81,6 @@ public class PaymentController {
                     Files.createDirectories(uploadPath);
                 }
 
-                // 2. Генерируем текстовый файл-чек на сервере
                 String fileName = "payu_receipt_" + caseId + "_" + System.currentTimeMillis() + ".txt";
                 Path filePath = uploadPath.resolve(fileName);
 

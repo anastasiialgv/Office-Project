@@ -7,6 +7,7 @@ import com.kancelaria.officesystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,11 +18,10 @@ public class UserService {
     private final DTOMapper dtoMapper;
     private final PasswordEncoder passwordEncoder;
 
-    //#########-------------2-------------#########//
-    public UserDTO getUserById(Integer id) {
-        return userRepository.findById(id).map(dtoMapper::mapToUserDTO)
+    public UserDTO getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        return dtoMapper.mapToUserDTO(user);
     }
 
     public List<UserDTO> getAllUsers() {
@@ -30,11 +30,42 @@ public class UserService {
     }
 
     public UserDTO createUser(User user) {
-        // Хешируем пароль, который пришел с фронта (например "12345")
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setActive(true);
 
         User savedUser = userRepository.save(user);
         return dtoMapper.mapToUserDTO(savedUser);
+    }
+
+    @Transactional
+    public User updateUser(Integer id, UserDTO userDTO) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setName(userDTO.getName());
+        user.setSurname(userDTO.getSurname());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateUserAdmin(Integer id, UserDTO userDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setRole(userDTO.getRole());
+        user.setActive(userDTO.isActive());
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void resetPassword(Integer id, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        userRepository.save(user);
     }
 }

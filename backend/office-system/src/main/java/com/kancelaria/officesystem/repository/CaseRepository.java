@@ -11,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface CaseRepository extends JpaRepository<Case, Integer> {
+    // Employee Cases
     @Query("""
         SELECT new com.kancelaria.officesystem.model.dto.Case.EmployeeListCaseDTO(
             c.numberCase, c.status, c.violationDate, d.name, d.surname
@@ -21,11 +22,10 @@ public interface CaseRepository extends JpaRepository<Case, Integer> {
     """)
     List<EmployeeListCaseDTO> findCasesByEmployeeId(@Param("userId") Integer userId);
 
+    // Admin Cases (All)
     @Query("SELECT c FROM Case c JOIN FETCH c.driver JOIN FETCH c.vehicle LEFT JOIN FETCH c.employee")
     List<Case> findAllWithRelations();
 }
-
-
 
 
 

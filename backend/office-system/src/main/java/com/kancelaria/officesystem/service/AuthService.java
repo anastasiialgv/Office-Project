@@ -6,10 +6,10 @@ import com.kancelaria.officesystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.kancelaria.officesystem.model.entity.User;
 import java.util.Optional;
 import com.kancelaria.officesystem.security.JwtService;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {

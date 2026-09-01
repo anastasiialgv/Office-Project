@@ -21,10 +21,9 @@ public class CaseAutomationService {
     private final CaseRepository caseRepository;
     private final EmailService emailService;
 
-    /**
-     * Запуск каждую ночь в 01:00.
-     * Проверяет просрочки и автоматически начисляет пени / передает дела в суд.
-     */
+    // Every night 01:00.
+    // Проверяет просрочки и автоматически начисляет пени / передает дела в суд.
+
     @Scheduled(cron = "0 0 1 * * ?")
     @Transactional
     public void checkAndEscalateCases() {

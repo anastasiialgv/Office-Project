@@ -1,14 +1,13 @@
 package com.kancelaria.officesystem.controller;
 
-import com.kancelaria.officesystem.DTOMapper;
 import com.kancelaria.officesystem.model.dto.Contact.ContactDTO;
-import com.kancelaria.officesystem.repository.ContactRepository;
 import com.kancelaria.officesystem.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -16,8 +15,6 @@ import java.util.List;
 @RequestMapping("/office/")
 public class ContactController {
     private final ContactService contactService;
-    private final ContactRepository contactRepository;
-    private final DTOMapper dtoMapper;
 
     @GetMapping("/cases/{caseId}/contact-history")
     public ResponseEntity<List<ContactDTO>> getContactHistory(@PathVariable("caseId") int caseId) {
@@ -45,19 +42,9 @@ public class ContactController {
 
     @GetMapping("/contacts/my")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<ContactDTO>> getMyContacts(java.security.Principal principal) {
+    public ResponseEntity<List<ContactDTO>> getMyContacts(Principal principal) {
         try {
-            String username = principal.getName();
-
-            // Достаем контакты, фильтруем по юзеру дела и мапим в чистые DTO
-            List<ContactDTO> myContacts =
-                    contactRepository.findAll().stream()
-                            .filter(c -> c.getLawCase() != null
-                                    && c.getLawCase().getEmployee() != null
-                                    && username.equals(c.getLawCase().getEmployee().getEmail()))
-                            .map(dtoMapper::mapToContactDTO) // Используем твой маппер!
-                            .toList();
-
+            List<ContactDTO> myContacts = contactService.getMyContacts(principal.getName());
             return ResponseEntity.ok(myContacts);
         } catch (Exception e) {
             e.printStackTrace();

@@ -10,7 +10,8 @@ import lombok.Data;
 public class LoginResponseDTO {
     @JsonProperty("success") // Гарантирует имя "success" без искажений
     private boolean success;
-    private String message;       // User not found, Wrong password, Success
+
+    private String message; // User not found, Wrong password, Success
     private Integer userId;
     private UserRole role;
     private String token;

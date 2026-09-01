@@ -3,9 +3,11 @@ package com.kancelaria.officesystem;
 import com.kancelaria.officesystem.model.dto.*;
 import com.kancelaria.officesystem.model.dto.Case.AdminCaseDTO;
 import com.kancelaria.officesystem.model.dto.Case.CaseDTO;
+import com.kancelaria.officesystem.model.dto.Case.EmployeeCaseDetailDTO;
 import com.kancelaria.officesystem.model.dto.Contact.ContactCaseDTO;
 import com.kancelaria.officesystem.model.dto.Contact.ContactDTO;
 import com.kancelaria.officesystem.model.dto.Driver.DriverDTO;
+import com.kancelaria.officesystem.model.dto.Driver.DriverLegalDTO;
 import com.kancelaria.officesystem.model.dto.Driver.DriverShortDTO;
 import com.kancelaria.officesystem.model.dto.File.FileCaseDTO;
 import com.kancelaria.officesystem.model.dto.File.FileDTO;
@@ -44,6 +46,30 @@ public class DTOMapper {
                 .build();
     }
 
+    public DriverLegalDTO mapToDriverLegalDTO(Driver driver){
+        if (driver == null) return null;
+        return DriverLegalDTO.builder()
+                .idDriver(driver.getIdDriver())
+                .name(driver.getName())
+                .surname(driver.getSurname())
+                .birthDate(driver.getBirthDate())
+                .passportNumber(driver.getPassportNumber())
+                .pesel(driver.getPesel())
+                .email(driver.getEmail())
+                .phone(driver.getPhone())
+                .address(driver.getAddress())
+                .build();
+    }
+
+    public DriverShortDTO mapToDriverShortDTO(Driver driver){
+        if (driver == null) return null;
+        return DriverShortDTO.builder()
+                .idDriver(driver.getIdDriver())
+                .name(driver.getName())
+                .surname(driver.getSurname())
+                .email(driver.getEmail())
+                .build();
+    }
 
 
     // --- VEHICLE ---
@@ -58,23 +84,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // --- CASE ---
-    public CaseDTO mapToCaseDTO(Case lawCase) {
-        if (lawCase == null) return null;
-        return CaseDTO.builder()
-                .numberCase(lawCase.getNumberCase())
-                .status(lawCase.getStatus())
-                .violationDate(lawCase.getViolationDate())
-                .fineAmount(lawCase.getFineAmount())
-                .overdueCount(lawCase.getOverdueCount())
-                .address(lawCase.getAddress())
-                .closedDate(lawCase.getClosedDate())
-                .userId(lawCase.getEmployee() != null ? lawCase.getEmployee().getUserId() : null)
-                .plateNumber(lawCase.getVehicle() != null ? lawCase.getVehicle().getPlateNumber() : null)
-                .driverId(lawCase.getDriver() != null ? lawCase.getDriver().getIdDriver() : null)
-                .build();
-    }
-
+    // --- ADMIN CASE ---
 
     public AdminCaseDTO mapToAdminCaseDTO(Case lawCase){
         return AdminCaseDTO.builder()
@@ -87,6 +97,7 @@ public class DTOMapper {
                 .employeeId(lawCase.getEmployee() != null ? lawCase.getEmployee().getUserId() : null)
                 .build();
     }
+
 
     // --- FILE ---
     public FileDTO mapToFileDTO(File file) {
@@ -103,6 +114,7 @@ public class DTOMapper {
         return dto;
     }
 
+    // --- FILE CASE ---
     public FileCaseDTO mapToFileCaseDTO(File file) {
         if (file == null) return null;
         return FileCaseDTO.builder()
@@ -112,17 +124,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // --- REPORT ---
-    public ReportDTO mapToReportDTO(Report report) {
-        if (report == null) return null;
-        return ReportDTO.builder()
-                .reportId(report.getReportId())
-                .generatedAt(report.getGeneratedAt())
-                .reportType(report.getReportType())
-                .filePath(report.getFilePath())
-                .userId(report.getAccountant() != null ? report.getAccountant().getUserId() : null)
-                .build();
-    }
+
 
     // --- CONTACT ---
     public ContactDTO mapToContactDTO(Contact contact) {
@@ -136,13 +138,5 @@ public class DTOMapper {
                 .build();
     }
 
-    public ContactCaseDTO mapToContactCaseDTO(Contact contact) {
-        if (contact == null) return null;
-        return ContactCaseDTO.builder()
-                .idMessage(contact.getIdMessage())
-                .contactDate(contact.getContactDate())
-                .contactType(contact.getContactType())
-                .result(contact.getResult())
-                .build();
-    }
+
 }
