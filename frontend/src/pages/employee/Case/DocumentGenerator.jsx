@@ -3,7 +3,6 @@ import {useEffect, useState} from "react";
 import { generateCasePDF } from "../../../utils/pdfGenerator.js";
 import axios from "axios";
 const API_BASE = import.meta.env.VITE_API_URL;
-const API_BASE_2 = import.meta.env.VITE_BACKEND_ROOT;
 const DOCS_CONFIG = {
     row1: [
         { id: 'payment_demand_notice', name: 'Payment Demand Notice', type: 'interactive' },
@@ -27,7 +26,7 @@ export default function DocumentGenerator() {
         const fetchDrivers = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get(`${API_BASE_2}/drivers/short`, {
+                const response = await axios.get(`${API_BASE}/drivers/short`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setDriversList(response.data);
