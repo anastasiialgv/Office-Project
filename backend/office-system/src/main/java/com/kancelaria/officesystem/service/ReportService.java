@@ -26,6 +26,7 @@ public class ReportService {
     @Transactional(readOnly = true)
     public Map<String, Object> getDashboardStats() {
         List<Case> allCases = caseRepository.findAll();
+
         long paidCount = allCases.stream().filter(c -> c.getStatus() == CaseStatus.CLOSED).count();
         long unpaidCount = allCases.stream().filter(c -> c.getStatus() != CaseStatus.CLOSED).count();
 
@@ -33,29 +34,56 @@ public class ReportService {
                 .filter(c -> c.getStatus() == CaseStatus.CLOSED)
                 .mapToDouble(c -> c.getFineAmount() != null ? c.getFineAmount().doubleValue() : 0.0).sum();
 
-        List<Map<String, Object>> weekData = List.of(
-                Map.of("label", "Mon", "revenue", totalRevenue * 0.1),
-                Map.of("label", "Tue", "revenue", totalRevenue * 0.15),
-                Map.of("label", "Wed", "revenue", totalRevenue * 0.2),
-                Map.of("label", "Thu", "revenue", totalRevenue * 0.12),
-                Map.of("label", "Fri", "revenue", totalRevenue * 0.3)
-        );
+        // week
+        java.time.format.DateTimeFormatter dayFormatter = java.time.format.DateTimeFormatter.ofPattern("EEE", java.util.Locale.ENGLISH);
+        Map<String, Double> weeklyMap = allCases.stream()
+                .filter(c -> c.getStatus() == CaseStatus.CLOSED && c.getViolationDate() != null)
+                .collect(java.util.stream.Collectors.groupingBy(
+                        c -> c.getViolationDate().format(dayFormatter),
+                        java.util.stream.Collectors.summingDouble(c -> c.getFineAmount() != null ? c.getFineAmount().doubleValue() : 0.0)
+                ));
 
-        List<Map<String, Object>> monthData = List.of(
-                Map.of("label", "Jan", "revenue", totalRevenue * 0.15),
-                Map.of("label", "Feb", "revenue", totalRevenue * 0.12),
-                Map.of("label", "Mar", "revenue", totalRevenue * 0.20),
-                Map.of("label", "Apr", "revenue", totalRevenue * 0.18),
-                Map.of("label", "May", "revenue", totalRevenue * 0.25),
-                Map.of("label", "Jun", "revenue", totalRevenue * 0.10)
-        );
+        List<String> daysOrder = List.of("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
+        List<Map<String, Object>> weekData = daysOrder.stream().map(day -> {
+            Map<String, Object> item = new HashMap<>();
+            item.put("label", day);
+            item.put("revenue", weeklyMap.getOrDefault(day, 0.0));
+            return item;
+        }).toList();
 
-        List<Map<String, Object>> yearData = List.of(
-                Map.of("label", "2023", "revenue", totalRevenue * 0.8),
-                Map.of("label", "2024", "revenue", totalRevenue * 0.95),
-                Map.of("label", "2025", "revenue", totalRevenue * 1.1),
-                Map.of("label", "2026", "revenue", totalRevenue)
-        );
+        // month
+        java.time.format.DateTimeFormatter monthFormatter = java.time.format.DateTimeFormatter.ofPattern("MMM", java.util.Locale.ENGLISH);
+        Map<String, Double> monthlyMap = allCases.stream()
+                .filter(c -> c.getStatus() == CaseStatus.CLOSED && c.getViolationDate() != null)
+                .collect(java.util.stream.Collectors.groupingBy(
+                        c -> c.getViolationDate().format(monthFormatter),
+                        java.util.stream.Collectors.summingDouble(c -> c.getFineAmount() != null ? c.getFineAmount().doubleValue() : 0.0)
+                ));
+
+        List<String> monthsOrder = List.of("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+        List<Map<String, Object>> monthData = monthsOrder.stream().map(month -> {
+            Map<String, Object> item = new HashMap<>();
+            item.put("label", month);
+            item.put("revenue", monthlyMap.getOrDefault(month, 0.0));
+            return item;
+        }).toList();
+
+        // year
+        Map<String, Double> yearlyMap = allCases.stream()
+                .filter(c -> c.getStatus() == CaseStatus.CLOSED && c.getViolationDate() != null)
+                .collect(java.util.stream.Collectors.groupingBy(
+                        c -> String.valueOf(c.getViolationDate().getYear()),
+                        java.util.stream.Collectors.summingDouble(c -> c.getFineAmount() != null ? c.getFineAmount().doubleValue() : 0.0)
+                ));
+
+        List<Map<String, Object>> yearData = yearlyMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> {
+                    Map<String, Object> item = new HashMap<>();
+                    item.put("label", entry.getKey());
+                    item.put("revenue", entry.getValue());
+                    return item;
+                }).toList();
 
         Map<String, Object> stats = new HashMap<>();
         stats.put("paidCount", paidCount);
