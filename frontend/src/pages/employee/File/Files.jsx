@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TopBar, ArrButton, TypeBadge, Loader } from "../../../components/Mini.jsx";
+import {  ArrButton, TypeBadge, Loader } from "../../../components/Mini.jsx";
 import Table from "../../../components/Table.jsx";
 import axios from "axios";
 
@@ -38,7 +38,7 @@ export default function Files() {
             return;
         }
 
-        const fileUrl = `${API_BASE}/office/files/download/${fileId}`;
+        const fileUrl = `${API_BASE}/files/download/${fileId}`;
 
         window.open(fileUrl, '_blank', 'noopener,noreferrer');
     };
