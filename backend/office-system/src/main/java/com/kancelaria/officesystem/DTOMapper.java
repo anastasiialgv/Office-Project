@@ -67,7 +67,7 @@ public class DTOMapper {
                 .idDriver(driver.getIdDriver())
                 .name(driver.getName())
                 .surname(driver.getSurname())
-                .email(driver.getEmail())
+                .email(driver.getEmail() != null ? driver.getEmail() : "")
                 .build();
     }
 
