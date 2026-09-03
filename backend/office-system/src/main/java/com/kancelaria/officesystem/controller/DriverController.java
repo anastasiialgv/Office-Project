@@ -4,6 +4,7 @@ import com.kancelaria.officesystem.model.dto.Driver.DriverDTO;
 import com.kancelaria.officesystem.model.dto.Driver.DriverLegalDTO;
 import com.kancelaria.officesystem.model.dto.Driver.DriverShortDTO;
 import com.kancelaria.officesystem.model.entity.Driver;
+import com.kancelaria.officesystem.repository.DriverRepository;
 import com.kancelaria.officesystem.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DriverController {
     private final DriverService driverService;
+    private final DriverRepository driverRepository;
+
     //================================================EMPLOYEE=============================================
     @GetMapping("/drivers/{id}")
     public ResponseEntity<DriverLegalDTO> getDriverForLegalDocument(@PathVariable("id") int id) {
@@ -69,4 +72,9 @@ public class DriverController {
         return ResponseEntity.ok(driverService.getAllDriversShort());
     }
     //==========================BOTH===============================
+
+    @GetMapping("/drivers")
+    public ResponseEntity<List<Driver>> getAllDrivers() {
+        return ResponseEntity.ok(driverRepository.findAll());
+    }
 }

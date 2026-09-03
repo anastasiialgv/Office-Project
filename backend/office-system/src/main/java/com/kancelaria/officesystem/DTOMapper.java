@@ -62,6 +62,7 @@ public class DTOMapper {
     }
 
     public DriverShortDTO mapToDriverShortDTO(Driver driver){
+        System.out.println(driver.getIdDriver());
         if (driver == null) return null;
         return DriverShortDTO.builder()
                 .idDriver(driver.getIdDriver())

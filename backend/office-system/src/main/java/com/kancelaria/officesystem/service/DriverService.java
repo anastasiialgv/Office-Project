@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DriverService {
     private final DriverRepository driverRepository;
-    private DTOMapper dtoMapper;
+    private final DTOMapper dtoMapper;
 
     @Transactional
     public void updateDriverContacts(Integer driverId, String phone, String address, String email) {
