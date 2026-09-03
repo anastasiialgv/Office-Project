@@ -1,0 +1,110 @@
+[
+  {
+    "violationDate": "2026-08-30",
+    "fineAmount": 250.00,
+    "address": "Warszawa, ul. Marszałkowska 126",
+    "driver": {
+      "name": "Jan",
+      "surname": "Kowalski",
+      "passportNumber": "A1B234567",
+      "pesel": "85051212345",
+      "phone": "501234567",
+      "email": "jan.kowalski@gmail.com",
+      "birthDate": "1985-05-12"
+    },
+    "vehicle": {
+      "plateNumber": "WI12345",
+      "brand": "Skoda",
+      "model": "Octavia",
+      "color": "Silver"
+    },
+    "file": {
+      "filePath": "/uploads/cases/wi12345_20260830.jpg",
+      "fileType": "PHOTOGRAPH_OF_INCIDENT"
+    }
+  },
+  {
+    "violationDate": "2026-09-01",
+    "fineAmount": 150.00,
+    "address": "Warszawa, Al. Jerozolimskie 54",
+    "driver": {
+      "name": "Anna",
+      "surname": "Nowak",
+      "passportNumber": "CD9876543",
+      "pesel": "92092354321",
+      "phone": "602345678",
+      "email": "anna.nowak@yahoo.com",
+      "birthDate": "1992-09-23"
+    },
+    "vehicle": {
+      "plateNumber": "KR77889",
+      "brand": "Toyota",
+      "model": "Yaris",
+      "color": "Red"
+    }
+  },
+  {
+    "violationDate": "2026-08-28",
+    "fineAmount": 400.00,
+    "address": "Kraków, ul. Floriańska 18",
+    "driver": {
+      "name": "Tomasz",
+      "surname": "Mazur",
+      "passportNumber": "GZ9988776",
+      "pesel": "95070733445",
+      "phone": "905678901",
+      "email": "tomasz.mazur@infomail.pl",
+      "birthDate": "1995-07-07"
+    },
+    "vehicle": {
+      "plateNumber": "PO6677A",
+      "brand": "Ford",
+      "model": "Focus",
+      "color": "Grey"
+    },
+    "file": {
+      "filePath": "/uploads/cases/po6677a_20260828.jpg",
+      "fileType": "PHOTOGRAPH_OF_INCIDENT"
+    }
+  },
+  {
+    "violationDate": "2026-09-02",
+    "fineAmount": 200.00,
+    "address": "Wrocław, ul. Świdnicka 10",
+    "driver": {
+      "name": "Ewa",
+      "surname": "Kaczmarek",
+      "passportNumber": "PL7788990",
+      "pesel": "94031255678",
+      "phone": "608999888",
+      "email": "ewa.kaczmarek@gmail.com",
+      "birthDate": "1994-03-12"
+    },
+    "vehicle": {
+      "plateNumber": "DW9988W",
+      "brand": "Hyundai",
+      "model": "i30",
+      "color": "Black"
+    }
+  },
+  {
+    "violationDate": "2026-08-29",
+    "fineAmount": 500.00,
+    "address": "Gdańsk, ul. Długa 45",
+    "driver": {
+      "name": "Michał",
+      "surname": "Zając",
+      "passportNumber": "MZ3344556",
+      "pesel": "89061522334",
+      "phone": "503444555",
+      "email": "michal.zajac@onet.pl",
+      "birthDate": "1989-06-15"
+    },
+    "vehicle": {
+      "plateNumber": "GD7766B",
+      "brand": "Kia",
+      "model": "Sportage",
+      "color": "White"
+    }
+  }
+]

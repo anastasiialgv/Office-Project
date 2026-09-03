@@ -63,7 +63,7 @@ function ResetPasswordModal({ user, onClose }) {
         const generated = generatePassword();
         try {
             const token = localStorage.getItem("token");
-            await axios.put(API_BASE+`/admin/user/${user.userId || user.id}/reset-password`,
+            await axios.put(API_BASE+`/user/${user.userId || user.id}/reset-password`,
                 { password: generated },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
