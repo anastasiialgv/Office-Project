@@ -41,6 +41,21 @@ public class CaseAutomationService {
 
             BigDecimal currentFine = c.getFineAmount() != null ? c.getFineAmount() : BigDecimal.ZERO;
 
+            //                           3 week
+            if (daysPassed >= 21) {
+                if (currentStage < 3) {
+                    c.setOverdueCount(3);
+                    c.setStatus(CaseStatus.IN_COURT);
+                    if (c.getDriver() != null && c.getDriver().getEmail() != null) {
+                        emailService.sendInCourtNotification(
+                                c.getDriver().getEmail(),
+                                c.getDriver().getName(),
+                                c.getNumberCase()
+                        );
+                    }
+                    log.info("Case #{}: Over 21 days passed. Automatically transferred to COURT.", c.getNumberCase());
+                }
+            }
             //                           1 week
             if (daysPassed >= 7 && daysPassed < 14 && currentStage == 0) {
                 c.setFineAmount(currentFine.add(new BigDecimal("100.00")));
@@ -55,17 +70,7 @@ public class CaseAutomationService {
                 log.info("Case #{}: 2 weeks passed. Penalty +300 PLN applied. New fine: {}", c.getNumberCase(), c.getFineAmount());
             }
 
-            //                           3 week
-            else if (daysPassed >= 21 && currentStage < 3) {
-                c.setOverdueCount(3);
-                c.setStatus(CaseStatus.IN_COURT);
-                emailService.sendInCourtNotification(
-                        c.getDriver().getEmail(),
-                        c.getDriver().getName(),
-                        c.getNumberCase()
-                );
-                log.info("Case #{}: 3 weeks passed without payment. Case automatically transferred to COURT.", c.getNumberCase());
-            }
+
         }
 
         caseRepository.saveAll(activeCases);
