@@ -40,7 +40,15 @@ function CreateDriverModal({ onClose, onSave }) {
         }
         try {
             const token = localStorage.getItem("token");
-            await axios.post(`${API_BASE}/drivers`, form, { headers: { Authorization: `Bearer ${token}` } });
+            const payload = {
+                ...form,
+                pesel: form.pesel.trim() === "" ? null : form.pesel,
+                email: form.email.trim() === "" ? null : form.email,
+                phone: form.phone.trim() === "" ? null : form.phone,
+                address: form.address.trim() === "" ? null : form.address,
+            };
+
+            await axios.post(`${API_BASE}/drivers`, payload, { headers: { Authorization: `Bearer ${token}` } });
             onSave();
             onClose();
         } catch (e) {
