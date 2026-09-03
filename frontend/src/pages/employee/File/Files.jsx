@@ -38,8 +38,7 @@ export default function Files() {
             return;
         }
 
-        const BASE_URL = "https://office-project-production-3ce4.up.railway.app";
-        const fileUrl = `${BASE_URL}/office/files/download/${fileId}`;
+        const fileUrl = `${API_BASE}/office/files/download/${fileId}`;
 
         window.open(fileUrl, '_blank', 'noopener,noreferrer');
     };
